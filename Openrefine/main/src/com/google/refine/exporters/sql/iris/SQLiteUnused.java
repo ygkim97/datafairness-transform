@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.exporters.sql.iris;
 
 /*
  * Copyright (c) 2007 David Crawshaw <david@zentus.com>

@@ -362,6 +362,12 @@
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-mapreduce-client-core</artifactId>
         <version>3.0.0</version>
+		<exclusions>
+			<exclusion>
+				<artifactId>jdk.tools</artifactId>
+				<groupId>jdk.tools</groupId>
+			</exclusion>
+		</exclusions>
     </dependency>
     <dependency>
         <groupId>org.apache.hadoop</groupId>

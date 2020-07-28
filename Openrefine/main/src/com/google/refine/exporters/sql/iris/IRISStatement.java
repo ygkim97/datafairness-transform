@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.exporters.sql.iris;
 
 /**
  * IRISStatement.java
@@ -31,8 +31,8 @@ import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import com.mobigen.iris.jdbc.common.io.IRISReader;
-import com.mobigen.iris.jdbc.common.io.JsonIRISReader;
+import com.google.refine.exporters.sql.iris.common.io.IRISReader;
+import com.google.refine.exporters.sql.iris.common.io.JsonIRISReader;
 
 public class IRISStatement implements Statement {
 	private boolean resultSetFetched;

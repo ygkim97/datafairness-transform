@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.exporters.sql.iris;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -10,11 +10,11 @@ import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mobigen.iris.jdbc.config.ColumnTypes;
-import com.mobigen.iris.jdbc.parser.CreateQueryParser;
-import com.mobigen.iris.jdbc.parser.IndexQueryParser;
-import com.mobigen.iris.jdbc.schema.CreateSchema;
-import com.mobigen.iris.jdbc.schema.IndexSchema;
+import com.google.refine.exporters.sql.iris.config.ColumnTypes;
+import com.google.refine.exporters.sql.iris.parser.CreateQueryParser;
+import com.google.refine.exporters.sql.iris.parser.IndexQueryParser;
+import com.google.refine.exporters.sql.iris.schema.CreateSchema;
+import com.google.refine.exporters.sql.iris.schema.IndexSchema;
 
 public class IRISDatabaseMetaData implements DatabaseMetaData {
 

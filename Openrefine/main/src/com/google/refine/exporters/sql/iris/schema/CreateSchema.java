@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc.schema;
+package com.google.refine.exporters.sql.iris.schema;
 
 import java.util.ArrayList;
 import java.util.List;
