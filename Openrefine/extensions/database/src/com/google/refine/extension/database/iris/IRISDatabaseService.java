@@ -59,7 +59,7 @@ public class IRISDatabaseService extends DatabaseService {
      */
     private DatabaseInfo getMetadata(DatabaseConfiguration connectionInfo)  throws DatabaseServiceException {
         try {
-                Class.forName("com.mobigen.iris.jdbc.IRISDriver");
+                Class.forName("com.google.refine.extension.database.iris.IRISDriver");
         } catch (java.lang.ClassNotFoundException e) {
                 e.printStackTrace();
                 return null;
@@ -100,7 +100,7 @@ public class IRISDatabaseService extends DatabaseService {
     @Override
     public ArrayList<DatabaseColumn> getColumns(DatabaseConfiguration dbConfig, String query) throws DatabaseServiceException{
         try {
-                Class.forName("com.mobigen.iris.jdbc.IRISDriver");
+                Class.forName("com.google.refine.extension.database.iris.IRISDriver");
         } catch (java.lang.ClassNotFoundException e) {
                 e.printStackTrace();
                 return null;
@@ -135,7 +135,7 @@ public class IRISDatabaseService extends DatabaseService {
     public List<DatabaseRow> getRows(DatabaseConfiguration dbConfig, String query)
             throws DatabaseServiceException {
         try {
-                Class.forName("com.mobigen.iris.jdbc.IRISDriver");
+                Class.forName("com.google.refine.extension.database.iris.IRISDriver");
         } catch (java.lang.ClassNotFoundException e) {
                 e.printStackTrace();
                 return null;

@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc.schema.struct;
+package com.google.refine.extension.database.iris.schema.struct;
 
 public class ColumnInfo {
 	public String columnName;

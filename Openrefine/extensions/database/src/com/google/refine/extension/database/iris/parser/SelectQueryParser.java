@@ -1,11 +1,11 @@
-package com.mobigen.iris.jdbc.parser;
+package com.google.refine.extension.database.iris.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mobigen.iris.jdbc.schema.SelectSchema;
-import com.mobigen.iris.jdbc.schema.struct.ColumnInfo;
-import com.mobigen.iris.jdbc.schema.struct.TableInfo;
+import com.google.refine.extension.database.iris.schema.SelectSchema;
+import com.google.refine.extension.database.iris.schema.struct.ColumnInfo;
+import com.google.refine.extension.database.iris.schema.struct.TableInfo;
 
 public class SelectQueryParser {
 	public SelectQueryParser() {

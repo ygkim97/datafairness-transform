@@ -1,13 +1,13 @@
-package com.mobigen.iris.jdbc.parser;
+package com.google.refine.extension.database.iris.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.mobigen.iris.jdbc.config.ColumnTypes;
-import com.mobigen.iris.jdbc.schema.CreateSchema;
-import com.mobigen.iris.jdbc.schema.IndexSchema;
+import com.google.refine.extension.database.iris.config.ColumnTypes;
+import com.google.refine.extension.database.iris.schema.CreateSchema;
+import com.google.refine.extension.database.iris.schema.IndexSchema;
 
 public class CreateQueryParser {
 	private String createQuery;

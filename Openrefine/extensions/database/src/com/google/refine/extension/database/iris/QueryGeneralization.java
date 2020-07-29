@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.extension.database.iris;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

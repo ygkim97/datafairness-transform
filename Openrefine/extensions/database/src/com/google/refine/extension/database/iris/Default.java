@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.extension.database.iris;
 
 public class Default {
     protected static final int BUFFER_SIZE = 1024 * 1024;
