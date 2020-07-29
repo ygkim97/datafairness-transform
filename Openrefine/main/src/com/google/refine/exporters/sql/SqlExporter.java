@@ -73,7 +73,7 @@ public class SqlExporter implements WriterExporter {
     private void executeQueryIRIS(String url, String user, String password, String query) //throws SQLException
     {
         try {
-                Class.forName("com.mobigen.iris.jdbc.IRISDriver");
+                Class.forName("com.google.refine.exporters.sql.iris.IRISDriver");
         } catch (java.lang.ClassNotFoundException e) {
                 e.printStackTrace();
         }
