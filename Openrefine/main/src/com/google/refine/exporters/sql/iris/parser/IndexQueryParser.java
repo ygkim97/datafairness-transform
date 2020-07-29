@@ -1,9 +1,9 @@
-package com.mobigen.iris.jdbc.parser;
+package com.google.refine.exporters.sql.iris.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.mobigen.iris.jdbc.schema.IndexSchema;
+import com.google.refine.exporters.sql.iris.schema.IndexSchema;
 
 public class IndexQueryParser {
 	private String indexQuery;

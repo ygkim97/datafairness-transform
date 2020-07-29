@@ -1,0 +1,152 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+@import-less url("../../theme.less");
+
+#data-quality-body {
+	overflow-x : auto;
+	height : 100%;
+	padding: 20px;
+	font-size : small;
+}
+
+/*
+.data-quality .body_top {
+	padding: 0px;
+}
+.data-quality .body_top label {
+	padding-bottom : 5px;
+}
+*/
+
+#data-quality-body .custom_table_header_check {
+	margin-right : 10px;
+}
+#data-quality-body #project_table {
+	min-height : 100px;
+	padding:5px;
+}
+.data-quality-top {
+	border : 1px solid gray;
+	padding : 10px;
+	height : 5%;
+}
+.data-quality-top div:nth-child(1) {
+	float : left;
+}
+.data-quality-top div:nth-child(2) {
+	float : right;
+}
+.data-quality-top {
+	margin-bottom : 10px;
+}
+/*
+.data-quality-middle {
+	display : none;
+	height: 200px;
+    border: 1px solid gray;
+    padding: 10px;
+}
+*/
+.data-quality-bottom {
+	margin-top : 10px;
+	min-height : 80%;
+	border : 1px solid gray;
+	padding : 12px;
+}
+
+.bottom-grid {
+	height : 80%;
+}
+.graph-dialog-body {
+	
+}
+#graph-body {
+	height : 100%;
+}
+#graph-title {
+	height : 10%;
+}
+#graph-chart {
+	height : 95%;
+}
+
+
+
+/*
+	Dialog
+*/
+#statistic_dialog table {
+	height : 95%;
+}
+#graph-body > div:nth-child(1) {
+	height : 200px;
+}
+#graph-body > div:nth-child(2) {
+	height : auto;
+	border: 1px solid gray;
+}
+#basic-statistics-grid table {
+	width : 100%;
+}
+#basic-statistics-chart table {
+	table-layout: fixed;
+    border: 1px solid #444444;
+    border-collapse: collapse;
+    margin-left: 90px;
+    margin-right: 20px;
+    /* width: calc(100% - 90px); */
+    width : -webkit-fill-available;
+}
+#basic-statistics-chart td {
+    border: 1px solid #444444;
+	border-collapse:collapse;
+    height: 95%;
+}
+#basic-statistics-chart .statistic_chart_warp {
+	padding : 3px;
+	height : 100%;
+}
+#basic-statistics-chart .statistic_chart_warp canvas {
+	display: inline !important;
+}
+
+.bar {
+    fill: skyblue;
+    fill-opacity: 0.3;
+    stroke: skyblue;
+}
+.bar:hover {
+    fill-opacity: 1;
+}
+

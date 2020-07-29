@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.exporters.sql.iris;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;

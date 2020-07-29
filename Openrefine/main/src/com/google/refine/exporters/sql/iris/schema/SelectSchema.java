@@ -1,10 +1,10 @@
-package com.mobigen.iris.jdbc.schema;
+package com.google.refine.exporters.sql.iris.schema;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mobigen.iris.jdbc.schema.struct.ColumnInfo;
-import com.mobigen.iris.jdbc.schema.struct.TableInfo;
+import com.google.refine.exporters.sql.iris.schema.struct.ColumnInfo;
+import com.google.refine.exporters.sql.iris.schema.struct.TableInfo;
 
 
 public class SelectSchema {

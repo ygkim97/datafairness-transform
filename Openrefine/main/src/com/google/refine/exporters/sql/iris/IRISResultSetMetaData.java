@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc;
+package com.google.refine.exporters.sql.iris;
 
 /**
  * IRISResultSetMetaData.java
@@ -14,8 +14,8 @@ package com.mobigen.iris.jdbc;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import com.mobigen.iris.jdbc.parser.SelectQueryParser;
-import com.mobigen.iris.jdbc.schema.SelectSchema;
+import com.google.refine.exporters.sql.iris.parser.SelectQueryParser;
+import com.google.refine.exporters.sql.iris.schema.SelectSchema;
 
 public class IRISResultSetMetaData implements ResultSetMetaData {
 

@@ -1,6 +1,6 @@
-package com.mobigen.iris.jdbc.schema.struct;
+package com.google.refine.exporters.sql.iris.schema.struct;
 
-import com.mobigen.iris.jdbc.schema.SelectSchema;
+import com.google.refine.exporters.sql.iris.schema.SelectSchema;
 
 public class TableInfo {
     public String tableName;

@@ -1,4 +1,4 @@
-package com.mobigen.iris.jdbc.config;
+package com.google.refine.exporters.sql.iris.config;
 
 public class ColumnTypes {
 	public final static int TEXT = java.sql.Types.LONGVARCHAR;
