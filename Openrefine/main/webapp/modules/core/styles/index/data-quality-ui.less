@@ -136,17 +136,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #basic-statistics-chart .statistic_chart_warp {
 	padding : 3px;
 	height : 100%;
-}
-#basic-statistics-chart .statistic_chart_warp canvas {
-	display: inline !important;
+	position: relative;
 }
 
-.bar {
-    fill: skyblue;
-    fill-opacity: 0.3;
-    stroke: skyblue;
+.chart_tooltip {	
+    position: absolute;
+    visibility : hidden;	
+    text-align: center;			
+    width: 150px;					
+    height: 40px;					
+    padding: 2px;				
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
 }
-.bar:hover {
-    fill-opacity: 1;
+.chart_tooltip .tooltip_text {
+	font: 8px sans-serif;
 }
-
