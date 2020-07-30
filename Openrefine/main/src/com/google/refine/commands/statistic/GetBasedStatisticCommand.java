@@ -35,21 +35,21 @@ package com.google.refine.commands.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.jena.atlas.json.JsonArray;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
@@ -106,7 +106,9 @@ public class GetBasedStatisticCommand extends Command {
             List<Map<String, Object>> columnInfo = new ArrayList<Map<String, Object>>();
             
             List<Map<String, String>> rowNames = getRowNames();
-            
+
+        	List<Map<Object, Long>> frequencyList = new ArrayList<Map<Object, Long>>();
+        	
             int i = 0;
             while(cIt.hasNext()) {
             	String column = cIt.next();
@@ -126,7 +128,20 @@ public class GetBasedStatisticCommand extends Command {
             	List<Object> chartRow = chartRows.get(i);
             	Iterator<Object> chartRowIt = chartRow.iterator();
             	
-            	if (columnType.equals("int")) {            		
+            	if (columnType.equals("int")) {            	
+                	try {
+						chartRow = (chartRows.get(i).stream().sorted((a, b) -> {
+							int newA = Integer.parseInt(a.toString());
+							int newB = Integer.parseInt(b.toString());
+							return Integer.compare(newA, newB);
+						}).collect(Collectors.toCollection(ArrayList::new)));
+						
+						chartRows.remove(i);
+						chartRows.add(i, chartRow);
+					} catch (Exception e1) {
+						// do nothing
+					}
+                    
 					SummaryStatistics stats = new SummaryStatistics();
 
             		int missingCnt = 0;
@@ -148,7 +163,21 @@ public class GetBasedStatisticCommand extends Command {
             		obj.put(getRowKey(rowNames, 9), String.format(DOT_STRING, stats.getVariance()));
             		obj.put(getRowKey(rowNames, 10), "");
 					
-            	} else if (columnType.equals("double")) {            		
+            	} else if (columnType.equals("double")) {
+
+                	try {
+						chartRow = (chartRows.get(i).stream().sorted((a, b) -> {
+							Double newA = Double.parseDouble(a.toString());
+							Double newB = Double.parseDouble(b.toString());
+							return Double.compare(newA, newB);
+						}).collect(Collectors.toCollection(ArrayList::new)));
+						
+						chartRows.remove(i);
+						chartRows.add(i, chartRow);
+					} catch (Exception e1) {
+						// do nothing
+					}
+                	
             		SummaryStatistics stats = new SummaryStatistics();
             		
             		int missingCnt = 0;
@@ -172,6 +201,8 @@ public class GetBasedStatisticCommand extends Command {
             	} else {
             		// string?
             	}
+				frequencyList.add(chartRow.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting())));
+				
             	columnInfo.add(obj);
             	i++;
             }
@@ -179,6 +210,7 @@ public class GetBasedStatisticCommand extends Command {
             Map<String, Object> result = new HashMap<String, Object>();
             result.put("columnInfo", columnInfo);
             result.put("chartRows", chartRows);
+            result.put("frequencyList", frequencyList);
             result.put("rowNames", rowNames);
             
             response.setCharacterEncoding("UTF-8");
@@ -234,6 +266,7 @@ public class GetBasedStatisticCommand extends Command {
         		chartRows.get(i).add(columnRow);
         	}
         }
+        
         return chartRows;
 	}
 
@@ -256,13 +289,45 @@ public class GetBasedStatisticCommand extends Command {
 		// array 건수 별 소요 시간 계산
 		// getStatisticsTest();
 		
-		double num = 8.479179458244507E11;
-		double num2 = 8.479179;
-		NumberFormat f = NumberFormat.getInstance();
-		f.setGroupingUsed(false);
+//		double num = 8.479179458244507E11;
+//		double num2 = 8.479179;
+//		NumberFormat f = NumberFormat.getInstance();
+//		f.setGroupingUsed(false);
+//		
+//		System.out.println(f.format(num));
+//		System.out.println(f.format(num2));
 		
-		System.out.println(f.format(num));
-		System.out.println(f.format(num2));
+//		List<Object> arr = new ArrayList<Object>();
+//		arr.add("3");
+//		arr.add("5");
+//		arr.add("1");
+//		
+////		List<Object> newArr = arr.stream().sorted().collect(Collectors.toCollection(ArrayList::new));
+////		
+//		arr.remove(1);
+//		arr.add(1, 4);
+//		Iterator<Object> it = arr.iterator();
+//		while (it.hasNext()) {
+//			System.out.println(it.next());
+//		}
+		// 빈도수 테스트
+		List<String> arr = new ArrayList<String>();
+		arr.add("1");
+		arr.add("2");
+		arr.add("3");
+		arr.add("2");
+		arr.add("1");
+		arr.add("3");
+		arr.add("2");
+		arr.add("1");
+		arr.add("3");
+		arr.add("1");
+		arr.add("2");
+		
+		Map<Object, Long> newArr = arr.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+		System.out.println(newArr);
+				
+				
 	}
 	private static void getStatisticsTest() {
 		long start = System.currentTimeMillis();
