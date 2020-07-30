@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
   <div id="header">
-    <img alt="OpenRefine" src="images/logo-openrefine-550.png" height="29" />
+    <img alt="IRISRefine" src="images/logo-irisrefine-550.png" height="29" />
     <span id="slogan"></span>
   </div>
   
