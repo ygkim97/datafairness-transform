@@ -1,8 +1,8 @@
-function BasicStatisticsDialogUI() {
-	this._createDialog();
+function BasicStatisticsDialogUI(headerOriginalNames) {
+	this._createDialog(headerOriginalNames);
 } 
 
-BasicStatisticsDialogUI.prototype._createDialog = function() {
+BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 	var self = this;
 
 	var frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog.html"));
@@ -22,16 +22,19 @@ BasicStatisticsDialogUI.prototype._createDialog = function() {
 	$('#graph-title').append(title);
 	
 	// Create Dialog
-	this._getStatisticData();
+	this._getStatisticData(selectedHeaders);
 }
 BasicStatisticsDialogUI.prototype.resize = function() {
 	console.log('resize')
 };
 
-BasicStatisticsDialogUI.prototype._getStatisticData = function() {
+BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) {
+	if (selectedHeaders == 'all') {
+		selectedHeaders = [];
+	}
 	var _self = this;
 	$.get(
-			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId}),
+			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId, headers : selectedHeaders}),
 			{engine: {}},	// no history option
 			function(data) {
 				if(data.code === "error") {
@@ -80,85 +83,6 @@ BasicStatisticsDialogUI.prototype._createChart_default = function() {
 	template += '</tr>';
 	template += '</table>';
 	dialogChart.append(template);
-}
-
-BasicStatisticsDialogUI.prototype._getChartSeries = function(data, name) {
-	const keys = Object.keys(data);
-	const values = Object.values(data);
-	
-	const limitLength = 5;
-	return {
-		data : {
-			categories : keys.length > 5 ? keys.slice(0, limitLength) : keys,
-			series : [
-				{
-					name : name,
-					data : values.length > 5 ? values.slice(0, limitLength) : values
-				}
-			]
-		},
-		max : values.length > limitLength ? limitLength : values.length  
-	}
-}
-// toast chart
-BasicStatisticsDialogUI.prototype._createChart_tui = function(columnInfo, datas) {
-	let WIDTH = 0
-	let HEIGHT = 0
-	
-	this._columnInfo = columnInfo;
-	
-	this._gridColumns.forEach(function(c, i) {
-		if (c.name !== 'key') {
-			const columnInfo = this._columnInfo[i-1];
-			if (WIDTH == 0) {
-				const parent = $('#template_' + i);
-				WIDTH = parent.width();
-				HEIGHT = parent.height();
-			}
-
-			const series = this._getChartSeries(datas[i-1], c.name);
-			var data = series.data;
-			
-			if (columnInfo.type !== 'string') {
-				var container = document.getElementById('template_' + i);
-				
-				var options = {
-						chart: {
-							width: WIDTH,
-							height: HEIGHT,
-							title: {
-								text : ''
-							},
-							format: '1,000'
-						},
-						yAxis: {
-							title: '',
-							min: 0,
-							max: series.max,
-							showLabel : false
-						},
-						xAxis: {
-							title: '',
-							showLabel : false
-						},
-						legend: {
-							visible : false
-						},
-						chartExportMenu : {
-							visible : false
-						}
-				};
-				Chart.registerTheme('myTheme', {
-					title : {
-						fontSize : 0.1
-					}
-				})
-				options.theme = 'myTheme';
-				Chart.columnChart(container, data, options);
-			}
-		}
-
-	}, this)
 }
 
 BasicStatisticsDialogUI.prototype._getD3ChartSeries = function(data) {
@@ -238,8 +162,6 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 					const tooltip = target.parentElement.parentElement.previousElementSibling;
 					
 					const tQuery = $(tooltip);
-//					tQuery.animate({opacity:'1'}, 500)
-//					tQuery.css('display', 'block')
 					tQuery.css('visibility', 'visible')
 					
 					const positionLeft = Number(target.getAttribute('x')) + Number(x.bandwidth()/2) - tooltip.clientWidth/2;
@@ -268,161 +190,14 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 					const target = event.target;
 					const tooltip = target.parentElement.parentElement.previousElementSibling;
 					
-//					$(tooltip).animate({opacity:'0'}, 500)
-//					$(tooltip).css('display', 'none')
 					$(tooltip).css('visibility', 'hidden')
 				});
 			}
 		}
 	};
 }
-
-// chartjs
-BasicStatisticsDialogUI.prototype._createChart_chartjs = function(columnInfo, datas) {
-	// chart frame
-	var dialogChart = this._elmts.basic_statistics_chart.empty();
-	
-	var template = '';
-	template += '<table>';
-	template += '<tr>';
-	
-	this._gridColumns.forEach( (c,i)=> {
-		var divId = '';
-		if (c.name !== 'key') {
-			divId = 'template_'+i;
-			template += '<td>';
-			template += '<div id="'+divId+'" class="statistic_chart_warp">'
-			template += '</td>';
-		}
-	})
-	
-	template += '</tr>';
-	template += '</table>';
-	dialogChart.append(template);
-	
-	const _self = this
-	const convertedDatas = [];
-	datas.forEach( (d, i) => {
-		convertedDatas.push(_self._dataConvert(columnInfo[i].type, d));
-	})
-	
-	var dataI = 0;
-	// draw chart
-	var width = 0;
-	var height = 0;
-	this._gridColumns.forEach( (c, i) => {
-		if (c.name !== 'key') {
-			const chartWrap = $('#template_'+i)
-			const td = chartWrap.parent();
-			
-			if (width == 0) {
-				width = td.width();
-				height = td.height();
-			}
-			var chartId = 'statistic_chart_' + i
-			var canvas = $('<canvas>');
-			canvas.attr('id', chartId);
-			canvas.css('width', width+ 'px');
-			canvas.css('height', height + 'px');
-			chartWrap.append(canvas);
-				
-			const data = convertedDatas[dataI]
-			if (data.length > 0) {
-				var ctx = document.getElementById(chartId).getContext('2d');
-				var chart = new Chart(ctx, {
-					type: 'bar',
-					data: {
-						// labels를 이렇게 넣지 말고, 다르게 넣고싶은데.. 어떻게 요약해야하나
-						labels : [''],
-						datasets: [{
-							data : data,
-							borderColor: "rgba(255, 201, 14, 1)",
-							backgroundColor: "rgba(255, 201, 14, 0.5)",
-							fill: false,
-						}]
-					},
-					options: {
-						legend: {
-							display: false
-						},
-						responsive: false,
-						maintainAspectRatio: false,
-						title: {
-							display: false,
-							text: ''
-						},
-						tooltips: {
-							mode: 'index',
-							intersect: false,
-							callbacks: {
-								title: function(tooltipItems, data) {
-									return data.labels[tooltipItems[0].datasetIndex];
-								}
-							}
-						},
-						hover: {
-							mode: 'nearest',
-							intersect: true
-						},
-						scales: {
-							xAxes: [{
-								display: true,
-								scaleLabel: {
-									display: false,
-									labelString: 'x축'
-								},
-								ticks: {
-									autoSkip: false
-								}
-							}],
-							yAxes: [{
-								display: false,
-								ticks: {
-									suggestedMin: 0,
-								},
-								scaleLabel: {
-									display: true,
-									labelString: 'y축'
-								}
-							}]
-						}
-					}
-				});
-			}
-			dataI++;
-		}
-	})
-}
 	
 BasicStatisticsDialogUI.prototype._createGrid = function(data, rowNames) {
-//	var template = '<table>';
-//	template += '<tbody>';
-//	
-//	var dialogGrid = this._elmts.basic_statistics_grid.empty();
-//	
-//	rowNames.forEach( (rowName, i) => {
-//		template += '<tr>';
-//		template += '<th>'+rowName+'</th>';
-//		
-//		data.forEach( (ci) => {
-//			const val = ci[rowNames[i]]
-//			template += '<td>'+(val == undefined ? '' : val)+'</td>';
-//		})
-//		template += '</tr>';
-//	})
-//	template += '</tbody>';
-//	template+='</table>'
-//	
-//	dialogGrid.append(template)
-	
-	
-	// use TOAST UI
-	
-	// create column
-	// create data
-	
-//	1. create data
-	// data template
 	/**
 	 * {
 	 * 	key : 'key',
@@ -453,6 +228,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(data, rowNames) {
 			header : column,
 			name : column,
 			align : 'right',
+//			columnOptions : {minWidth : 200}, 
 		})
 	})
 	// 90 이상은 화면이 제대로 안나옴

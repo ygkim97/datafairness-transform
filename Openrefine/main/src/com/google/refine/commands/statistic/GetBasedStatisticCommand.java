@@ -36,11 +36,13 @@ package com.google.refine.commands.statistic;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -99,6 +101,9 @@ public class GetBasedStatisticCommand extends Command {
                 project = getProject(request);
             }
             
+            ;
+            String[] selectedColumns = request.getParameterValues("headers[]");
+            
             List<String> columnNames = project.columnModel.getColumnNames();
             List<List<Object>> chartRows = createChartRows(project, columnNames.size());
             
@@ -112,6 +117,13 @@ public class GetBasedStatisticCommand extends Command {
             int i = 0;
             while(cIt.hasNext()) {
             	String column = cIt.next();
+
+            	// 만약 선택된 columns가 있으면, 이 column이 선택되었는지 체크한다.
+            	if (selectedColumns != null) {
+            		if (!Arrays.asList(selectedColumns).contains(column)) {
+            			continue;
+            		}
+            	}
             	
             	Map<String, Object> obj = new HashMap<String, Object>();
             	
@@ -154,14 +166,25 @@ public class GetBasedStatisticCommand extends Command {
 						}
             		}
 					
-					obj.put(getRowKey(rowNames, 3), stats.getN());
-            		obj.put(getRowKey(rowNames, 4), missingCnt);
-            		obj.put(getRowKey(rowNames, 5), stats.getMin());
-            		obj.put(getRowKey(rowNames, 6), stats.getMax());
-            		obj.put(getRowKey(rowNames, 7), String.format(DOT_STRING, stats.getMean()));
-            		obj.put(getRowKey(rowNames, 8), String.format(DOT_STRING, stats.getStandardDeviation()));
-            		obj.put(getRowKey(rowNames, 9), String.format(DOT_STRING, stats.getVariance()));
-            		obj.put(getRowKey(rowNames, 10), "");
+					if (Double.isNaN(stats.getMin()) || Double.isNaN(stats.getMax())) {
+						obj.put(getRowKey(rowNames, 3), "");
+						obj.put(getRowKey(rowNames, 4), "");
+						obj.put(getRowKey(rowNames, 5), "");
+						obj.put(getRowKey(rowNames, 6), "");
+						obj.put(getRowKey(rowNames, 7), "");
+						obj.put(getRowKey(rowNames, 8), "");
+						obj.put(getRowKey(rowNames, 9), "");
+						obj.put(getRowKey(rowNames, 10), "");
+					} else {
+						obj.put(getRowKey(rowNames, 3), stats.getN());
+						obj.put(getRowKey(rowNames, 4), missingCnt);
+						obj.put(getRowKey(rowNames, 5), stats.getMin());
+						obj.put(getRowKey(rowNames, 6), stats.getMax());
+						obj.put(getRowKey(rowNames, 7), addDotString(stats.getMean()));
+						obj.put(getRowKey(rowNames, 8), addDotString(stats.getStandardDeviation()));
+						obj.put(getRowKey(rowNames, 9), addDotString(stats.getVariance()));
+						obj.put(getRowKey(rowNames, 10), "");
+					}
 					
             	} else if (columnType.equals("double")) {
 
@@ -190,18 +213,40 @@ public class GetBasedStatisticCommand extends Command {
 						}
             		}
 					
-					obj.put(getRowKey(rowNames, 3), stats.getN());
-            		obj.put(getRowKey(rowNames, 4), missingCnt);
-            		obj.put(getRowKey(rowNames, 5), stats.getMin());
-            		obj.put(getRowKey(rowNames, 6), stats.getMax());
-            		obj.put(getRowKey(rowNames, 7), String.format(DOT_STRING, stats.getMean()));
-            		obj.put(getRowKey(rowNames, 8), String.format(DOT_STRING, stats.getStandardDeviation()));
-            		obj.put(getRowKey(rowNames, 9), String.format(DOT_STRING, stats.getVariance()));
-            		obj.put(getRowKey(rowNames, 10), "");
+					if (Double.isNaN(stats.getMin()) || Double.isNaN(stats.getMax())) {
+						obj.put(getRowKey(rowNames, 3), "");
+						obj.put(getRowKey(rowNames, 4), "");
+						obj.put(getRowKey(rowNames, 5), "");
+						obj.put(getRowKey(rowNames, 6), "");
+						obj.put(getRowKey(rowNames, 7), "");
+						obj.put(getRowKey(rowNames, 8), "");
+						obj.put(getRowKey(rowNames, 9), "");
+						obj.put(getRowKey(rowNames, 10), "");
+					} else {
+						obj.put(getRowKey(rowNames, 3), stats.getN());
+	            		obj.put(getRowKey(rowNames, 4), missingCnt);
+	            		obj.put(getRowKey(rowNames, 5), stats.getMin());
+	            		obj.put(getRowKey(rowNames, 6), stats.getMax());
+	            		obj.put(getRowKey(rowNames, 7), addDotString(stats.getMean()));
+	            		obj.put(getRowKey(rowNames, 8), addDotString(stats.getStandardDeviation()));
+	            		obj.put(getRowKey(rowNames, 9), addDotString(stats.getVariance()));
+	            		obj.put(getRowKey(rowNames, 10), "");
+					}
             	} else {
-            		// string?
+            		int missingCnt = 0;
+					while(chartRowIt.hasNext()) {
+						Object str = chartRowIt.next();
+						if (str == null || str.equals("") || str.toString().toLowerCase().equals("null")) {
+							missingCnt++;
+						}
+					}
+					obj.put(getRowKey(rowNames, 3), chartRow.size());
+            		obj.put(getRowKey(rowNames, 4), missingCnt);
             	}
-				frequencyList.add(chartRow.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting())));
+            	
+				frequencyList.add(
+						chartRow.stream()
+						.collect(Collectors.groupingBy(e -> Optional.ofNullable(e), Collectors.counting())));
 				
             	columnInfo.add(obj);
             	i++;
@@ -227,6 +272,18 @@ public class GetBasedStatisticCommand extends Command {
             respondException(response, e);
         }
     }
+	
+	private String addDotString(double doubleValue) {
+		
+		String stringValue = String.format(DOT_STRING, doubleValue);
+		String[] splited = stringValue.split("\\.");
+		
+		if(splited[1].equals("00000")) {
+			return splited[0]; 
+		} else {
+			return stringValue;
+		}
+	}
 	
 	private List<Map<String, String>> getRowNames() {
 //        JsonArray rowNames = new JsonArray();
@@ -310,6 +367,66 @@ public class GetBasedStatisticCommand extends Command {
 //		while (it.hasNext()) {
 //			System.out.println(it.next());
 //		}
+		// 빈도수
+//		getFrequency();
+		
+		// 소숫점 계산
+//		
+//		double doubleValue1 = 123.0;
+//		System.out.println(addDotString(doubleValue1));
+//		
+//		double doubleValue2 = 123.123123;
+//		System.out.println(addDotString(doubleValue2));
+				
+//		
+//		Object a = null;
+//		Object b = "";
+//		Object c = "null";
+//		
+//		System.out.println(a == null);
+////		System.out.println(a.equals(null));
+//		System.out.println(b == "");
+//		System.out.println(b.equals(""));
+//		System.out.println(c == "null".toLowerCase());
+		
+		String[] a = {"a", "b", "c"};
+
+		String test = "aa";
+		System.out.println(Arrays.asList(a).contains(test));
+		
+//		for (String _t : a) {
+//			System.out.println(_t);
+//		}
+		List<String> arr = new ArrayList<String>();
+		arr.add("1");
+		arr.add("2");
+		arr.add("3");
+		Iterator<String> it = arr.iterator();
+		while(it.hasNext()) {
+			String no = it.next();
+			if (no.equals("2")) {
+				continue;
+			}
+			System.out.println(no);
+		}
+	}
+//	
+//	private static String addDotString(double doubleValue) {
+//		String stringValue = String.format(DOT_STRING, doubleValue);
+//		String[] splited = stringValue.split("\\.");
+//		
+//		if(splited[1].equals("00000")) {
+//			return splited[0]; 
+//		} else {
+//			return stringValue;
+//		}
+	
+//	Object headers = "[1,2,3]";
+	
+	
+//	}
+	
+	private static void getFrequency() {
 		// 빈도수 테스트
 		List<String> arr = new ArrayList<String>();
 		arr.add("1");
@@ -326,9 +443,8 @@ public class GetBasedStatisticCommand extends Command {
 		
 		Map<Object, Long> newArr = arr.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
 		System.out.println(newArr);
-				
-				
 	}
+
 	private static void getStatisticsTest() {
 		long start = System.currentTimeMillis();
 		IntSummaryStatistics stats = new IntSummaryStatistics();

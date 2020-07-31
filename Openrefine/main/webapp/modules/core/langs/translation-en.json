@@ -755,6 +755,8 @@
     "core-index-data/project-label": "Projects",
     "core-index-data/no-selected-project": "You must Select a Project.",
     "core-index-dialog/title": "Simply Data Statistical Analysis Dialog",
+    "core-index-data/no-selected-headers": "No Header selected. If no Header is selected, all headers are selected. (INPUT YES or Y or click 'cacnel')'",
+    "core-index-data/wrong-input": "Wrong input. please try again.",
     
     "" : ""
 }

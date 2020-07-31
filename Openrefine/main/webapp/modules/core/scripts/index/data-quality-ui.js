@@ -12,7 +12,7 @@ var PAGE_INFO = {
 
 var UI_CHART_INFO = {
 	selectedPId : '',
-	columnIndex : {}
+	originalName : {}
 }
 
 /* ************************************
@@ -201,10 +201,32 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	
 	this._elmts.get_sta_bnt.on('click', {_self : this}, (e) => {
 		const _self = e.data._self;
+
+		const checked = $('#data-quality-body .custom_table_header_check:checked');
+		var headerOriginalNames = [];
+		checked.each((i, _c) => {
+			headerOriginalNames.push(UI_CHART_INFO.originalName[_c.name])
+		})
+		
+		// 선택된 프로젝트가 없음 > 진행불가능
 		if (_self.selectedPName == undefined) {
 			alert($.i18n('core-index-data/no-selected-project'))
+		} else if (headerOriginalNames.length == 0) {
+			// 선택된 header가 없음 > prompt를 띄워서 전체선택을 하는것인지 확인한다.
+			const response = prompt($.i18n('core-index-data/no-selected-headers'), 'yes')
+			// '취소'버튼 클릭 > 아무것도 하지 않는다.
+			if (response == null || response == '') {
+				// do nothing					
+			} else if (response.toLocaleLowerCase() === 'yes' || response.toLocaleLowerCase() === 'y') {
+				// yes 나 y를 입력 > 전체선택 진행
+				new BasicStatisticsDialogUI('all');
+			} else {
+				// 다른값을 입력 > alert을 띄우고 prompt를 다시 진행하도록 유도
+				alert($.i18n('core-index-data/wrong-input'))
+			}
 		} else {
-			new BasicStatisticsDialogUI(_self.selectedPName);
+			// 선택된 header가 있음 > 그 header로 진행
+			new BasicStatisticsDialogUI(headerOriginalNames);
 		}
 	})
 }
@@ -297,7 +319,7 @@ Refine.SetDataQualityUI.prototype._createColumns = function(isHeaderColumn) {
 	
 	if (this.columnModel != undefined) {
 		this.columnModel.columns.forEach((c, i) => {
-			UI_CHART_INFO.columnIndex[c.name] = i
+			UI_CHART_INFO.originalName[c.name] = c.originalName
 			
 			var obj = {};
 			if (isHeaderColumn) {
@@ -305,6 +327,7 @@ Refine.SetDataQualityUI.prototype._createColumns = function(isHeaderColumn) {
 				obj['header'] = c.name; 
 				obj['name'] = c.name;
 				obj['renderer'] = CustomColumnHeader;
+				obj['originalName'] = c.originalName;
 			} else {
 				obj['header'] = c.name; 
 				obj['name'] = c.name;
