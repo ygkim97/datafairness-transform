@@ -12,7 +12,7 @@ var PAGE_INFO = {
 
 var UI_CHART_INFO = {
 	selectedPId : '',
-	originalName : {}
+	headerIndex : {}
 }
 
 /* ************************************
@@ -69,7 +69,7 @@ Refine.SetDataQualityUI.prototype._createGrid = function() {
 	
 	this.GridInstance = new Grid({
 		  el: document.getElementById('project_table'), // Container element
-		  rowHeaders: ['rowNum'],
+//		  rowHeaders: ['rowNum'],
 		  columns: columns,
 		  data: [],
 		  header : {
@@ -205,7 +205,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		const checked = $('#data-quality-body .custom_table_header_check:checked');
 		var headerOriginalNames = [];
 		checked.each((i, _c) => {
-			headerOriginalNames.push(UI_CHART_INFO.originalName[_c.name])
+			headerOriginalNames.push(UI_CHART_INFO.headerIndex[_c.name])
 		})
 		
 		// 선택된 프로젝트가 없음 > 진행불가능
@@ -235,11 +235,16 @@ Refine.SetDataQualityUI.prototype._makeDataObj = function(rows) {
 	
 	function createArr(cells) {
 		var obj = {}
-		cells.forEach((c, i)=>{
+		
+		var headerIndex = 0;
+		for (var i = 0, size = cells.length; i < size; i++) {
+			const c = cells[i];
+			
 			if (c !== null) {
-				obj[_header[i].name] = c.v;
+				obj[_header[headerIndex].name] = c.v;
+				headerIndex++;
 			}
-		})
+		}
 		return obj;
 	}
 	
@@ -319,7 +324,7 @@ Refine.SetDataQualityUI.prototype._createColumns = function(isHeaderColumn) {
 	
 	if (this.columnModel != undefined) {
 		this.columnModel.columns.forEach((c, i) => {
-			UI_CHART_INFO.originalName[c.name] = c.originalName
+			UI_CHART_INFO.headerIndex[c.originalName] = c.cellIndex
 			
 			var obj = {};
 			if (isHeaderColumn) {
