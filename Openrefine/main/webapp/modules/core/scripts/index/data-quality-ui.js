@@ -195,6 +195,8 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		_self.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 		
+		DialogSystem.showBusy();
+		
 		_self._getModelInfo();
 		_self._getProjectData();
 	})
@@ -275,6 +277,8 @@ Refine.SetDataQualityUI.prototype._getProjectData = function() {
 			"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: PAGE_INFO.START, limit: PAGE_INFO.ITEM_PER_PAGE }),
 			{engine: {}},	// no history option
 			function(data) {
+				DialogSystem.dismissAll();
+				
 				if(data.code === "error") {
 					alert('error')
 				} else {

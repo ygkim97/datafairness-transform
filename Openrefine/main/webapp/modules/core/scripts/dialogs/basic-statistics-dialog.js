@@ -33,10 +33,15 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 		selectedHeaders = [];
 	}
 	var _self = this;
+	
+	const warningDialog = DialogSystem.showBusy()
+	
 	$.get(
 			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId, headers : selectedHeaders}),
 			{engine: {}},	// no history option
 			function(data) {
+				warningDialog();
+				
 				if(data.code === "error") {
 					alert('error')
 				} else {
