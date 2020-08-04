@@ -206,8 +206,6 @@ public class GetBasedStatisticCommand extends Command {
 				Map<Object, Long> freq = chartRow.stream()
 						.collect(Collectors.groupingBy(e -> e == null || e == "" ? "NULL" : e, Collectors.counting()));
 				frequencyList.add(freq);
-//            	chartRow.stream().forEach(System.out::println);
-//            	System.out.println(chartRow.stream().collect(Collectors.groupingBy(e -> e == null || e == "" ? "NULL" : e, Collectors.counting())));
 
 				// Freq : 가장 큰 빈도수를 구함.
 				obj.put(getRowKey(rowNames, 10), freq.values().stream().max(Comparator.naturalOrder()).get());
