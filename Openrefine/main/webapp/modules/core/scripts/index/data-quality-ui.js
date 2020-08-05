@@ -23,11 +23,13 @@ var CustomColumnHeader = function(props) {
     const el = document.createElement('div');
     el.className ='custom_table_header';
     
+    const chkElWrapper = document.createElement('div');
     const chkEl = document.createElement('input');
     chkEl.type = 'checkbox';
     chkEl.name = `${columnInfo.header}`;
     chkEl.className = 'custom_table_header_check';
-    el.appendChild(chkEl);
+    chkElWrapper.appendChild(chkEl);
+    el.appendChild(chkElWrapper);
     
     const txtEl = document.createElement('span');
     txtEl.className = 'custom_table_header_span';
@@ -75,6 +77,9 @@ Refine.SetDataQualityUI.prototype._createGrid = function() {
 		  header : {
 			  columns: headerColumns,
 			  height : 100
+		  },
+		  columnOptions : {
+			  minWidth : 120
 		  }
 		});
 	var theme = {
@@ -177,8 +182,9 @@ Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
 Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	// text 처리
 	this._elmts.project_select_lebel.text($.i18n('core-index-data/project-label')+":");
-	this._elmts.project_select_btn.text('다음');
-	this._elmts.get_sta_bnt.text('기초통계');
+	this._elmts.project_select_btn.text($.i18n('core-index-data/select'));
+	this._elmts.get_sta_bnt.text($.i18n('core-index-data/basic-data-statistics'));
+	this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label'));
 	
 	// btn click 이벤트
 	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
@@ -188,6 +194,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		
 		// reset
 		_self._elmts.project_table.empty();
+		_self._elmts.check_all.attr('checked', false)
 		
 		_self.GridInstance = null;
 		_self.staticGridInstance2 = null;
@@ -199,6 +206,27 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		
 		_self._getModelInfo();
 		_self._getProjectData();
+	})
+	
+	this._elmts.select_all_label.on('click', {_self : this}, (e) => {
+		const _self = e.data._self;
+//		console.log(this._elmts.check_all)
+		_self._elmts.check_all.click()
+	})
+	this._elmts.check_all.on('change', {_self : this}, (e) => {
+		const _self = e.data._self;
+		// 프로젝트 선택 전일경우 alert을 띄운다.
+		if (_self.selectedPName == undefined) {
+			alert($.i18n('core-index-data/no-selected-project'))
+			$(e.target).removeProp('checked');
+	       return;
+		}
+		
+		const selectAllChecked = $(e.target).is(':checked');
+		var checkBtns = $('#data-quality-body .custom_table_header_check');
+		checkBtns.each((i, cb)=>{
+			$(cb).attr('checked', selectAllChecked)	
+		})
 	})
 	
 	this._elmts.get_sta_bnt.on('click', {_self : this}, (e) => {
@@ -214,18 +242,20 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		if (_self.selectedPName == undefined) {
 			alert($.i18n('core-index-data/no-selected-project'))
 		} else if (headerOriginalNames.length == 0) {
-			// 선택된 header가 없음 > prompt를 띄워서 전체선택을 하는것인지 확인한다.
-			const response = prompt($.i18n('core-index-data/no-selected-headers'), 'yes')
-			// '취소'버튼 클릭 > 아무것도 하지 않는다.
-			if (response == null || response == '') {
-				// do nothing					
-			} else if (response.toLocaleLowerCase() === 'yes' || response.toLocaleLowerCase() === 'y') {
-				// yes 나 y를 입력 > 전체선택 진행
-				new BasicStatisticsDialogUI('all');
-			} else {
-				// 다른값을 입력 > alert을 띄우고 prompt를 다시 진행하도록 유도
-				alert($.i18n('core-index-data/wrong-input'))
-			}
+//			// 선택된 header가 없음 > prompt를 띄워서 전체선택을 하는것인지 확인한다.
+//			const response = prompt($.i18n('core-index-data/no-selected-headers'), 'yes')
+//			// '취소'버튼 클릭 > 아무것도 하지 않는다.
+//			if (response == null || response == '') {
+//				// do nothing					
+//			} else if (response.toLocaleLowerCase() === 'yes' || response.toLocaleLowerCase() === 'y') {
+//				// yes 나 y를 입력 > 전체선택 진행
+//				new BasicStatisticsDialogUI('all');
+//			} else {
+//				// 다른값을 입력 > alert을 띄우고 prompt를 다시 진행하도록 유도
+//				alert($.i18n('core-index-data/wrong-input'))
+//			}
+			
+			alert($.i18n('core-index-data/no-selected-headers'))
 		} else {
 			// 선택된 header가 있음 > 그 header로 진행
 			new BasicStatisticsDialogUI(headerOriginalNames);

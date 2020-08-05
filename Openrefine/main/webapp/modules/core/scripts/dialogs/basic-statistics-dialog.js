@@ -1,21 +1,33 @@
+// for window resize event.
+var _BasicStatisticsDialogUI = null;
+
 function BasicStatisticsDialogUI(headerOriginalNameIndex) {
 	this._createDialog(headerOriginalNameIndex);
 } 
 
 BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
+	_BasicStatisticsDialogUI = this;
+	
 	var self = this;
 
 	var frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog.html"));
 	this._elmts = DOM.bind(frame);
 
 	this._level = DialogSystem.showDialog(frame);
+	
+	// btn setting
 	this._elmts.closeButton.html($.i18n('core-buttons/close'));
 	this._elmts.closeButton.click(function() {
 		self._dismiss();
 		Refine.OpenProjectUI.prototype._addTagFilter()
 	});
-	
-	this._gridColumns = [];
+
+	//set browser resize event
+	$(window).resize((target) => {
+		if (_BasicStatisticsDialogUI != null) {
+			_BasicStatisticsDialogUI._setDialog();
+		}
+	})
 
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog/title'));
@@ -24,9 +36,6 @@ BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 	// Create Dialog
 	this._getStatisticData(selectedHeaders);
 }
-BasicStatisticsDialogUI.prototype.resize = function() {
-	console.log('resize')
-};
 
 BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) {
 	if (selectedHeaders == 'all') {
@@ -45,9 +54,8 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 				if(data.code === "error") {
 					alert('error')
 				} else {
-					_self._createChart_default(data.columnInfo);
-					_self._createChart_d3(data.columnInfo, data.frequencyList);
-					_self._createGrid(data.columnInfo, data.rowNames);
+					_self.statData = data;
+					_self._setDialog();
 					
 //					_self._createChart_tui(data.columnInfo, data.frequencyList);
 //					_self._createChart_chartjs(data.columnInfo, data.frequencyList);
@@ -55,6 +63,15 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 			},
 			"json"
 	);
+}
+BasicStatisticsDialogUI.prototype._setDialog = function() {
+	const warningDialog = DialogSystem.showBusy()
+	
+	this._createChart_default(this.statData.columnInfo);
+	this._createChart_d3(this.statData.columnInfo, this.statData.frequencyList);
+	this._createGrid(this.statData.columnInfo, this.statData.rowNames);
+	
+	warningDialog();
 }
 BasicStatisticsDialogUI.prototype._dataConvert = function(type, datas) {
 	var returnArray = [];
@@ -123,7 +140,20 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	const width = td.width();
 	const height = td.height();
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
-
+	
+//	var colors = ['cornflowerblue', 'dodgerblue', 'royalblue', 'steelblue']
+//	getData = function(len) {
+//		if (len < 100) {
+//			return colors[0];
+//		} else if (len < 200) {
+//			return colors[1];
+//		} else if (len < 300) {
+//			return colors[2];
+//		} else {
+//			return colors[3];
+//		} 
+//	}
+	
 	for (var i = 0, size = columnInfo.length; i < size; i++) {
 		const c = columnInfo[i];
 		
@@ -131,6 +161,8 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 		
 		if (columnInfo.type != 'string') {
 			const data = this._getD3ChartSeries(datas[i]);
+//			var fillColor = getData(data.length);
+			var fillColor = 'royalblue';
 			
 			const x = d3.scaleBand()
 				.domain(data.map(d => d.key))
@@ -166,7 +198,7 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 				.attr('y', d => y(d.value))
 				.attr('height', d => y(0) - y(d.value))
 				.attr('width', x.bandwidth())
-				.attr('fill', 'skyblue')
+				.attr('fill', fillColor)
 				.attr('data-x', d => d.key)
 				.attr('data-y', d => d.value);
 			 
@@ -247,5 +279,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 }
 
 BasicStatisticsDialogUI.prototype._dismiss = function() {
+	_BasicStatisticsDialogUI = null;
+	
 	DialogSystem.dismissUntil(this._level - 1);
 };

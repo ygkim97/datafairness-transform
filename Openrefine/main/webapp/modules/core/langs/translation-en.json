@@ -753,10 +753,14 @@
     
     "core-index-data/data-quality-asses": "Data Quality Assessment",	
     "core-index-data/project-label": "Projects",
+    "core-index-data/select-all-label": "Select All",
     "core-index-data/no-selected-project": "You must Select a Project.",
-    "core-index-dialog/title": "Simply Data Statistical Analysis Dialog",
-    "core-index-data/no-selected-headers": "No Header selected. If no Header is selected, all headers are selected. (INPUT YES or Y or click 'cacnel')'",
+    "core-index-data/no-selected-headers": "You must Select a Header",
+    "core-index-data/no-selected-headers2": "No Header selected. If no Header is selected, all headers are selected. (INPUT YES or Y or click 'cacnel')'",
     "core-index-data/wrong-input": "Wrong input. please try again.",
-    
+    "core-index-data/select": "Select",
+    "core-index-data/basic-data-statistics": "Data statistics",
+    "core-index-data/select-all": "Select All",
+    "core-index-dialog/title": "Simply Data Statistical Analysis Dialog",
     "" : ""
 }
