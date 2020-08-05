@@ -433,7 +433,7 @@ function init() {
       "styles/index/open-project-ui.less",
       "styles/index/import-project-ui.less",
       "styles/index/data-quality-ui.less",
-
+      "styles/index/basic-static-dialog.css",
 
       "styles/index/default-importing-controller.less",
       "styles/index/default-importing-file-selection-panel.less",

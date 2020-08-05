@@ -1,0 +1,123 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+/*
+	Dialog
+*/
+#statistic_dialog {
+	width: 90%;
+}
+
+#statistic_dialog .dialog-body {
+	overflow-x: visible;
+    overflow-y: visible;
+	height: 700px;
+    padding-bottom: 0px;
+}
+#statistic_dialog .dialog-body > div:nth-child(1) {
+	height : 200px;
+}  
+#statistic_dialog .dialog-body > div:nth-child(2) {
+	height : calc(100% - 200px);
+}
+#statistic_dialog table {
+	height : 95%;
+	table-layout: fixed;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width : -webkit-fill-available;
+}
+#statistic_dialog table td {
+	min-width : 120px;
+    width: 120px;
+}
+#statistic_dialog th {
+	width : 120px;
+	min-width : 90px;
+    text-align: center;
+    vertical-align: middle;
+}
+#basic-statistics-chart th {
+	border-top: hidden;
+    border-left: hidden;
+    border-bottom: hidden;
+    
+}
+#statistic_dialog td, th {
+    border: 1px solid #ccc;
+	border-collapse:collapse;
+}
+#statistic_dialog #basic-statistics-chart td {
+    height: 95%;
+}
+#statistic_dialog #basic-statistics-grid th {
+    background: #eee;
+}
+#statistic_dialog #basic-statistics-grid tr:nth-child(1) td {
+	vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+    background: #eee;
+}
+#statistic_dialog #basic-statistics-grid tr:not(:first-child) td {
+	vertical-align: middle;
+	text-align: right;	
+	padding-right: 5px;
+}
+
+#statistic_dialog #basic-statistics-grid tr:nth-child(odd) {
+	background:#f2f2f2;
+}
+
+#statistic_dialog #basic-statistics-chart .statistic_chart_warp {
+	padding : 3px;
+	height : 100%;
+	position: relative;
+}
+
+#statistic_dialog .chart_tooltip {	
+    position: absolute;
+    visibility : hidden;	
+    text-align: center;			
+    width: 150px;					
+    height: 30px;					
+    padding: 2px;				
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+    z-index:1;
+}
+#statistic_dialog .chart_tooltip .tooltip_text {
+	font: 8px sans-serif;
+}
