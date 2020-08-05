@@ -61,6 +61,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	min-width : 120px;
     width: 120px;
 }
+#statistic_dialog table span {
+    word-wrap: break-word;
+}
 #statistic_dialog th {
 	width : 120px;
 	min-width : 90px;
@@ -112,12 +115,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 150px;					
     height: 30px;					
     padding: 2px;				
-    background: lightsteelblue;	
-    border: 0px;		
+    background: #dbebff;
+    border: 1px solid #9bc7ff;
     border-radius: 8px;			
     pointer-events: none;			
     z-index:1;
 }
 #statistic_dialog .chart_tooltip .tooltip_text {
-	font: 8px sans-serif;
+	font: 9px sans-serif;
+}
+#statistic_dialog .chart_tooltip .tooltip_text p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
