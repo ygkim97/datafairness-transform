@@ -133,6 +133,8 @@ Refine.SetDataQualityUI.prototype._createGrid = function() {
 	Grid.applyTheme('default', theme)
 }
 Refine.SetDataQualityUI.prototype._createPagination = function(totalCount) {
+	$('#data-quality-pagination').show();
+	
 	// pagination
 	this.pageInstance = new Pagination('data-quality-pagination', {
         totalItems: totalCount,
@@ -188,6 +190,8 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	
 	// btn click 이벤트
 	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
+		DialogSystem.showBusy();
+		
 		const _self = e.data._self;
 		
 		_self.columnModel = null;
@@ -195,6 +199,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		// reset
 		_self._elmts.project_table.empty();
 		_self._elmts.check_all.attr('checked', false)
+		$('#data-quality-pagination').hide();
 		
 		_self.GridInstance = null;
 		_self.staticGridInstance2 = null;
@@ -202,15 +207,14 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		_self.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 		
-		DialogSystem.showBusy();
-		
-		_self._getModelInfo();
-		_self._getProjectData();
+		setTimeout(()=>{
+			_self._getModelInfo();
+			_self._getProjectData();
+		}, 100)
 	})
 	
 	this._elmts.select_all_label.on('click', {_self : this}, (e) => {
 		const _self = e.data._self;
-//		console.log(this._elmts.check_all)
 		_self._elmts.check_all.click()
 	})
 	this._elmts.check_all.on('change', {_self : this}, (e) => {
@@ -268,14 +272,9 @@ Refine.SetDataQualityUI.prototype._makeDataObj = function(rows) {
 	function createArr(cells) {
 		var obj = {}
 		
-		var headerIndex = 0;
-		for (var i = 0, size = cells.length; i < size; i++) {
-			const c = cells[i];
-			
-			if (c !== null) {
-				obj[_header[headerIndex].name] = c.v;
-				headerIndex++;
-			}
+		for (var i = 0, size = _header.length; i < size; i++) {
+			const h = _header[i];
+			obj[h.name] = cells[h.cellIndex].v;
 		}
 		return obj;
 	}
@@ -313,6 +312,7 @@ Refine.SetDataQualityUI.prototype._getProjectData = function() {
 					alert('error')
 				} else {
 					_self._setGridData(data);
+//					_self._convertData(data);
 				}
 			},
 			"json"
@@ -358,7 +358,7 @@ Refine.SetDataQualityUI.prototype._createColumns = function(isHeaderColumn) {
 	
 	if (this.columnModel != undefined) {
 		this.columnModel.columns.forEach((c, i) => {
-			UI_CHART_INFO.headerIndex[c.originalName] = c.cellIndex
+			UI_CHART_INFO.headerIndex[c.name] = c.cellIndex
 			
 			var obj = {};
 			if (isHeaderColumn) {
@@ -366,7 +366,6 @@ Refine.SetDataQualityUI.prototype._createColumns = function(isHeaderColumn) {
 				obj['header'] = c.name; 
 				obj['name'] = c.name;
 				obj['renderer'] = CustomColumnHeader;
-				obj['originalName'] = c.originalName;
 			} else {
 				obj['header'] = c.name; 
 				obj['name'] = c.name;

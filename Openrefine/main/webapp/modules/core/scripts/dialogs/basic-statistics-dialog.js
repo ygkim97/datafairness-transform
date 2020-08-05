@@ -45,9 +45,9 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 	
 	const warningDialog = DialogSystem.showBusy()
 	
-	$.get(
-			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId, headers : selectedHeaders}),
-			{engine: {}},	// no history option
+	$.post(
+			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId}),
+			{headers: selectedHeaders.join(',')},	// no history option
 			function(data) {
 				warningDialog();
 				
@@ -56,9 +56,6 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 				} else {
 					_self.statData = data;
 					_self._setDialog();
-					
-//					_self._createChart_tui(data.columnInfo, data.frequencyList);
-//					_self._createChart_chartjs(data.columnInfo, data.frequencyList);
 				}
 			},
 			"json"
@@ -157,12 +154,28 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	for (var i = 0, size = columnInfo.length; i < size; i++) {
 		const c = columnInfo[i];
 		
-		const svg = d3.select('#chart_template_'+i).append('svg').style('width', width).style('height', height);
+		const svg = d3.select('#chart_template_'+i)
+		.append('svg')
+		.style('width', width)
+		.style('height', height);
 		
 		if (columnInfo.type != 'string') {
 			const data = this._getD3ChartSeries(datas[i]);
 //			var fillColor = getData(data.length);
 			var fillColor = 'royalblue';
+			
+//			function zoomed() {
+//			    const xz = d3.event.transform.rescaleX(x);
+//			    path.attr("d", area(data, xz));
+//			    gx.call(xAxis, xz);
+//			}
+//			const zoom = d3.zoom()
+//		      .scaleExtent([1, 32])
+//		      .extent([[margin.left, 0], [width - margin.right, height]])
+//		      .translateExtent([[margin.left, -Infinity], [width - margin.right, Infinity]])
+//		      .on("zoom", zoomed);
+//			
+//			svg.call(zoom)
 			
 			const x = d3.scaleBand()
 				.domain(data.map(d => d.key))
@@ -220,11 +233,7 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 					var tQueryTemplate = '';
 					
 					tQueryTemplate += '<div class="tooltip_text">';
-					_key = key;
-					if (key.length > 15) {
-						_key = key.slice(0,13)+'...';
-					}
-					tQueryTemplate += '<p>key : ' + _key + '</p>';
+					tQueryTemplate += '<p>key : ' + key + '</p>';
 					tQueryTemplate += '<p>count : ' + value + '</p>';
 					tQueryTemplate += '</div>';
 					
@@ -280,6 +289,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 
 BasicStatisticsDialogUI.prototype._dismiss = function() {
 	_BasicStatisticsDialogUI = null;
+	this.statData = {};
 	
 	DialogSystem.dismissUntil(this._level - 1);
 };
