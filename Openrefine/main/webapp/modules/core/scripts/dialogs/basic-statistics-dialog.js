@@ -9,6 +9,7 @@ BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 	_BasicStatisticsDialogUI = this;
 	
 	var self = this;
+	this.statData = {};
 
 	var frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog.html"));
 	this._elmts = DOM.bind(frame);
@@ -45,9 +46,9 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 	
 	const warningDialog = DialogSystem.showBusy()
 	
-	$.get(
-			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId, headers : selectedHeaders}),
-			{engine: {}},	// no history option
+	$.post(
+			"command/core/get-based-statistic?" + $.param({ project: UI_CHART_INFO.selectedPId}),
+			{headers: selectedHeaders.join(',')},	// no history option
 			function(data) {
 				warningDialog();
 				
@@ -55,21 +56,21 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 					alert('error')
 				} else {
 					_self.statData = data;
-					_self._setDialog();
-					
-//					_self._createChart_tui(data.columnInfo, data.frequencyList);
-//					_self._createChart_chartjs(data.columnInfo, data.frequencyList);
+					_self._setDialog('all');
 				}
 			},
 			"json"
 	);
 }
-BasicStatisticsDialogUI.prototype._setDialog = function() {
+BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 	const warningDialog = DialogSystem.showBusy()
 	
+	// browser resized or normal
 	this._createChart_default(this.statData.columnInfo);
 	this._createChart_d3(this.statData.columnInfo, this.statData.frequencyList);
-	this._createGrid(this.statData.columnInfo, this.statData.rowNames);
+	if (drawType == 'all') {
+		this._createGrid(this.statData.columnInfo, this.statData.rowNames);
+	}
 	
 	warningDialog();
 }
@@ -141,28 +142,33 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	const height = td.height();
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	
-//	var colors = ['cornflowerblue', 'dodgerblue', 'royalblue', 'steelblue']
-//	getData = function(len) {
-//		if (len < 100) {
-//			return colors[0];
-//		} else if (len < 200) {
-//			return colors[1];
-//		} else if (len < 300) {
-//			return colors[2];
-//		} else {
-//			return colors[3];
-//		} 
-//	}
-	
+	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
+
 	for (var i = 0, size = columnInfo.length; i < size; i++) {
 		const c = columnInfo[i];
 		
-		const svg = d3.select('#chart_template_'+i).append('svg').style('width', width).style('height', height);
+		const svg = d3.select('#chart_template_'+i)
+		.append('svg')
+		.style('width', width)
+		.style('height', height);
 		
 		if (columnInfo.type != 'string') {
 			const data = this._getD3ChartSeries(datas[i]);
-//			var fillColor = getData(data.length);
 			var fillColor = 'royalblue';
+			
+
+			// zoom 설정
+			function zoomed() {
+				x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
+				svg.selectAll(".bars rect").attr("x", d => x(d.key)).attr("width", x.bandwidth());
+				svg.selectAll(".x-axis").call(xAxis);
+			}
+			
+			svg.call(d3.zoom()
+//					.scaleExtent([1, 32])	// use default value (1 to Infinity) 
+					.translateExtent(extent)
+					.extent(extent)
+					.on("zoom", zoomed));
 			
 			const x = d3.scaleBand()
 				.domain(data.map(d => d.key))
@@ -189,10 +195,12 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 				.call(g => g.selectAll('line')
 						.attr('x2', width)
 						.style('stroke', '#f5f5f5'))
-			 
+						
 			svg.append('g').call(xAxis);
 			svg.append('g').call(yAxis);
+			
 			svg.append('g')
+		      	.attr("class", "bars")
 				.selectAll('rect').data(data).enter().append('rect')
 				.attr('x', d => x(d.key))
 				.attr('y', d => y(d.value))
@@ -204,6 +212,8 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			 
 			const rectEl = document.getElementById('chart_template_'+i).getElementsByTagName('rect');
 			for(const el of rectEl) {
+				// event reset
+				el.removeEventListener('mouseover', ()=>{})
 				el.addEventListener('mouseover', (event) => {
 					const target = event.target;
 					const tooltip = target.parentElement.parentElement.previousElementSibling;
@@ -220,11 +230,7 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 					var tQueryTemplate = '';
 					
 					tQueryTemplate += '<div class="tooltip_text">';
-					_key = key;
-					if (key.length > 15) {
-						_key = key.slice(0,13)+'...';
-					}
-					tQueryTemplate += '<p>key : ' + _key + '</p>';
+					tQueryTemplate += '<p>key : ' + key + '</p>';
 					tQueryTemplate += '<p>count : ' + value + '</p>';
 					tQueryTemplate += '</div>';
 					
@@ -278,8 +284,10 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 	dialogChart.append(template);	
 }
 
+// when close Dialog 
 BasicStatisticsDialogUI.prototype._dismiss = function() {
 	_BasicStatisticsDialogUI = null;
+	this.statData = {};
 	
 	DialogSystem.dismissUntil(this._level - 1);
 };

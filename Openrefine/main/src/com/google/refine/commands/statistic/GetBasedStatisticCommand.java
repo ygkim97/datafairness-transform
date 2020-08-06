@@ -49,18 +49,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.jena.sparql.function.library.print;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
-import com.google.refine.model.Column;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
+import clojure.main;
+
 public class GetBasedStatisticCommand extends Command {
 
 	private static String DOT_STRING = "%.5f";
+	private static final String _STRING = "string";
+	private static final String _INT = "int";
+	private static final String _DOUBLE = "double";
 
 	protected static class RowNames {
 		@JsonProperty("key")
@@ -81,12 +86,12 @@ public class GetBasedStatisticCommand extends Command {
 	}
 
 	/**
-	 * This command accepts GET. It is not CSRF-protected as it does not incur any
+	 * This command accepts POST. It is not CSRF-protected as it does not incur any
 	 * state change.
 	 */
 
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		internalRespond(request, response);
 	}
 
@@ -104,17 +109,7 @@ public class GetBasedStatisticCommand extends Command {
 			List<String> columnNames = projectModel.getColumnNames();
 
 			// 선택한 column이 없을 경우, 전체 column을 배열에 추가해준다.
-			String[] selectedColumns = request.getParameterValues("headers[]");
-			if (selectedColumns == null) {
-				List<Column> pc = projectModel.columns;
-				selectedColumns = new String[pc.size()];
-				Iterator<Column> projectColumnIt = pc.iterator();
-				int cI = 0;
-				while (projectColumnIt.hasNext()) {
-					selectedColumns[cI] = String.valueOf(projectColumnIt.next().getCellIndex());
-					cI++;
-				}
-			}
+			String[] selectedColumns = request.getParameter("headers").split(",");
 			List<List<Object>> chartRows = createChartRows(project, columnNames, selectedColumns);
 
 			List<Map<String, Object>> columnInfo = new ArrayList<Map<String, Object>>();
@@ -204,7 +199,18 @@ public class GetBasedStatisticCommand extends Command {
 
 				// chart를 그리기 위해서, 항목별로 갯수 구함.
 				Map<Object, Long> freq = chartRow.stream()
-						.collect(Collectors.groupingBy(e -> e == null || e == "" ? "NULL" : e, Collectors.counting()));
+						.collect(Collectors.groupingBy((e) -> {
+							if (e == null || e == "") {
+								return "NULL";
+							} else {
+								if (columnType.equals(_STRING)) {
+									return e;
+								} else if (columnType.equals(_INT)) {
+									return e;
+								} else {
+									return Math.round(Double.parseDouble(e.toString()));
+								}
+							}}, Collectors.counting()));
 				frequencyList.add(freq);
 
 				// Freq : 가장 큰 빈도수를 구함.
@@ -213,7 +219,6 @@ public class GetBasedStatisticCommand extends Command {
 				columnInfo.add(obj);
 				i++;
 			}
-//            }
 
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("columnInfo", columnInfo);
@@ -296,7 +301,7 @@ public class GetBasedStatisticCommand extends Command {
 			list.stream().filter(Objects::nonNull).mapToInt((Object v) -> Integer.parseInt(v.toString())).max()
 					.getAsInt();
 
-			return "int";
+			return _INT;
 		} catch (Exception e1) {
 		}
 
@@ -304,10 +309,10 @@ public class GetBasedStatisticCommand extends Command {
 			list.stream().filter(Objects::nonNull).mapToDouble((Object v) -> Double.parseDouble(v.toString())).max()
 					.getAsDouble();
 
-			return "double";
+			return _DOUBLE;
 		} catch (Exception e1) {
 		}
 
-		return "string";
+		return _STRING;
 	}
 }
