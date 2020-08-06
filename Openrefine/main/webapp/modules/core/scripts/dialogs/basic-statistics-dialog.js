@@ -9,6 +9,7 @@ BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 	_BasicStatisticsDialogUI = this;
 	
 	var self = this;
+	this.statData = {};
 
 	var frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog.html"));
 	this._elmts = DOM.bind(frame);
@@ -64,6 +65,7 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 	const warningDialog = DialogSystem.showBusy()
 	
+	// browser resized or normal
 	this._createChart_default(this.statData.columnInfo);
 	this._createChart_d3(this.statData.columnInfo, this.statData.frequencyList);
 	if (drawType == 'all') {
@@ -140,19 +142,6 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	const height = td.height();
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	
-//	var colors = ['cornflowerblue', 'dodgerblue', 'royalblue', 'steelblue']
-//	const getData = function(len) {
-//		if (len < 100) {
-//			return colors[0];
-//		} else if (len < 200) {
-//			return colors[1];
-//		} else if (len < 300) {
-//			return colors[2];
-//		} else {
-//			return colors[3];
-//		} 
-//	}
-	
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
 
 	for (var i = 0, size = columnInfo.length; i < size; i++) {
@@ -165,7 +154,6 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 		
 		if (columnInfo.type != 'string') {
 			const data = this._getD3ChartSeries(datas[i]);
-//			var fillColor = getData(data.length);
 			var fillColor = 'royalblue';
 			
 
@@ -177,7 +165,7 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			}
 			
 			svg.call(d3.zoom()
-//					.scaleExtent([1, 32])
+//					.scaleExtent([1, 32])	// use default value (1 to Infinity) 
 					.translateExtent(extent)
 					.extent(extent)
 					.on("zoom", zoomed));
@@ -296,6 +284,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 	dialogChart.append(template);	
 }
 
+// when close Dialog 
 BasicStatisticsDialogUI.prototype._dismiss = function() {
 	_BasicStatisticsDialogUI = null;
 	this.statData = {};
