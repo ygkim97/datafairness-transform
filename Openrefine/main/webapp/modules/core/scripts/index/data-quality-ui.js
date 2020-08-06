@@ -190,6 +190,9 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	
 	// btn click 이벤트
 	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
+		// focus out
+		$(e.target).blur();
+		
 		DialogSystem.showBusy();
 		
 		const _self = e.data._self;
@@ -234,6 +237,9 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	})
 	
 	this._elmts.get_sta_bnt.on('click', {_self : this}, (e) => {
+		// focus out
+		$(e.target).blur();
+		
 		const _self = e.data._self;
 
 		const checked = $('#data-quality-body .custom_table_header_check:checked');
@@ -274,6 +280,15 @@ Refine.SetDataQualityUI.prototype._makeDataObj = function(rows) {
 		
 		for (var i = 0, size = _header.length; i < size; i++) {
 			const h = _header[i];
+			
+			var _t = cells[h.cellIndex];
+			
+			if (_t == null || _t == undefined) {
+				_t = {}
+				_t.v = '';
+				cells[h.cellIndex] = _t;
+			}
+			
 			obj[h.name] = cells[h.cellIndex].v;
 		}
 		return obj;

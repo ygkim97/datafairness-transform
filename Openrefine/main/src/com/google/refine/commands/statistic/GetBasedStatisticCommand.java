@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.jena.sparql.function.library.print;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
@@ -57,9 +58,14 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
+import clojure.main;
+
 public class GetBasedStatisticCommand extends Command {
 
 	private static String DOT_STRING = "%.5f";
+	private static final String _STRING = "string";
+	private static final String _INT = "int";
+	private static final String _DOUBLE = "double";
 
 	protected static class RowNames {
 		@JsonProperty("key")
@@ -193,7 +199,18 @@ public class GetBasedStatisticCommand extends Command {
 
 				// chart를 그리기 위해서, 항목별로 갯수 구함.
 				Map<Object, Long> freq = chartRow.stream()
-						.collect(Collectors.groupingBy(e -> e == null || e == "" ? "NULL" : e, Collectors.counting()));
+						.collect(Collectors.groupingBy((e) -> {
+							if (e == null || e == "") {
+								return "NULL";
+							} else {
+								if (columnType.equals(_STRING)) {
+									return e;
+								} else if (columnType.equals(_INT)) {
+									return e;
+								} else {
+									return Math.round(Double.parseDouble(e.toString()));
+								}
+							}}, Collectors.counting()));
 				frequencyList.add(freq);
 
 				// Freq : 가장 큰 빈도수를 구함.
@@ -202,7 +219,6 @@ public class GetBasedStatisticCommand extends Command {
 				columnInfo.add(obj);
 				i++;
 			}
-//            }
 
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("columnInfo", columnInfo);
@@ -285,7 +301,7 @@ public class GetBasedStatisticCommand extends Command {
 			list.stream().filter(Objects::nonNull).mapToInt((Object v) -> Integer.parseInt(v.toString())).max()
 					.getAsInt();
 
-			return "int";
+			return _INT;
 		} catch (Exception e1) {
 		}
 
@@ -293,10 +309,10 @@ public class GetBasedStatisticCommand extends Command {
 			list.stream().filter(Objects::nonNull).mapToDouble((Object v) -> Double.parseDouble(v.toString())).max()
 					.getAsDouble();
 
-			return "double";
+			return _DOUBLE;
 		} catch (Exception e1) {
 		}
 
-		return "string";
+		return _STRING;
 	}
 }

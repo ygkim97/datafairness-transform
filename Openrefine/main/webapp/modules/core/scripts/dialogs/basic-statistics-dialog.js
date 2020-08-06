@@ -55,18 +55,20 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 					alert('error')
 				} else {
 					_self.statData = data;
-					_self._setDialog();
+					_self._setDialog('all');
 				}
 			},
 			"json"
 	);
 }
-BasicStatisticsDialogUI.prototype._setDialog = function() {
+BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 	const warningDialog = DialogSystem.showBusy()
 	
 	this._createChart_default(this.statData.columnInfo);
 	this._createChart_d3(this.statData.columnInfo, this.statData.frequencyList);
-	this._createGrid(this.statData.columnInfo, this.statData.rowNames);
+	if (drawType == 'all') {
+		this._createGrid(this.statData.columnInfo, this.statData.rowNames);
+	}
 	
 	warningDialog();
 }
@@ -139,7 +141,7 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	
 //	var colors = ['cornflowerblue', 'dodgerblue', 'royalblue', 'steelblue']
-//	getData = function(len) {
+//	const getData = function(len) {
 //		if (len < 100) {
 //			return colors[0];
 //		} else if (len < 200) {
@@ -151,6 +153,8 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 //		} 
 //	}
 	
+	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
+
 	for (var i = 0, size = columnInfo.length; i < size; i++) {
 		const c = columnInfo[i];
 		
@@ -164,18 +168,19 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 //			var fillColor = getData(data.length);
 			var fillColor = 'royalblue';
 			
-//			function zoomed() {
-//			    const xz = d3.event.transform.rescaleX(x);
-//			    path.attr("d", area(data, xz));
-//			    gx.call(xAxis, xz);
-//			}
-//			const zoom = d3.zoom()
-//		      .scaleExtent([1, 32])
-//		      .extent([[margin.left, 0], [width - margin.right, height]])
-//		      .translateExtent([[margin.left, -Infinity], [width - margin.right, Infinity]])
-//		      .on("zoom", zoomed);
-//			
-//			svg.call(zoom)
+
+			// zoom 설정
+			function zoomed() {
+				x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
+				svg.selectAll(".bars rect").attr("x", d => x(d.key)).attr("width", x.bandwidth());
+				svg.selectAll(".x-axis").call(xAxis);
+			}
+			
+			svg.call(d3.zoom()
+//					.scaleExtent([1, 32])
+					.translateExtent(extent)
+					.extent(extent)
+					.on("zoom", zoomed));
 			
 			const x = d3.scaleBand()
 				.domain(data.map(d => d.key))
@@ -202,10 +207,12 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 				.call(g => g.selectAll('line')
 						.attr('x2', width)
 						.style('stroke', '#f5f5f5'))
-			 
+						
 			svg.append('g').call(xAxis);
 			svg.append('g').call(yAxis);
+			
 			svg.append('g')
+		      	.attr("class", "bars")
 				.selectAll('rect').data(data).enter().append('rect')
 				.attr('x', d => x(d.key))
 				.attr('y', d => y(d.value))
@@ -217,6 +224,8 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			 
 			const rectEl = document.getElementById('chart_template_'+i).getElementsByTagName('rect');
 			for(const el of rectEl) {
+				// event reset
+				el.removeEventListener('mouseover', ()=>{})
 				el.addEventListener('mouseover', (event) => {
 					const target = event.target;
 					const tooltip = target.parentElement.parentElement.previousElementSibling;

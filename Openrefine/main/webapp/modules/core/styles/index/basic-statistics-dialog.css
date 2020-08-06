@@ -71,9 +71,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     vertical-align: middle;
 }
 #basic-statistics-chart th {
-	border-top: hidden;
-    border-left: hidden;
-    border-bottom: hidden;
+    border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-bottom: 1px solid transparent;
     
 }
 #statistic_dialog td, th {
@@ -122,7 +122,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     z-index:1;
 }
 #statistic_dialog .chart_tooltip .tooltip_text {
-	font: 9px sans-serif;
+	font: 11px sans-serif;
 }
 #statistic_dialog .chart_tooltip .tooltip_text p {
     text-overflow: ellipsis;
