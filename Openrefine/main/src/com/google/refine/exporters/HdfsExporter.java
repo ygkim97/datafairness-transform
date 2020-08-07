@@ -63,7 +63,8 @@ public class HdfsExporter implements WriterExporter{
     final static Logger logger = LoggerFactory.getLogger("HdfsExporter");
     char separator;
     String propertPath = "/properties/HdfsInfo.properties";
-    String tempRows;
+    FSDataOutputStream out = null;
+    //int rowCount = 0;
 
     public HdfsExporter() {
         separator = ','; //Comma separated-value is default
@@ -82,8 +83,18 @@ public class HdfsExporter implements WriterExporter{
         protected boolean quoteAll = false;
     }
 
-    public void mergeString(String rowData) {
-        tempRows += rowData;
+    public void writeData(String rowData) {
+        try {
+                out.write(rowData.getBytes("UTF-8"));
+        } catch (Exception e) {
+                logger.error("hdfs error :: {}", e.getMessage());
+        }
+        /*
+        rowCount += 1;
+        if (rowCount % 10000 == 0) {
+            logger.error("[IRIS] ROW :: {}", rowCount);
+        }
+        */
     }
 
     @Override
@@ -112,6 +123,34 @@ public class HdfsExporter implements WriterExporter{
                 Boolean.parseBoolean(params.getProperty("printColumnHeader")) :
                 true;
         
+        Properties hdsfInfo = IOUtils.getProperty(propertPath);
+        String workDir =  System.getProperty("user.dir");
+
+        Configuration hdfsConf = new Configuration();
+        hdfsConf.addResource(new Path(workDir + "/conf/hdfs-site.xml"));
+        hdfsConf.addResource(new Path(workDir + "/conf/core-site.xml"));
+
+        FileSystem fs = null;
+        String defaultFs = hdsfInfo.getProperty("defaultFs");
+        String rootPath = hdsfInfo.getProperty("rootPath");
+        try {
+                fs = FileSystem.get(new URI(defaultFs), hdfsConf);
+
+                Path outFile = new Path(rootPath + params.getProperty("filename"));
+        
+                if (!fs.exists(outFile)) {
+                    logger.debug("create file::{}", outFile);
+                    out = fs.create(outFile);
+                }
+                else {
+                    logger.debug("append found::{}", outFile);
+                    out = fs.append(outFile);            
+                }
+        }
+        catch (Exception e) {
+                logger.error("hdfs error :: {}", e.getMessage());
+        } 
+
         TabularSerializer serializer = new TabularSerializer() {
             @Override
             public void startFile(JsonNode options) {
@@ -132,44 +171,21 @@ public class HdfsExporter implements WriterExporter{
                             (cellData != null && cellData.text != null) ?
                             cellData.text : "";
                     }
-                    rowData = String.join(separator, strings);
-
-                    rowData = rowData + lineSeparator;
-                    mergeString(rowData); 
+                    rowData = String.join(separator, strings) + lineSeparator;
+                    writeData(rowData);
                 }
             }
         };
+        long start = System.currentTimeMillis();
         CustomizableTabularExporterUtilities.exportRows(project, engine, params, serializer);
-
-        Properties hdsfInfo = IOUtils.getProperty(propertPath);
-
-        logger.error("START");
-        Configuration hdfsConf = new Configuration();
-        FSDataOutputStream out = null;
-        String uri = hdsfInfo.getProperty("hdfsUri");
-        String rootPath = hdsfInfo.getProperty("rootPath");
-        try {
-                FileSystem fs = FileSystem.get(new URI(uri), hdfsConf);
-
-                Path outFile = new Path(rootPath + params.getProperty("filename"));
-        
-                if (!fs.exists(outFile)) {
-                    logger.debug("file not found::{}", outFile);
-                    out = fs.create(outFile);
-                }
-                else {
-                    logger.debug("file found::{}", outFile);
-                    out = fs.append(outFile);            
-                }
-        }
-        catch (Exception e) {
-                logger.debug("{}", e);
-        }
-
-        out.write(tempRows.getBytes("UTF-8"));
         out.close();
-        tempRows = "";
-        logger.error("END");
+        out = null;
+        fs.close();
+        fs = null;
+        //rowCount = 0;
+    
+        long end = System.currentTimeMillis();
+        logger.debug("hdfs write execution time : {} sec", ( end - start )/1000.0);
     }
 
     @Override

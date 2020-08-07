@@ -57,9 +57,6 @@ public class CreateImportingJobCommand extends Command {
     		return;
     	}
 
-        logger.debug("[IRIS] getReqURI :: {}", request.getRequestURI());
-        logger.debug("[IRIS] getReqURL :: {}", request.getRequestURL());
-
         long id = ImportingManager.createJob().id;
         
         response.setCharacterEncoding("UTF-8");

@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.lang.Runtime;
 
 import org.apache.tools.tar.TarOutputStream;
 import org.slf4j.Logger;
@@ -60,6 +62,7 @@ import com.google.refine.model.Project;
 import com.google.refine.preference.PreferenceStore;
 import com.google.refine.preference.TopList;
 import com.google.refine.util.ParsingUtilities;
+import com.google.refine.util.IOUtils;
 
 /**
  * ProjectManager is responsible for loading and saving the workspace and projects.
@@ -70,11 +73,13 @@ public abstract class ProjectManager {
     // last n expressions used across all projects
     static public final int EXPRESSION_HISTORY_MAX = 100;
 
+    String propertPath = "/properties/ProjectInfo.properties";
+
     // If a project has been idle this long, flush it from memory
-    static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
+    //static protected final int PROJECT_FLUSH_DELAY = 1000 * 60 * 15; // 15 minutes
     
     // Don't spend more than this much time saving projects if doing a quick save
-    static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
+    //static protected final int QUICK_SAVE_MAX_TIME = 1000 * 30; // 30 secs
 
 
     protected Map<Long, ProjectMetadata> _projectsMetadata;
@@ -262,10 +267,22 @@ public abstract class ProjectManager {
         List<SaveRecord> records = new ArrayList<SaveRecord>();
         LocalDateTime startTimeOfSave = LocalDateTime.now();
         
+        Properties projectInfo = IOUtils.getProperty(propertPath);
+        
+        long MEGABYTE = 1024L * 1024L;
+        // If a project has been idle this long, flush it from memory
+        int PROJECT_FLUSH_DELAY = 1000 * 60 * Integer.parseInt(projectInfo.getProperty("projectFlushDelay"));
+    
+        // Don't spend more than this much time saving projects if doing a quick save
+        int QUICK_SAVE_MAX_TIME = 1000 * Integer.parseInt(projectInfo.getProperty("saveMaxTime"));
+   
+        //logger.debug("[IRIS] PROJECT_FLUSH_DELAY :: {}, QUICK_SAVE_MAX_TIME :: {}", PROJECT_FLUSH_DELAY, QUICK_SAVE_MAX_TIME); 
+
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
                 ProjectMetadata metadata = getProjectMetadata(id);
                 Project project = _projects.get(id); // don't call getProject() as that will load the project.
+
 
                 if (project != null) {
                     boolean hasUnsavedChanges =
@@ -277,6 +294,9 @@ public abstract class ProjectManager {
                     if (hasUnsavedChanges) {
                         long msecsOverdue = startTimeOfSave.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - project.getLastSave().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+                        logger.debug("project has unsaved changes [id: {}, name: {}, row: {}]", 
+                                    id, metadata.getName(), metadata.getRowCount());
+
                         records.add(new SaveRecord(project, msecsOverdue));
 
                     } else if (!project.getProcessManager().hasPending()
@@ -286,11 +306,17 @@ public abstract class ProjectManager {
                          *  It's been a while since the project was last saved and it hasn't been
                          *  modified. We can safely remove it from the cache to save some memory.
                          */
+                        logger.debug("project flush memory [id: {}, name: {}, row: {}]", 
+                                    id, metadata.getName(), metadata.getRowCount());
                         _projects.remove(id).dispose();
                     }
                 }
             }
         }
+        //Runtime.getRuntime().gc();
+        logger.debug("memory info [ {}MB  /  {}MB ]",
+        (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory())/MEGABYTE, 
+        Runtime.getRuntime().maxMemory()/MEGABYTE);
         
         if (records.size() > 0) {
             Collections.sort(records, new Comparator<SaveRecord>() {
