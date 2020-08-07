@@ -367,20 +367,24 @@ public class ImportingUtilities {
                     String fileName = Streams.asString(stream);
                     String propertPath = "/properties/HdfsInfo.properties";
                     Properties hdsfInfo = IOUtils.getProperty(propertPath);
-                    Configuration hdfsConf = new Configuration();
                     FSDataInputStream in = null;
                     FileSystem fs = null;
                     InputStream result = null;
 
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-                    String uri = hdsfInfo.getProperty("hdfsUri");
+                    String defaultFs= hdsfInfo.getProperty("defaultFs");
+                    String workDir =  System.getProperty("user.dir");
+   
+                    Configuration hdfsConf = new Configuration();
+                    hdfsConf.addResource(new Path(workDir + "/conf/hdfs-site.xml"));
+                    hdfsConf.addResource(new Path(workDir + "/conf/core-site.xml"));
 
-                    logger.error("START");
                     byte[] b = new byte[1024];
                     int numBytes = 0; 
                     int totalnumBytes = 0; 
+                    long start = System.currentTimeMillis();
                     try {
-                            fs = FileSystem.get(new URI(uri), hdfsConf);
+                            fs = FileSystem.get(new URI(defaultFs), hdfsConf);
 
                             Path inFile = new Path(fileName.trim());
                             if (!fs.exists(inFile)) {
@@ -398,25 +402,25 @@ public class ImportingUtilities {
                             result = ByteSource.wrap(c).openStream();
 
                     } catch (Exception e) {
-                            logger.error("{}", e);
+                            logger.error("hdsf error :: {}", e.getMessage());
                     } finally {
                             in.close();
                             fs.close();        
+                            outputStream.close();        
                     }
+
+                    long end = System.currentTimeMillis();
+                    logger.debug("hdfs read execution time : {} sec", ( end - start )/1000.0);
 
                     File file = allocateFile(rawDataDir, fileName);
 
                     ObjectNode fileRecord = ParsingUtilities.mapper.createObjectNode();
                     JSONUtilities.safePut(fileRecord, "origin", "hdfs");
-                    JSONUtilities.safePut(fileRecord, "declaredEncoding", "");
-                    JSONUtilities.safePut(fileRecord, "declaredMimeType", "");
                     JSONUtilities.safePut(fileRecord, "fileName", fileName);
                     JSONUtilities.safePut(fileRecord, "location", getRelativePath(file, rawDataDir));
-                    //progress.setProgress(
-                    //    "Saving file " + fileName + " locally (" + totalnumBytes + " bytes)",
-                    //   calculateProgressPercent(update.totalExpectedSize, update.totalRetrievedSize));
                     
                     long len = saveStreamToFileForHdfs(result, file);
+                    result.close();
 
                     JSONUtilities.safePut(fileRecord, "size", len);
                     postProcessRetrievedFile(rawDataDir, file, fileRecord, fileRecords, progress);

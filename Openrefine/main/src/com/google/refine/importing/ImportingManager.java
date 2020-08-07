@@ -171,7 +171,6 @@ public class ImportingManager {
     
     static public void registerController(ButterflyModule module, String name, ImportingController controller) {
         String key = module.getName() + "/" + name;
-        logger.debug("[IRIS] registerController Key :: {}", key);
         controllers.put(key, controller);
         
         controller.init(servlet);

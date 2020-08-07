@@ -48,12 +48,7 @@ import com.google.refine.commands.HttpUtilities;
 import com.google.refine.importing.ImportingController;
 import com.google.refine.importing.ImportingManager;
 import com.google.refine.util.ParsingUtilities;
-/*
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-*/
+
 public class ImportingControllerCommand extends Command {
 
     final static Logger logger = LoggerFactory.getLogger("importing-controller_command");
@@ -66,26 +61,6 @@ public class ImportingControllerCommand extends Command {
     		return;
     	}
         
-        logger.debug("[IRIS] getReqURI :: {}", request.getRequestURI());
-        logger.debug("[IRIS] getReqURL :: {}", request.getRequestURL());
-/*
-        try {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            InputStream inputStream = request.getInputStream();
-            if (inputStream != null) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[1024];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            }
-            logger.debug("[IRIS] body :: {}", stringBuilder.toString());
-        } catch (IOException e) {
-            return;
-        }
-*/
         ImportingController controller = getController(request);
         if (controller != null) {
         	response.setCharacterEncoding("UTF-8");
@@ -121,7 +96,6 @@ public class ImportingControllerCommand extends Command {
         Properties options = ParsingUtilities.parseUrlParameters(request);
         String name = options.getProperty("controller");
         if (name != null) {
-            logger.debug("[IRIS] controllers name :: {}", name);
             return ImportingManager.controllers.get(name);
         }
         return null;
