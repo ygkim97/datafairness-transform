@@ -90,6 +90,8 @@ public class ExportRowsCommand extends Command {
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
             
+            String projectID = params.getProperty("project");
+            
             String format = params.getProperty("format");
             Exporter exporter = ExporterRegistry.getExporter(format);
             if (exporter == null) {
@@ -136,6 +138,8 @@ public class ExportRowsCommand extends Command {
                 // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
+            ProjectManager.singleton.removeMemory(Long.parseLong(projectID));
+
         } catch (Exception e) {
             // Use generic error handling rather than our JSON handling
             logger.info("error:{}", e.getMessage());

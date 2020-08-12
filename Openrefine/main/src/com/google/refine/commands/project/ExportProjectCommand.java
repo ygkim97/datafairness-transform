@@ -64,6 +64,8 @@ public class ExportProjectCommand extends Command {
             OutputStream os = response.getOutputStream();
             try {
                 FileProjectManager.gzipTarToOutputStream(project, os);
+
+                ProjectManager.singleton.removeMemory(project.id);
             } finally {
                 os.close();
             }
