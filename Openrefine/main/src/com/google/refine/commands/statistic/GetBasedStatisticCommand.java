@@ -39,9 +39,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.jena.sparql.function.library.print;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
@@ -58,33 +57,72 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
-import clojure.main;
-
 public class GetBasedStatisticCommand extends Command {
 
 	private static String DOT_STRING = "%.5f";
+	
 	private static final String _STRING = "string";
 	private static final String _INT = "int";
 	private static final String _DOUBLE = "double";
-
-	protected static class RowNames {
-		@JsonProperty("key")
-		protected final String key;
-		@JsonProperty("text")
-		protected final String text;
-		@JsonProperty("obj")
-		protected final Map<String, String> obj;
-
-		protected RowNames(String key, String text) {
-			this.key = key;
-			this.text = text;
-//        	this.obj = new JsonObject();
-			obj = new HashMap<String, String>();
-			this.obj.put("key", key);
-			this.obj.put("text", text);
+	
+	private static Map<String, String> rowNames = null;
+	private static List<String> rowNameList = null;
+	
+	public GetBasedStatisticCommand() {
+		if (rowNames == null) {
+			rowNames = new LinkedHashMap<String, String>();
+			
+			rowNames.put("name", "Name");
+			rowNames.put("type", "Type");
+			rowNames.put("logical", "Logical1");
+			rowNames.put("count", "Count");
+			rowNames.put("missing", "Missing");
+			rowNames.put("min", "Min");
+			rowNames.put("max", "Max");
+			rowNames.put("mean", "Mean");
+			rowNames.put("stdev", "Stdev");
+			rowNames.put("vari", "Vari");
+			rowNames.put("freq", "Freq");
+			rowNames.put("unique", "Unique");
+			
+			rowNameList = new ArrayList<String>(rowNames.keySet());
 		}
 	}
+	
+	protected static class valueObj {
+		@JsonProperty("obj")
+		protected final Map<String, Object> obj;
 
+		protected valueObj(
+				String columnName
+				, String columnType
+				, String logical
+				, Object cnt
+				, int missingCnt
+				, Object min
+				, Object max
+				, Object mean
+				, Object stde
+				, Object vari
+				, Object maxFreq
+				, Object unique
+				) {
+        	obj = new HashMap<String, Object>();
+    		obj.put(rowNameList.get(0), columnName);
+    		obj.put(rowNameList.get(1), columnType);
+    		obj.put(rowNameList.get(2), logical);
+    		obj.put(rowNameList.get(3), cnt);
+    		obj.put(rowNameList.get(4), missingCnt);
+    		obj.put(rowNameList.get(5), min);
+    		obj.put(rowNameList.get(6), max);
+    		obj.put(rowNameList.get(7), mean);
+    		obj.put(rowNameList.get(8), stde);
+    		obj.put(rowNameList.get(9), vari);
+    		obj.put(rowNameList.get(10), maxFreq);
+    		obj.put(rowNameList.get(11), unique);
+		}
+	}
+	
 	/**
 	 * This command accepts POST. It is not CSRF-protected as it does not incur any
 	 * state change.
@@ -113,44 +151,43 @@ public class GetBasedStatisticCommand extends Command {
 			List<List<Object>> chartRows = createChartRows(project, columnNames, selectedColumns);
 
 			List<Map<String, Object>> columnInfo = new ArrayList<Map<String, Object>>();
-			List<Map<String, String>> rowNames = getRowNames();
 			List<Map<Object, Long>> frequencyList = new ArrayList<Map<Object, Long>>();
 
 			int i = 0;
-
-			Map<String, Object> obj = null;
+			
 			SummaryStatistics stats = null;
-
 			Iterator<List<Object>> it = chartRows.iterator();
+			
+			Object cnt = null;
+			Object min = null;
+			Object max = null;
+			Object mean = null;
+			Object stde = null;
+			Object vari = null;
+			Object maxFreq = null;
+			Object unique = null;
+			int missingCnt = 0;
+			
 			while (it.hasNext()) {
 				List<Object> chartRow = it.next();
-				obj = new HashMap<String, Object>();
+				
 
-				String column = projectModel.getColumnByCellIndex(Integer.valueOf(selectedColumns[i])).getName();
-
-				// 공통
-				obj.put(getRowKey(rowNames, 0), column);
+				String columnName = projectModel.getColumnByCellIndex(Integer.valueOf(selectedColumns[i])).getName();
 				String columnType = getColumnType(chartRow);
-
-				// column type
-				obj.put(getRowKey(rowNames, 1), columnType);
-
-				// 결정된바 없음 (임시)
-				obj.put(getRowKey(rowNames, 2), column + "_logical");
 
 				Iterator<Object> chartRowIt = chartRow.iterator();
 
-				if (columnType.equals("int") || columnType.equals("double")) {
+				if (columnType.equals(_INT) || columnType.equals(_DOUBLE)) {
 					stats = new SummaryStatistics();
 
 					chartRowIt = chartRow.iterator();
-					int missingCnt = 0;
+					missingCnt = 0;
 					while (chartRowIt.hasNext()) {
 						try {
-							if (columnType.equals("int")) {
+							if (columnType.equals(_INT)) {
 								int rowVal = Integer.parseInt(chartRowIt.next().toString());
 								stats.addValue(rowVal);
-							} else if (columnType.equals("double")) {
+							} else if (columnType.equals(_DOUBLE)) {
 								double rowVal = Double.parseDouble(chartRowIt.next().toString());
 								stats.addValue(rowVal);
 							}
@@ -161,62 +198,66 @@ public class GetBasedStatisticCommand extends Command {
 
 					// 최소값이나 최대값이 NaN일 경우, column Type이 String이라고 가정하고 넘긴다
 					if (Double.isNaN(stats.getMin()) || Double.isNaN(stats.getMax())) {
-						obj.put(getRowKey(rowNames, 3), "");
-						obj.put(getRowKey(rowNames, 4), "");
-						obj.put(getRowKey(rowNames, 5), "");
-						obj.put(getRowKey(rowNames, 6), "");
-						obj.put(getRowKey(rowNames, 7), "");
-						obj.put(getRowKey(rowNames, 8), "");
-						obj.put(getRowKey(rowNames, 9), "");
-						obj.put(getRowKey(rowNames, 11), "");
+						cnt = "";
+						min = "";
+						max = "";
+						mean = "";
+						stde = "";
+						vari = "";
+						unique = "";
 					} else {
-						obj.put(getRowKey(rowNames, 3), stats.getN());
-						obj.put(getRowKey(rowNames, 4), missingCnt);
-						obj.put(getRowKey(rowNames, 5), stats.getMin());
-						obj.put(getRowKey(rowNames, 6), stats.getMax());
-						obj.put(getRowKey(rowNames, 7), addDotString(stats.getMean()));
-						obj.put(getRowKey(rowNames, 8), addDotString(stats.getStandardDeviation()));
-						obj.put(getRowKey(rowNames, 9), addDotString(stats.getVariance()));
-						obj.put(getRowKey(rowNames, 11), chartRow.stream().distinct().count());
+						cnt = stats.getN();
+						min = stats.getMin();
+						max = stats.getMax();
+						mean = addDotString(stats.getMean());
+						stde = addDotString(stats.getStandardDeviation());
+						vari = addDotString(stats.getVariance());
+						unique = chartRow.stream().distinct().count();
 					}
 				} else {
-					int missingCnt = 0;
+					missingCnt = 0;
 					while (chartRowIt.hasNext()) {
 						Object str = chartRowIt.next();
 						if (str == null || str.equals("") || str.toString().toLowerCase().equals("null")) {
 							missingCnt++;
 						}
 					}
-					obj.put(getRowKey(rowNames, 3), chartRow.size());
-					obj.put(getRowKey(rowNames, 4), missingCnt);
-					obj.put(getRowKey(rowNames, 5), "-");
-					obj.put(getRowKey(rowNames, 6), "-");
-					obj.put(getRowKey(rowNames, 7), "-");
-					obj.put(getRowKey(rowNames, 8), "-");
-					obj.put(getRowKey(rowNames, 9), "-");
-					obj.put(getRowKey(rowNames, 11), chartRow.stream().distinct().count());
+
+					cnt = chartRow.size();
+					min = "-";
+					max = "-";
+					mean = "-";
+					stde = "-";
+					vari = "-";
+					unique = chartRow.stream().distinct().count();
 				}
 
 				// chart를 그리기 위해서, 항목별로 갯수 구함.
 				Map<Object, Long> freq = chartRow.stream()
+						.filter(el -> el != null && !el.toString().trim().isEmpty())
 						.collect(Collectors.groupingBy((e) -> {
-							if (e == null || e == "") {
-								return "NULL";
+							if (columnType.equals(_STRING)) {
+								return e;
+							} else if (columnType.equals(_INT)) {
+								return e;
 							} else {
-								if (columnType.equals(_STRING)) {
-									return e;
-								} else if (columnType.equals(_INT)) {
-									return e;
-								} else {
-									return Math.round(Double.parseDouble(e.toString()));
-								}
-							}}, Collectors.counting()));
+								return Math.round(Double.parseDouble(e.toString()));
+							}
+						}, Collectors.counting()));
 				frequencyList.add(freq);
 
-				// Freq : 가장 큰 빈도수를 구함.
-				obj.put(getRowKey(rowNames, 10), freq.values().stream().max(Comparator.naturalOrder()).get());
+				if (freq.values().size() > 0) {
+					// Freq : 가장 큰 빈도수를 구함.
+					maxFreq = freq.values().stream().max(Comparator.naturalOrder()).get();
+				} else {
+					// 모든 값이 null이어서, 빈도수 및 Unique 값이 없음.
+					maxFreq = "-";
+					unique = "-";
+				}
 
-				columnInfo.add(obj);
+				String logical = columnName + "_logical";
+				
+				columnInfo.add(new valueObj(columnName, columnType, logical, cnt, missingCnt, min, max, mean, stde, vari, maxFreq, unique).obj);
 				i++;
 			}
 
@@ -239,38 +280,18 @@ public class GetBasedStatisticCommand extends Command {
 			respondException(response, e);
 		}
 	}
-
+	
 	private String addDotString(double doubleValue) {
-
 		String stringValue = String.format(DOT_STRING, doubleValue);
 		String[] splited = stringValue.split("\\.");
 
+		// double 이 아닌 값에 소숫점을 추가 하게 되면 value.00000으로 변환된다.
+		// .00000 일 경우 정수값만 표시한다.
 		if (splited[1].equals("00000")) {
 			return splited[0];
 		} else {
 			return stringValue;
 		}
-	}
-
-	private List<Map<String, String>> getRowNames() {
-		List<Map<String, String>> rowNames = new ArrayList<Map<String, String>>();
-		rowNames.add(new RowNames("name", "Name").obj);
-		rowNames.add(new RowNames("type", "Type").obj);
-		rowNames.add(new RowNames("logical", "Logical1").obj);
-		rowNames.add(new RowNames("count", "Count").obj);
-		rowNames.add(new RowNames("missing", "Missing").obj);
-		rowNames.add(new RowNames("min", "Min").obj);
-		rowNames.add(new RowNames("max", "Max").obj);
-		rowNames.add(new RowNames("mean", "Mean").obj);
-		rowNames.add(new RowNames("stdev", "Stdev").obj);
-		rowNames.add(new RowNames("vari", "Vari").obj);
-		rowNames.add(new RowNames("freq", "Freq").obj);
-		rowNames.add(new RowNames("unique", "Unique").obj);
-		return rowNames;
-	}
-
-	private String getRowKey(List<Map<String, String>> rowNames, int index) {
-		return rowNames.get(index).get("key").toString();
 	}
 
 	private List<List<Object>> createChartRows(Project project, List<String> columnNames, String[] selectedColumns) {
@@ -298,21 +319,25 @@ public class GetBasedStatisticCommand extends Command {
 
 	private String getColumnType(List<Object> list) {
 		try {
-			list.stream().filter(Objects::nonNull).mapToInt((Object v) -> Integer.parseInt(v.toString())).max()
-					.getAsInt();
-
+			// max값을 구한다.
+			// Int로 떨어지면 INT
+			list.stream()
+				.filter(el -> el != null && !el.toString().trim().isEmpty())
+				.mapToInt((Object v) -> Integer.parseInt(v.toString()))
+				.max()
+				.getAsInt();
 			return _INT;
 		} catch (Exception e1) {
-		}
-
-		try {
-			list.stream().filter(Objects::nonNull).mapToDouble((Object v) -> Double.parseDouble(v.toString())).max()
+			try {
+				list.stream()
+					.filter(el -> el != null && !el.toString().trim().isEmpty())
+					.mapToDouble((Object v) -> Double.parseDouble(v.toString()))
+					.max()
 					.getAsDouble();
-
-			return _DOUBLE;
-		} catch (Exception e1) {
+				return _DOUBLE;
+			} catch (Exception e2) {
+				return _STRING;
+			}
 		}
-
-		return _STRING;
 	}
 }

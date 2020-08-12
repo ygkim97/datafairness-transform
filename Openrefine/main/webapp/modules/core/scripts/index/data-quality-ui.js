@@ -4,12 +4,14 @@ const Chart = tui.chart;
 
 var ui = {};
 
+/* ************************************
+ * Grid Pagination Info
+ * ************************************/
 var PAGE_INFO = {
 	PAGE_VAL : 1,
 	ITEM_PER_PAGE : 15,
 	START : 0
 }
-
 var UI_CHART_INFO = {
 	selectedPId : '',
 	headerIndex : {}
@@ -65,6 +67,9 @@ Refine.SetDataQualityUI = function(elmt) {
 	this._btnSetting();
 };
 
+/* ************************************
+ * Grid Creator
+ * ************************************/
 Refine.SetDataQualityUI.prototype._createGrid = function() {
 	const columns = this._createColumns(false);
 	const headerColumns = this._createColumns(true);
@@ -129,9 +134,11 @@ Refine.SetDataQualityUI.prototype._createGrid = function() {
 		    }
     	}
 	}
-//	Grid.applyTheme('striped'); // Call API of static method
 	Grid.applyTheme('default', theme)
 }
+/* ************************************
+ * Create Pagination
+ * ************************************/
 Refine.SetDataQualityUI.prototype._createPagination = function(totalCount) {
 	$('#data-quality-pagination').show();
 	
@@ -149,7 +156,9 @@ Refine.SetDataQualityUI.prototype._createPagination = function(totalCount) {
     }, this);
 }
 
-
+/* ************************************
+ * get Project Info Fron Backend
+ * ************************************/
 Refine.SetDataQualityUI.prototype._getProjectList = function() {
 	const self = this;
 	$.getJSON(
@@ -161,6 +170,10 @@ Refine.SetDataQualityUI.prototype._getProjectList = function() {
 			"json"
 	);
 }
+
+/* ************************************
+ * set Projct List to SelectBox 
+ * ************************************/
 Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
 	var selectbox = this._elmts.project_selectbox.empty();
 	const projectIds = Object.keys(data.projects);
@@ -181,6 +194,13 @@ Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
 	}
 	selectbox.append(optionHtml);
 }
+
+/* ************************************
+ * Setting Btn Events
+ * - Project Select Btn
+ * - Data Statistics Btn
+ * - Select All Checkbox
+ * ************************************/
 Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	// text 처리
 	this._elmts.project_select_lebel.text($.i18n('core-index-data/project-label')+":");
@@ -272,6 +292,10 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		}
 	})
 }
+
+/* ************************************
+ * Convert Data from Backend to tui.Grid
+ * ************************************/
 Refine.SetDataQualityUI.prototype._makeDataObj = function(rows) {
 	const _header = this.columnModel.columns;
 	
@@ -301,6 +325,9 @@ Refine.SetDataQualityUI.prototype._makeDataObj = function(rows) {
 	return arr;
 }
 
+/* ************************************
+ * get Model info From Backend
+ * ************************************/
 Refine.SetDataQualityUI.prototype._getModelInfo = function() {
 	var _self = this;
 	
@@ -315,6 +342,9 @@ Refine.SetDataQualityUI.prototype._getModelInfo = function() {
     $.ajaxSetup({ async: true});
 }
 
+/* ************************************
+ * get Project Rows From Backend
+ * ************************************/
 Refine.SetDataQualityUI.prototype._getProjectData = function() {
 	var _self = this;
 	$.post(
@@ -327,7 +357,6 @@ Refine.SetDataQualityUI.prototype._getProjectData = function() {
 					alert('error')
 				} else {
 					_self._setGridData(data);
-//					_self._convertData(data);
 				}
 			},
 			"json"

@@ -156,20 +156,6 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			const data = this._getD3ChartSeries(datas[i]);
 			var fillColor = 'royalblue';
 			
-
-			// zoom 설정
-			function zoomed() {
-				x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
-				svg.selectAll(".bars rect").attr("x", d => x(d.key)).attr("width", x.bandwidth());
-				svg.selectAll(".x-axis").call(xAxis);
-			}
-			
-			svg.call(d3.zoom()
-//					.scaleExtent([1, 32])	// use default value (1 to Infinity) 
-					.translateExtent(extent)
-					.extent(extent)
-					.on("zoom", zoomed));
-			
 			const x = d3.scaleBand()
 				.domain(data.map(d => d.key))
 				.range([margin.left, width - margin.right])
@@ -195,17 +181,63 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 				.call(g => g.selectAll('line')
 						.attr('x2', width)
 						.style('stroke', '#f5f5f5'))
-						
+			
 			svg.append('g').call(xAxis);
 			svg.append('g').call(yAxis);
+			
+			// zoom 할때, 영역 잡아줌
+			svg.append("clipPath")
+		      .attr("id", "clip_path_"+i)
+		      .append("rect")
+		      .attr("x", margin.left)
+		      .attr("y", margin.top)
+		      .attr("width", width - margin.left - margin.right)
+		      .attr("height", height - margin.top - margin.bottom);
+			
+			
+			/**
+			 * chart bar의 width 계산 및 zoom sacle max 값 계산
+			 * 각 차트 width의 1/5 값을 width의 최대길이로 가정하고, 그 길이를 기준으로 비율을 계산한다.  
+			 */
+			// chart width 길이 구함 (clipPath의 rect node의 길이가 차트 영역이다.
+			const chartViewWidth = $('#chart_template_'+i).find('svg').find('clipPath').find('rect').width();
+			
+			const UNIQUE_MAX_WIDTH = 100;
+			
+			// max 길이에서 1/5로 한 길이가 chart bar의 최대길이가 된다. 
+			var maxBandWidth = chartViewWidth/5;
+			maxBandWidth = (maxBandWidth > UNIQUE_MAX_WIDTH) ? UNIQUE_MAX_WIDTH : maxBandWidth;
+			
+			// 기본 bandWidth는 /2로 설정한다.
+			var bandwidth =  x.bandwidth();
+			// 만약 bandwidth의 길이가 설정가능한 최대 width를 넘어갈 경우, 최대 width로 설정한다.
+			bandwidth = (bandwidth > maxBandWidth) ? maxBandWidth : bandwidth;
+			
+			// zoom 가능한 scale max 값은 최대 width / 현재 width 값
+			// 그 비율만큼 zoom 가능하다.
+			var scaleMaxExtent = maxBandWidth / bandwidth;
+			scaleMaxExtent = (scaleMaxExtent < 0) ? 1 : Math.round(scaleMaxExtent);
+			
+			// zoom 설정
+			function zoomed() {
+				x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
+				svg.selectAll(".bars rect").attr("x", d => x(d.key)).attr("width", x.bandwidth());
+				svg.selectAll(".x-axis").call(xAxis);
+			}
+			svg.call(d3.zoom()
+					.scaleExtent([1, scaleMaxExtent]) 
+					.translateExtent(extent)
+					.extent(extent)
+					.on("zoom", zoomed));
 			
 			svg.append('g')
 		      	.attr("class", "bars")
 				.selectAll('rect').data(data).enter().append('rect')
+				.attr("clip-path","url(#clip_path_"+i+")")
 				.attr('x', d => x(d.key))
 				.attr('y', d => y(d.value))
 				.attr('height', d => y(0) - y(d.value))
-				.attr('width', x.bandwidth())
+				.attr('width', bandwidth)
 				.attr('fill', fillColor)
 				.attr('data-x', d => d.key)
 				.attr('data-y', d => d.value);
@@ -258,11 +290,11 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 	var template = '';
 	template += '<table>';
 	
-	rowNames.forEach((r, rI)=>{
+	Object.keys(rowNames).forEach((k, rI)=>{
 		template += '<tr>';
 		
 		template += '<th>';
-		template += '<span>'+r.key+'</span>';
+		template += '<span>'+ rowNames[k] +'</span>';
 		template += '</th>';
 		
 		for ( var i = 0; i < column.length; i++) {
@@ -270,7 +302,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 			
 			template += '<td>';
 			
-			var val = c[r.key];
+			var val = c[k];
 			if (val == undefined || val == ''){
 				val = 0;
 			}
@@ -286,8 +318,8 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 
 // when close Dialog 
 BasicStatisticsDialogUI.prototype._dismiss = function() {
+	this.statData = {}; 
 	_BasicStatisticsDialogUI = null;
-	this.statData = {};
 	
 	DialogSystem.dismissUntil(this._level - 1);
 };
