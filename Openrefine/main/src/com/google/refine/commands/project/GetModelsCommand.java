@@ -111,7 +111,6 @@ public class GetModelsCommand extends Command {
         // This command also supports retrieving rows for an importing job.
         String importingJobID = request.getParameter("importingJobID");
         if (importingJobID != null) {
-            logger.debug("[IRIS] get importingJobID");
             long jobID = Long.parseLong(importingJobID);
             ImportingJob job = ImportingManager.getJob(jobID);
             if (job != null) {
@@ -119,7 +118,6 @@ public class GetModelsCommand extends Command {
             }
         }
         if (project == null) {
-            logger.debug("[IRIS] get getProject");
             project = getProject(request);
         }
         
@@ -136,12 +134,6 @@ public class GetModelsCommand extends Command {
             HttpHeaderInfo info = HttpHeadersSupport.getHttpHeaderInfo(headerLabel);
             headersMap.put(headerLabel, info);
         }
-
-        logger.debug("[IRIS] project.columnModel :: {}", project.columnModel.getColumnNames());
-        logger.debug("[IRIS] project.recordModel:: {}", project.recordModel);
-        logger.debug("[IRIS] project.overlayModels :: {}", project.overlayModels);
-        logger.debug("[IRIS] prefixesMap :: {}", prefixesMap);
-        logger.debug("[IRIS] headersMap :: {}", headersMap);
 
         respondJSON(response, new ModelsResponse(
                 project.columnModel,
