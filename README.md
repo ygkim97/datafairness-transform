@@ -10,9 +10,21 @@
 
 ## 방법 및 이론
 
-
-
 ## 실험
+### OpenRefine 실행
+1. 실행 및 Google Chrome을 통해 UI 접속. ( http://Server_IP:Port )
+- ./refine
+<img src="https://user-images.githubusercontent.com/39294675/89847223-60a64500-dbbe-11ea-89f6-c7d229132fad.png" width=700>
+
+### Project 생성
+1. 샘플 데이터 다운로드 ( https://drive.google.com/file/d/0ByWzdp4ZR-JiZkF1NFpCbHVGR1U/view )
+2. 데이터를 업로드하여, 새로운 프로젝트를 만들기 위해 “Create Project”를 클릭.
+3. 데이터를 여러 위치 ( Local, Web, Database, 직접입력 ) 에서 가져온 후 “Next”를 클릭.
+ <img src="https://user-images.githubusercontent.com/39294675/89848344-14103900-dbc1-11ea-9058-6dd17d6e643c.png" width=700>
+4. 데이터의 미리 보기가 표시되고, 파일 형식에 따라 ( CSV, TSV, xls, JSON ) 설정을 변경 후 “Create Project” 클릭.
+ <img src="https://user-images.githubusercontent.com/39294675/89848364-17a3c000-dbc1-11ea-866c-6acc3a20e8b6.png" width=700>
+5. 프로젝트를 생성한 후에는 “Open Project” 탭을 클릭하여, 생성된 프로젝트를 열 수 있음.
+ <img src="https://user-images.githubusercontent.com/39294675/89848366-17a3c000-dbc1-11ea-84f2-c9ee858c6a9b.png" width=700>
 
 ---
 
