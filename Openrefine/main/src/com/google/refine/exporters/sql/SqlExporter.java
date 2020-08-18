@@ -156,8 +156,10 @@ public class SqlExporter implements WriterExporter {
 
                     if (includeStructure) {
                         String sqlCreateStr = createBuilder.getCreateSQL(iris);
-                        writer.write(sqlCreateStr);
-                
+                        if (writer != null) {
+                            writer.write(sqlCreateStr);
+                        }
+
                         if (iris == true) {
                             partitionKey = sqlOptions.get("irisKey").textValue();
                             partitionDate = sqlOptions.get("irisDateKey").textValue();
@@ -174,8 +176,10 @@ public class SqlExporter implements WriterExporter {
 
                     if (includeContent) {
                         String sqlInsertStr = insertBuilder.getInsertSQL();
-                        writer.write(sqlInsertStr);
-                        
+                        if (writer != null) {
+                            writer.write(sqlInsertStr);
+                        }
+
                         if (iris == true) {
                             executeQueryIRIS(url, user, password, sqlInsertStr);
                         }
