@@ -136,6 +136,8 @@ public class GetBasedStatisticCommand extends Command {
 	protected void internalRespond(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		PrintWriter writer = null;
+		
 		try {
 			Project project = null;
 			if (project == null) {
@@ -168,11 +170,12 @@ public class GetBasedStatisticCommand extends Command {
 			Object unique = null;
 			int missingCnt = 0;
 			
+			String columnName = null;
+			
 			while (it.hasNext()) {
 				List<Object> chartRow = it.next();
 				
-
-				String columnName = projectModel.getColumnByCellIndex(Integer.valueOf(selectedColumns[i])).getName();
+				columnName = projectModel.getColumnByCellIndex(Integer.valueOf(selectedColumns[i])).getName();
 				String columnType = getColumnType(chartRow);
 
 				Iterator<Object> chartRowIt = chartRow.iterator();
@@ -269,7 +272,7 @@ public class GetBasedStatisticCommand extends Command {
 			response.setCharacterEncoding("UTF-8");
 			response.setHeader("Content-Type", "application/json");
 
-			PrintWriter writer = response.getWriter();
+			writer = response.getWriter();
 			ParsingUtilities.defaultWriter.writeValue(writer, result);
 
 			// metadata refresh for row mode and record mode
@@ -278,6 +281,10 @@ public class GetBasedStatisticCommand extends Command {
 			}
 		} catch (Exception e) {
 			respondException(response, e);
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
 		}
 	}
 	
@@ -297,13 +304,17 @@ public class GetBasedStatisticCommand extends Command {
 	private List<List<Object>> createChartRows(Project project, List<String> columnNames, String[] selectedColumns) {
 		List<List<Object>> chartRows = new ArrayList<List<Object>>();
 		Iterator<Row> it = project.rows.iterator();
-
+		
+		Row row = null;
+		int chartRowI = 0;
+		int selectedColumnIndex = 0;
+		
 		while (it.hasNext()) {
-			Row row = it.next(); // project row
+			row = it.next(); // project row
 
-			int chartRowI = 0;
+			chartRowI = 0;
 			for (int i = 0, size = selectedColumns.length; i < size; i++) {
-				int selectedColumnIndex = Integer.valueOf(selectedColumns[i]);
+				selectedColumnIndex = Integer.valueOf(selectedColumns[i]);
 				if (chartRows.size() <= chartRowI) {
 					chartRows.add(new ArrayList<Object>());
 				}

@@ -188,7 +188,8 @@ Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
 		projectIds.forEach((pId) => {
 			const p = data.projects[pId];
 			optionHtml+= '<option value="'+pId+'" projectName="'+p.name+'">';
-			optionHtml+= '['+pId+'] '+p.name;
+//			optionHtml+= '['+pId+'] ';	// for test
+			optionHtml+= p.name;
 			optionHtml+= '</option>'
 		})
 	}
@@ -207,13 +208,15 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	this._elmts.project_select_btn.text($.i18n('core-index-data/select'));
 	this._elmts.get_sta_bnt.text($.i18n('core-index-data/basic-data-statistics'));
 	this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label'));
+	this._elmts.selected_header.text($.i18n('core-index-data/selected-header'));
+	this._elmts.selected_header_count.text('0');
 	
 	// btn click 이벤트
 	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
 		// focus out
 		$(e.target).blur();
 		
-		DialogSystem.showBusy();
+		DialogSystem.showBusy($.i18n('core-index-dialog/loading-step1'));
 		
 		const _self = e.data._self;
 		
@@ -223,6 +226,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		_self._elmts.project_table.empty();
 		_self._elmts.check_all.attr('checked', false)
 		$('#data-quality-pagination').hide();
+		_self._elmts.selected_header_count.text('0');
 		
 		_self.GridInstance = null;
 		_self.staticGridInstance2 = null;
@@ -233,13 +237,15 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		setTimeout(()=>{
 			_self._getModelInfo();
 			_self._getProjectData();
-		}, 100)
+		}, 10)
 	})
 	
+	// label 클릭 = checkbox 체크 이벤트
 	this._elmts.select_all_label.on('click', {_self : this}, (e) => {
 		const _self = e.data._self;
 		_self._elmts.check_all.click()
 	})
+	// 전체 선택 체크박스 체크시, 모든 header를 check 한다.
 	this._elmts.check_all.on('change', {_self : this}, (e) => {
 		const _self = e.data._self;
 		// 프로젝트 선택 전일경우 alert을 띄운다.
@@ -254,8 +260,10 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		checkBtns.each((i, cb)=>{
 			$(cb).attr('checked', selectAllChecked)	
 		})
+		_self._setSelectedHeaderCnt();
 	})
 	
+	// 데이터 통계 팝업 버튼 클릭
 	this._elmts.get_sta_bnt.on('click', {_self : this}, (e) => {
 		// focus out
 		$(e.target).blur();
@@ -291,6 +299,11 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			new BasicStatisticsDialogUI(headerOriginalNames);
 		}
 	})
+}
+// check한 header 갯수를 표시해준다.
+Refine.SetDataQualityUI.prototype._setSelectedHeaderCnt = function() {
+	const checked = $('#data-quality-body .custom_table_header_check:checked');
+	this._elmts.selected_header_count.text(checked.length);
 }
 
 /* ************************************
@@ -383,17 +396,20 @@ Refine.SetDataQualityUI.prototype._setGridData = function(data) {
 
 	this._elmts.get_sta_bnt.attr('disabled', false);
 	
-	function headerClicked(target) {
+	function headerClicked(target, _self) {
 		$(target).find('.custom_table_header_check').click();
+		_self._setSelectedHeaderCnt();
 	}
 	$('#data-quality-body th').off('click');
 	$('#data-quality-body th span').off('click');
 	//after grid data loaded, set Header Click EVENT
-	$('#data-quality-body th').click((e) => {
-		headerClicked(e.target);
+	$('#data-quality-body th').on('click', {_self:this}, (e)=>{
+		const _self = e.data._self;
+		headerClicked(e.target, _self);
 	})
-	$('#data-quality-body th span').click((e) => {
-		headerClicked(e.target.parentNode.parentNode);
+	$('#data-quality-body th span').on('click', {_self:this}, (e)=>{
+		const _self = e.data._self;
+		headerClicked(e.target.parentNode.parentNode, _self);
 	})
 }
 

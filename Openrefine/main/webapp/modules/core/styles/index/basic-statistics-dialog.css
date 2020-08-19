@@ -123,9 +123,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 #statistic_dialog .chart_tooltip .tooltip_text {
 	font: 11px sans-serif;
+    padding-left: 10px;
 }
 #statistic_dialog .chart_tooltip .tooltip_text p {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    text-align: left;
+    font-weight: 600;
 }
