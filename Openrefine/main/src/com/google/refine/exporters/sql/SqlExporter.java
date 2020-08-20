@@ -75,7 +75,8 @@ public class SqlExporter implements WriterExporter {
         try {
                 Class.forName("com.google.refine.exporters.sql.iris.IRISDriver");
         } catch (java.lang.ClassNotFoundException e) {
-                e.printStackTrace();
+            logger.error("ERROR Msg :: {}, Query :: {}", e.getMessage(), query);
+            throw new SqlExporterException(e.getMessage());
         }
         try {
                 Connection connection = DriverManager.getConnection(url, user, password);
@@ -89,7 +90,8 @@ public class SqlExporter implements WriterExporter {
 
                 }
         } catch (SQLException e) {
-            logger.error("SQLException::", e);
+            logger.error("ERROR Msg :: {}, Query :: {}", e.getMessage(), query);
+            throw new SqlExporterException(e.getMessage());
         }
     } 
 
@@ -189,11 +191,11 @@ public class SqlExporter implements WriterExporter {
                         logger.debug("sqlOptions::{}", sqlOptions);
                     }
 
-                    columnNames = new ArrayList<String>();
-                    sqlDataList = new ArrayList<ArrayList<SqlData>>();
-
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    columnNames = new ArrayList<String>();
+                    sqlDataList = new ArrayList<ArrayList<SqlData>>();
                 }
             }
 
