@@ -154,49 +154,42 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	const height = td.height();
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
-	
-	var svg = null;
-	var data = null;
-	var x = null;
-	var y = null;
-	var xAxis = null;
-	var yAxis = null;
-	
+
 	const fillColor = 'royalblue';
-	var chartViewWidth = 0;
-	
 	// chart 최대 width 길이
 	const UNIQUE_MAX_WIDTH = 55;
 	var maxBandWidth = 0;
 	var bandwidth = 0;
 	var scaleMaxExtent = 0;
-	var rectEl = null;
 	
+	var data = null; 
+
+	var rectEl = null;
 	var target = null; 
 	var tooltip = null;
 	var tQuery = null;
 	var positionLeft = null;
 	var positionTop = null;
 	var tQueryTemplate = '';
-	
-	columnInfo.forEach((c, i)=>{
-		svg = d3.select('#chart_template_'+i)
+
+	for (var i = 0, size = columnInfo.length; i < size; i++) {		
+		const svg = d3.select('#chart_template_'+i)
 		.append('svg')
 		.style('width', width)
 		.style('height', height);
-		
+	
 		data = this._getD3ChartSeries(datas[i]);
 		
-		x = d3.scaleBand()
+		const x = d3.scaleBand()
 			.domain(data.map(d => d.key))
 			.range([margin.left, width - margin.right])
 			.padding(0.4);
 		 
-		y = d3.scaleLinear()
+		const y = d3.scaleLinear()
 			.domain([0, d3.max(data, d => d.value)]).nice()
 			.range([height - margin.bottom, margin.top]);
 		 
-		xAxis = g => g
+		const xAxis = g => g
 			.attr('transform', `translate(0, ${height - margin.bottom})`)
 			.call(d3.axisBottom(x).tickSizeOuter(0))
 			.call(g => g.select('.domain').remove())
@@ -205,7 +198,7 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			.style('display', 'none');
 		 
 		// line chart와 동일
-		yAxis = g => g
+		const yAxis = g => g
 			.attr('transform', `translate(${margin.left}, 0)`)
 			.call(d3.axisLeft(y))
 			.call(g => g.select('.domain').remove())
@@ -269,7 +262,8 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			.attr('fill', fillColor)
 			.attr('data-x', d => d.key)
 			.attr('data-y', d => d.value);
-		 
+		
+		// tooltip
 		rectEl = document.getElementById('chart_template_'+i).getElementsByTagName('rect');
 		for(const el of rectEl) {
 			// event reset
@@ -298,10 +292,8 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			el.addEventListener('mouseout', (event) => {
 				$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
 			});
-		}
-
-//		$('#now_chart_cnt').text(i);
-	})
+		}		
+	};
 }
 
 BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
@@ -312,7 +304,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 	var template = '';
 	template += '<table>';
 	
-	Object.keys(rowNames).forEach((k)=>{
+	Object.keys(rowNames).forEach((k, rI)=>{
 		template += '<tr>';
 		
 		template += '<th>';
