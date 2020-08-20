@@ -116,7 +116,30 @@ public abstract class ProjectManager {
 
         preparePreferenceStore(_preferenceStore);
     }
-    
+
+    public void removeMemory(long projectID) {
+        synchronized (this) {
+            Properties projectInfo = IOUtils.getProperty(propertPath);
+            String remove = projectInfo.getProperty("removeMemory").trim();
+            ProjectMetadata metadata = getProjectMetadata(projectID);
+            if (remove.equals("true")) {
+                logger.debug("removeMemory ::[id: {}, name: {}, row: {}]", 
+                            projectID, metadata.getName(), metadata.getRowCount());
+                _projects.remove(projectID).dispose();
+            }
+
+            for (long id : _projectsMetadata.keySet()) {
+                metadata = getProjectMetadata(id);
+                logger.debug("ProjectMeta List ::[id: {}, name: {}, row: {}]", 
+                        id, metadata.getName(), metadata.getRowCount());
+                if (_projects.containsKey(id)) {
+                    logger.debug("Memory List ::[id: {}, name: {}, row: {}]", 
+                            id, metadata.getName(), metadata.getRowCount());
+                }
+            }
+        }
+    }   
+ 
     public void dispose() {
         save(true); // complete save
 
@@ -269,14 +292,13 @@ public abstract class ProjectManager {
         
         Properties projectInfo = IOUtils.getProperty(propertPath);
         
-        long MEGABYTE = 1024L * 1024L;
         // If a project has been idle this long, flush it from memory
         int PROJECT_FLUSH_DELAY = 1000 * 60 * Integer.parseInt(projectInfo.getProperty("projectFlushDelay"));
     
         // Don't spend more than this much time saving projects if doing a quick save
         int QUICK_SAVE_MAX_TIME = 1000 * Integer.parseInt(projectInfo.getProperty("saveMaxTime"));
    
-        //logger.debug("[IRIS] PROJECT_FLUSH_DELAY :: {}, QUICK_SAVE_MAX_TIME :: {}", PROJECT_FLUSH_DELAY, QUICK_SAVE_MAX_TIME); 
+        //logger.debug("PROJECT_FLUSH_DELAY :: {}, QUICK_SAVE_MAX_TIME :: {}", PROJECT_FLUSH_DELAY, QUICK_SAVE_MAX_TIME); 
 
         synchronized (this) {
             for (long id : _projectsMetadata.keySet()) {
@@ -313,10 +335,6 @@ public abstract class ProjectManager {
                 }
             }
         }
-        //Runtime.getRuntime().gc();
-        logger.debug("memory info [ {}MB  /  {}MB ]",
-        (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().freeMemory())/MEGABYTE, 
-        Runtime.getRuntime().maxMemory()/MEGABYTE);
         
         if (records.size() > 0) {
             Collections.sort(records, new Comparator<SaveRecord>() {

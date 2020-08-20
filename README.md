@@ -10,8 +10,6 @@
 
 ## 방법 및 이론
 
-
-
 ## 실험
 ### OpenRefine 실행
 1. 실행 및 Google Chrome을 통해 UI 접속. ( http://Server_IP:Port )
@@ -27,7 +25,7 @@
  <img src="https://user-images.githubusercontent.com/39294675/89848364-17a3c000-dbc1-11ea-866c-6acc3a20e8b6.png" width=700>
 5. 프로젝트를 생성한 후에는 “Open Project” 탭을 클릭하여, 생성된 프로젝트를 열 수 있음.
  <img src="https://user-images.githubusercontent.com/39294675/89848366-17a3c000-dbc1-11ea-84f2-c9ee858c6a9b.png" width=700>
- 
+
 ---
 
 이 논문은 2020년도 정부(과학기술정보통신부)의 재원으로 정보통신기획평가원의 지원을 받아 수행된 연구임.

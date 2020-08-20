@@ -118,7 +118,6 @@ ExporterManager.handlers.exportRows = function(format, ext) {
   var form = ExporterManager.prepareExportRowsForm(format, true, ext);
 
   document.body.appendChild(form);
-
   window.open(" ", "refine-export");
   form.submit();
 

@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -47,6 +48,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
@@ -90,6 +94,8 @@ public class ExportRowsCommand extends Command {
             Engine engine = getEngine(request, project);
             Properties params = getRequestParameters(request);
             
+            String projectID = params.getProperty("project");
+            
             String format = params.getProperty("format");
             Exporter exporter = ExporterRegistry.getExporter(format);
             if (exporter == null) {
@@ -101,28 +107,47 @@ public class ExportRowsCommand extends Command {
                 contentType = exporter.getContentType();
             }
             response.setHeader("Content-Type", contentType);
-
-            String preview = params.getProperty("preview");
-            if (!"true".equals(preview)) {
-                String path = request.getPathInfo();
-                String filename = path.substring(path.lastIndexOf('/') + 1);
-                params.setProperty("filename", filename);
-                response.setHeader("Content-Disposition", "attachment; filename=" + filename);
-            }
             
+            boolean iris = false;
+            if (format.equals("sql") == true) {
+                String options = params.getProperty("options");
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObj = (JSONObject) jsonParser.parse(options);
+                iris = (boolean) jsonObj.get("iris");
+            }           
+            
+            String preview = params.getProperty("preview");
+            String path = request.getPathInfo();
+            String filename = path.substring(path.lastIndexOf('/') + 1);
+            params.setProperty("filename", filename);
+
+            if (!"true".equals(preview)) {
+                logger.debug("preview [ {} ], format [ {} ], iris [ {} ]", preview, format, iris);
+                if (format.equals("hdfs") == false && iris == false) {
+                    logger.debug("download file !!!");
+                    response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+                }
+            }
+
             if (exporter instanceof WriterExporter) {
-                String encoding = params.getProperty("encoding");
                 Writer writer = null;
+                String encoding = params.getProperty("encoding");
                 response.setCharacterEncoding(encoding != null ? encoding : "UTF-8");
-                if (format.equals("hdfs") == false) {
+
+                if (format.equals("hdfs") == true || iris == true) {
+                    ((WriterExporter) exporter).export(project, params, engine, null);
+                    String msgInfo = format.equals("hdfs") ? "Hadoop":"IRIS DB";
+                    response.setContentType("text/html;charset=UTF-8");
+                    writer = response.getWriter();
+                    writer.write("<h3>" + msgInfo + " Export Complete.</h3>");
+               } else {
                     writer = encoding == null ?
                         response.getWriter() :
                         new OutputStreamWriter(response.getOutputStream(), encoding);
-                }
-                ((WriterExporter) exporter).export(project, params, engine, writer);
-                if (writer != null){
-                    writer.close();
-                }
+                    ((WriterExporter) exporter).export(project, params, engine, writer);
+                } 
+                writer.close();
+    
             }
             else if (exporter instanceof StreamExporter) {
                 response.setCharacterEncoding("UTF-8");
@@ -136,6 +161,8 @@ public class ExportRowsCommand extends Command {
                 // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
+            ProjectManager.singleton.removeMemory(Long.parseLong(projectID));
+
         } catch (Exception e) {
             // Use generic error handling rather than our JSON handling
             logger.info("error:{}", e.getMessage());
@@ -144,7 +171,7 @@ public class ExportRowsCommand extends Command {
             }
             throw new ServletException(e);
         } finally {
-            ProjectManager.singleton.setBusy(false);
+           ProjectManager.singleton.setBusy(false);
         }
     }
 }
