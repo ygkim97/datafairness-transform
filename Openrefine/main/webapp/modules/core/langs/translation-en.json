@@ -754,6 +754,7 @@
     "core-index-data/data-quality-asses": "Data Quality Assessment",	
     "core-index-data/project-label": "Projects",
     "core-index-data/select-all-label": "Select All",
+    "core-index-data/selected-header": "Selected:",
     "core-index-data/no-selected-project": "You must Select a Project.",
     "core-index-data/no-selected-headers": "You must Select a Header",
     "core-index-data/no-selected-headers2": "No Header selected. (INPUT YES or Y or click 'cacnel')'",
