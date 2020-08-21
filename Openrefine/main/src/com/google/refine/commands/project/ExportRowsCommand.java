@@ -139,7 +139,10 @@ public class ExportRowsCommand extends Command {
                     String msgInfo = format.equals("hdfs") ? "Hadoop":"IRIS DB";
                     response.setContentType("text/html;charset=UTF-8");
                     writer = response.getWriter();
-                    writer.write("<h3>" + msgInfo + " Export Complete.</h3>");
+                    writer.write("<script language='javascript'>");
+                    writer.write("document.write('" + msgInfo + " Export Complete.');");
+                    writer.write("window.setTimeout(function(){window.close();}, 1500)");
+                    writer.write("</script>");
                } else {
                     writer = encoding == null ?
                         response.getWriter() :
