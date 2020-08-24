@@ -60,11 +60,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	border : 1px solid gray;
 	padding : 10px;
 	height : 5%;
+	min-height : 45px;
 }
-.data-quality-top div:nth-child(1) {
+.data-quality-top > div:nth-child(1) {
 	float : left;
 }
-.data-quality-top div:nth-child(2) {
+.data-quality-top > div:nth-child(2) {
 	float : right;
 }
 .data-quality-top {
@@ -93,19 +94,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	width : 100%;
 	word-break: break-all;
 }
-
 #data-quality-body .btn-group {
-	width : 100px;
+	margin-right : 10px;
 }
 #data-quality-body .btn-group button {
     margin-top: -1px;
+    float: right;
 }
-#data-quality-body .btn-group div {
-    margin-top: 10px;
+#data-quality-body .btn-group .select_all_warpper {
+	float: right;
+    margin-top: 5px;
 }
 #data-quality-body .btn-group div label {
 	font-size: 1.1em;
 }
 #data-quality-body .btn-group div input {
 	vertical-align: text-top;
+}
+#data-quality-body .separator {
+    margin: 0 5px 0 5px;
+}
+#data-quality-body .selected_wrapper {
+    display: inline-block;
+    width: 80px;
+    text-align-last: end;
 }

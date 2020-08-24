@@ -72,5 +72,22 @@
     "core-index-import/project-name": "프로젝트&nbsp;이름",
     "core-index-import/project-tags": "태그",
     "core-index-import/this-computer": "이 컴퓨터",
-    "core-index-import/clipboard": "클립보드"
+    "core-index-import/clipboard": "클립보드",
+    
+    "core-buttons/close": "닫기",
+    "core-index-data/data-quality-asses": "데이터 품질 평가",	
+    "core-index-data/project-label": "프로젝트",
+    "core-index-data/select-all-label": "전체 선택",
+    "core-index-data/selected-header": "선택됨: ",
+    "core-index-data/no-selected-project": "프로젝트를 선택해 주세요.",
+    "core-index-data/no-selected-headers": "헤더를 선택해 주세요.",
+    "core-index-data/no-selected-headers2": "선택된 헤더가 없습니다. (YES or Y 입력시 전체선택 됩니다.)'",
+    "core-index-data/wrong-input": "잘못된 입력입니다. 다시 시도해주세요.",
+    "core-index-data/select": "선택",
+    "core-index-data/basic-data-statistics": "데이터 통계",
+    "core-index-data/select-all": "전체 선택",
+    "core-index-dialog/title": "기초 데이터 통계 Dialog",
+    "core-index-dialog/loading-step1": "데이터 조회 중…",
+    "core-index-dialog/loading-step2": "차트 그리는 중…",
+    "": ""
 }
