@@ -74,9 +74,12 @@
     "core-index-import/this-computer": "이 컴퓨터",
     "core-index-import/clipboard": "클립보드",
     
+    "core-index-open/open-proj": "프로젝트 열기",
+    "core-index-lang/lang-settings": "언어 설정",
+    
     "core-buttons/close": "닫기",
     "core-index-data/data-quality-asses": "데이터 품질 평가",	
-    "core-index-data/project-label": "프로젝트",
+    "core-index-data/project-label": "프로젝트 목록",
     "core-index-data/select-all-label": "전체 선택",
     "core-index-data/selected-header": "선택됨: ",
     "core-index-data/no-selected-project": "프로젝트를 선택해 주세요.",
