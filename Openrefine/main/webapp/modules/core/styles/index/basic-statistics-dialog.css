@@ -108,8 +108,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	position: relative;
 }
 
-#statistic_dialog .chart_tooltip {	
-    position: absolute;
+#statistic_dialog .chart_tooltip {
+	position: absolute;
+}
+.chart_tooltip {	
     visibility : hidden;	
     text-align: center;			
     width: 150px;					
@@ -121,14 +123,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     pointer-events: none;			
     z-index:1;
 }
-#statistic_dialog .chart_tooltip .tooltip_text {
+.chart_tooltip .tooltip_text {
 	font: 11px sans-serif;
     padding-left: 10px;
 }
-#statistic_dialog .chart_tooltip .tooltip_text p {
+.chart_tooltip .tooltip_text p {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     text-align: left;
     font-weight: 600;
+}
+
+#statistic_dialog_detail {
+	width : 850px;
+}
+.statistic_dialog_detail_container {
+    /* position: sticky !important; */
+    top : 100px !important;
+}
+.statistic_dialog_detail_container .chart_tooltip {	
+    position: relative;
 }

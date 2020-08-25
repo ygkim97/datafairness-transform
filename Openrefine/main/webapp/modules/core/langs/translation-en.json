@@ -765,6 +765,7 @@
     "core-index-data/basic-data-statistics": "Data statistics",
     "core-index-data/select-all": "Select All",
     "core-index-dialog/title": "Simply Data Statistical Analysis Dialog",
+    "core-index-dialog/title-detail": "Column's Detail Dialog",
     "core-index-dialog/loading-step1": "Loading data…",
     "core-index-dialog/loading-step2": "Drawing charts…",
     "" : ""

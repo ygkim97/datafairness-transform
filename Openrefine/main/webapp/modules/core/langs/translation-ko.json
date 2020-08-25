@@ -92,6 +92,7 @@
     "core-index-data/basic-data-statistics": "데이터 통계",
     "core-index-data/select-all": "전체 선택",
     "core-index-dialog/title": "기초 데이터 통계 Dialog",
+    "core-index-dialog/title-detail": "컬럼 상세 Dialog",
     "core-index-dialog/loading-step1": "데이터 조회 중…",
     "core-index-dialog/loading-step2": "차트 그리는 중…",
     "": ""

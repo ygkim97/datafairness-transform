@@ -42,7 +42,7 @@ var escapeKey = function(event) {
   }
 }
 
-DialogSystem.showDialog = function(elmt, onCancel) {
+DialogSystem.showDialog = function(elmt, onCancel, addContainerClass) {
   var overlay = $('<div>&nbsp;</div>')
   .addClass("dialog-overlay")
   .css("z-index", 101 + DialogSystem._layers.length * 2)
@@ -52,6 +52,10 @@ DialogSystem.showDialog = function(elmt, onCancel) {
   .addClass("dialog-container")
   .css("z-index", 102 + DialogSystem._layers.length * 2)
   .appendTo(document.body);
+  
+  if (addContainerClass) {
+	  container.addClass(addContainerClass)
+  }
 
   elmt.css("visibility", "hidden").appendTo(container);
   container.css("top", Math.round((overlay.height() - elmt.height()) / 2) + "px");
