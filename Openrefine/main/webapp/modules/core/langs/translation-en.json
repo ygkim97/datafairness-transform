@@ -760,6 +760,8 @@
     "core-index-data/no-selected-headers2": "No Header selected. (INPUT YES or Y or click 'cacnel')'",
     "core-index-data/wrong-input": "Wrong input. please try again.",
     "core-index-data/select": "Select",
+    "core-index-data/max": "Max",
+    "core-index-data/cnt": "",
     "core-index-data/basic-data-statistics": "Data statistics",
     "core-index-data/select-all": "Select All",
     "core-index-dialog/title": "Simply Data Statistical Analysis Dialog",

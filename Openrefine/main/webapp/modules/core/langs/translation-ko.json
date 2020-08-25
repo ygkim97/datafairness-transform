@@ -87,6 +87,8 @@
     "core-index-data/no-selected-headers2": "선택된 헤더가 없습니다. (YES or Y 입력시 전체선택 됩니다.)'",
     "core-index-data/wrong-input": "잘못된 입력입니다. 다시 시도해주세요.",
     "core-index-data/select": "선택",
+    "core-index-data/max": "최대",
+    "core-index-data/cnt": "건",
     "core-index-data/basic-data-statistics": "데이터 통계",
     "core-index-data/select-all": "전체 선택",
     "core-index-dialog/title": "기초 데이터 통계 Dialog",
