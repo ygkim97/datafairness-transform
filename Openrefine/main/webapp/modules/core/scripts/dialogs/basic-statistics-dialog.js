@@ -43,7 +43,6 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 		selectedHeaders = [];
 	}
 	const _self = this;
-//	_self.totalHeaderCnt = selectedHeaders.length;
 	
 	const warningDialog1 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step1'));
 	
@@ -65,16 +64,6 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 }
 BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 	const _self = this;
-	
-//	// loading 바에 상태를 표시해주기 위한 div tag
-//	var spanAppend = '';
-//	spanAppend += '<div>';
-//	spanAppend += '<span id="now_chart_cnt">0</span>';
-//	spanAppend += '<span>/</span>';
-//	spanAppend += '<span>'+_self.totalHeaderCnt+'</span>';
-//	spanAppend += '</div>';
-//	const warningDialog = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step2') + spanAppend);
-	
 	const warningDialog2 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step2'));
 	
 	setTimeout(()=>{
@@ -161,17 +150,22 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			width: width, 
 			height: height, 
 			clipPathId: "clip_path_" + i,
-			tooltipId : 'tooltip_chart_template_' + i
+			tooltipId : 'tooltip_chart_template_' + i,
+			isDetail : false
 		});
 
 		// chart click시, detail popup을 표시하는 이벤트 설정.
 		this._setChartEvent(i);
 	};
 }
-BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, height, clipPathId, tooltipId}) {
+BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, height, clipPathId, tooltipId, isDetail}) {
 	const UNIQUE_MAX_WIDTH = 55;
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
+	
+//	const isXAxisShow = isDetail ? 'initial' : 'none';
+//	margin.bottom += isDetail ? 50 : 0; 
+	const isXAxisShow = 'none'
 	
 	const fillColor = 'royalblue';
 	// chart 최대 width 길이
@@ -205,14 +199,16 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	const y = d3.scaleLinear()
 		.domain([0, d3.max(data, d => d.value)]).nice()
 		.range([height - margin.bottom, margin.top]);
-	 
+
 	const xAxis = g => g
 		.attr('transform', `translate(0, ${height - margin.bottom})`)
 		.call(d3.axisBottom(x).tickSizeOuter(0))
 		.call(g => g.select('.domain').remove())
 		.call(g => g.selectAll('line').remove())
 		.selectAll('text')
-		.style('display', 'none');
+		.style('display', isXAxisShow)
+//		.style('transform', 'rotate(-90deg)')
+//		.orient("bottom");
 	 
 	// line chart와 동일
 	const yAxis = g => g
@@ -305,8 +301,13 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 			tQueryTemplate += '</div>';
 			tQuery.append(tQueryTemplate)
 			
-			positionLeft = Number(target.getAttribute('x')) - tQuery.width()/2 + Number(target.getAttribute('width'))/2
-			positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight + 10;
+			positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight;
+			if (isDetail) {
+				positionLeft = $(target).position().left - tQuery.width()/2 + Number(target.getAttribute('width'))/2
+				positionTop += 60
+			} else {
+				positionLeft = Number(target.getAttribute('x')) - tQuery.width()/2 + Number(target.getAttribute('width'))/2
+			}
 			tooltip.style.top = positionTop + 'px';
 			tooltip.style.left = positionLeft + 'px';
 			tooltip.style.opacity = 1;
@@ -347,7 +348,8 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 		width: width, 
 		height: height, 
 		clipPathId: "detail_clip_path_" + i,
-		tooltipId: 'detail_tooltip'
+		tooltipId: 'detail_tooltip',
+		isDetail : true
 	})
 }
 

@@ -108,10 +108,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	position: relative;
 }
 
-#statistic_dialog .chart_tooltip {
-	position: absolute;
-}
 .chart_tooltip {	
+	position: absolute;
     visibility : hidden;	
     text-align: center;			
     width: 150px;					
@@ -141,7 +139,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .statistic_dialog_detail_container {
     /* position: sticky !important; */
     top : 100px !important;
-}
-.statistic_dialog_detail_container .chart_tooltip {	
-    position: relative;
 }
