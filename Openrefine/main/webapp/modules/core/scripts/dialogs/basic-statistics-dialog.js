@@ -162,13 +162,10 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	const UNIQUE_MAX_WIDTH = 55;
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
-	
-//	const isXAxisShow = isDetail ? 'initial' : 'none';
-//	margin.bottom += isDetail ? 50 : 0; 
-	const isXAxisShow = 'none'
+
+	margin.bottom += isDetail ? 100 : 0; 
 	
 	const fillColor = 'royalblue';
-	// chart 최대 width 길이
 	
 	var maxBandWidth = 0;
 	var bandwidth = 0;
@@ -183,13 +180,14 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	var positionLeft = null;
 	var positionTop = null;
 	var tQueryTemplate = '';
+
+	data = this._getD3ChartSeries(i);
 	
 	const svg = d3.select('#'+parentId)
 	.append('svg')
+	.attr('viewBox', [0,0,width,height])
 	.style('width', width)
-	.style('height', height);
-
-	data = this._getD3ChartSeries(i);
+	.style('height', height).style("display", "block");
 	
 	const x = d3.scaleBand()
 		.domain(data.map(d => d.key))
@@ -199,38 +197,54 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	const y = d3.scaleLinear()
 		.domain([0, d3.max(data, d => d.value)]).nice()
 		.range([height - margin.bottom, margin.top]);
-
-	const xAxis = g => g
+	
+	var xAxis = null;
+	if (isDetail) {
+		xAxis = g => g
+		.attr('transform', `translate(0, ${height - margin.bottom})`)
+		.call(d3.axisBottom(x))
+		.call(g => g.selectAll('text')
+				.attr('x', 10)
+				.attr("y", 15)
+				.attr("dy", 0)
+				.style("transform", 'rotate(45deg)')
+				.style('text-anchor', 'start'))
+		.call(g => g.selectAll('line')
+				.attr('x1', 0)
+				.attr('x2', 0)
+				.attr('y1', 0)
+				.attr('y2', 10))
+	} else {
+		xAxis = g => g
 		.attr('transform', `translate(0, ${height - margin.bottom})`)
 		.call(d3.axisBottom(x).tickSizeOuter(0))
-		.call(g => g.select('.domain').remove())
 		.call(g => g.selectAll('line').remove())
 		.selectAll('text')
-		.style('display', isXAxisShow)
-//		.style('transform', 'rotate(-90deg)')
-//		.orient("bottom");
-	 
-	// line chart와 동일
+		.style('display', 'none')
+	}
+	
 	const yAxis = g => g
-		.attr('transform', `translate(${margin.left}, 0)`)
-		.call(d3.axisLeft(y))
-		.call(g => g.select('.domain').remove())
-		.call(g => g.selectAll('line')
-				.attr('x2', width)
-				.style('stroke', '#f5f5f5'))
-	
-	svg.append('g').call(xAxis);
-	svg.append('g').call(yAxis);
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y))
 
-	// zoom 할때, 영역 잡아줌
-	svg.append("clipPath")
-      .attr("id", clipPathId)
-      .append("rect")
-      .attr("x", margin.left)
-      .attr("y", margin.top)
-      .attr("width", width - margin.left - margin.right)
-      .attr("height", height - margin.top - margin.bottom);
+	// 그래프 clip-path
+	svg.append('defs').append("clipPath")
+	.attr("id", clipPathId)
+	.append("rect")
+	.attr("x", margin.left)
+	.attr("y", margin.top)
+	.attr("width", width - margin.left - margin.right)
+	.attr("height", height - margin.top - margin.bottom);
 	
+	// xAxis clip-path
+	svg.select('defs').append("clipPath")
+	.attr("id", clipPathId+'_sec')
+	.append("rect")
+	.attr("x", margin.left)
+	.attr("y", margin.top)
+	.attr("width", width - margin.left - margin.right)
+	.attr("height", height - margin.top);    
+    
 	/**
 	 * chart bar의 width 계산 및 zoom sacle max 값 계산
 	 * 각 차트 width의 1/5 값을 width의 최대길이로 가정하고, 그 길이를 기준으로 비율을 계산한다.  
@@ -251,70 +265,85 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	scaleMaxExtent = maxBandWidth / bandwidth;
 	scaleMaxExtent = (scaleMaxExtent < 0) ? 1 : Math.round(scaleMaxExtent);
 	
-	// zoom 설정
-	function zoomed() {
-		x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
-		svg.selectAll(".bars rect").attr("x", d => (x.bandwidth() /2.4)+x(d.key))
-		.attr("width", bandwidth * d3.event.transform.k);
-		svg.selectAll(".x-axis").call(xAxis);
-	}
-	svg.call(d3.zoom()
+	// detail popup chart 일때만 zoom일 지원한다
+	if (isDetail) {	
+		// zoom 설정
+		function zoomed() {
+			const _scaleWidth = bandwidth * d3.event.transform.k;
+			
+		    x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
+		    svg.selectAll(".bars rect").attr("x", d => (x.bandwidth()/2)-(_scaleWidth)/2+x(d.key)).attr("width", _scaleWidth);
+		    svg.selectAll(".x-axis").call(xAxis);
+		    svg.selectAll(".y-axis").call(yAxis);
+		}
+		svg.call(d3.zoom()
 			.scaleExtent([1, scaleMaxExtent]) 
 			.translateExtent(extent)
 			.extent(extent)
 			.on("zoom", zoomed))
 			.on("dblclick.zoom", () => {})
 			.on("click.zoom", () => {});
+	}
 	
 	svg.append('g')
       	.attr("class", "bars")
-		.selectAll('rect')
-		.data(data)
-		.enter()
-		.append('rect')
 		.attr("clip-path","url(#"+clipPathId+")")
-		.attr('x', d => (x.bandwidth()/2.4)+x(d.key))
+		.selectAll('rect')
+			.data(data)
+			.enter()
+		.append('rect')
+		.attr('x', d => (x.bandwidth()/2)-bandwidth/2+x(d.key))
 		.attr('y', d => y(d.value))
 		.attr('height', d => y(0) - y(d.value))
 		.attr('width', bandwidth)
 		.attr('fill', fillColor)
 		.attr('data-x', d => d.key)
 		.attr('data-y', d => d.value);
-	
-	// tooltip
-	rectEl = document.getElementById(parentId).getElementsByTagName('rect');
-	for(const el of rectEl) {
-		// event reset
-		el.removeEventListener('mouseover', ()=>{})
-		el.addEventListener('mouseover', (event) => {
-			target = event.target;
-			tooltip = $('#'+tooltipId)[0]; 
-			
-			tQuery = $(tooltip);
-			tQuery.css('visibility', 'visible')
-			
-			tQuery.empty();
-			tQueryTemplate = '';
-			tQueryTemplate += '<div class="tooltip_text">';
-			tQueryTemplate += '<p>key : ' + target.dataset.x + '</p>';
-			tQueryTemplate += '<p>count : ' + target.dataset.y + '</p>';
-			tQueryTemplate += '</div>';
-			tQuery.append(tQueryTemplate)
-			
-			positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight;
-			if (isDetail) {
+
+	svg.append('g').attr("class", "y-axis").call(yAxis, y);
+	svg.append('g')
+	.attr("clip-path","url(#"+clipPathId+"_sec)")
+	.append('g').attr("class", "x-axis").call(xAxis, x);
+
+	// detail popup chart 일때만 zoom일 지원한다
+	if (isDetail) {	
+		// tooltip
+		rectEl = document.getElementById(parentId).getElementsByTagName('rect');
+		for(const el of rectEl) {
+			// event reset
+			el.removeEventListener('mouseover', ()=>{})
+			el.addEventListener('mouseover', (event) => {
+				target = event.target;
+				tooltip = $('#'+tooltipId)[0]; 
+				
+				tQuery = $(tooltip);
+				tQuery.css('visibility', 'visible')
+				
+				tQuery.empty();
+				tQueryTemplate = '';
+				tQueryTemplate += '<div class="tooltip_text">';
+				tQueryTemplate += '<p>key : ' + target.dataset.x + '</p>';
+				tQueryTemplate += '<p>count : ' + target.dataset.y + '</p>';
+				tQueryTemplate += '</div>';
+				tQuery.append(tQueryTemplate)
+				
+				
+				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight - 40;
 				positionLeft = $(target).position().left - tQuery.width()/2 + Number(target.getAttribute('width'))/2
-				positionTop += 60
-			} else {
-				positionLeft = Number(target.getAttribute('x')) - tQuery.width()/2 + Number(target.getAttribute('width'))/2
-			}
-			tooltip.style.top = positionTop + 'px';
-			tooltip.style.left = positionLeft + 'px';
-			tooltip.style.opacity = 1;
-		});
-		el.addEventListener('mouseout', (event) => {
-			$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
-		});
+				
+				console.log('here')
+				
+				tooltip.style.top = positionTop + 'px';
+				tooltip.style.left = positionLeft + 'px';
+				tooltip.style.opacity = 1;
+			});
+			el.addEventListener('mouseout', (event) => {
+				$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
+			});
+		}
+	} else {
+		// 사용하지 않기 때문에 삭제한다.
+		svg.select('defs').remove();
 	}
 }
 BasicStatisticsDialogUI.prototype._setChartEvent = function(i) {
@@ -342,7 +371,7 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 	
 	// copy chart
 	const width = 800;
-	const height = 300;
+	const height = 600;
 	
 	this._drawSvg(i, 'basic-statistics-chart-Detail', {
 		width: width, 
