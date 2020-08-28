@@ -158,12 +158,39 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 		this._setChartEvent(i);
 	};
 }
+
+BasicStatisticsDialogUI.prototype.aXisxWrap = function(text, width) {
+	text.each(function() {
+		var text = d3.select(this),
+		words = text.text().split(/\s+/).reverse(),
+		word,
+		line = [],
+		lineNumber = 0,
+		lineHeight = 1.1, // ems
+		y = text.attr("y"),
+		dy = parseFloat(text.attr("dy")),
+		tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+		
+		while (word = words.pop()) {
+			line.push(word);
+			tspan.text(line.join(" "));
+			
+			if (tspan.node().getComputedTextLength() > width) {
+				line.pop();
+				tspan.text(line.join(" "));
+				line = [word];
+				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+			}
+		}
+	});
+}
+
 BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, height, clipPathId, tooltipId, isDetail}) {
 	const UNIQUE_MAX_WIDTH = 55;
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
 
-	margin.bottom += isDetail ? 100 : 0; 
+	margin.bottom += isDetail ? 50 : 0; 
 	
 	const fillColor = 'royalblue';
 	
@@ -202,18 +229,18 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	if (isDetail) {
 		xAxis = g => g
 		.attr('transform', `translate(0, ${height - margin.bottom})`)
-		.call(d3.axisBottom(x))
+		.call(d3.axisBottom(x).ticks(d => d.length))
 		.call(g => g.selectAll('text')
-				.attr('x', 10)
-				.attr("y", 15)
-				.attr("dy", 0)
-				.style("transform", 'rotate(45deg)')
-				.style('text-anchor', 'start'))
+				.style("text-anchor", "middle")
+//				.attr("dx", "-.8em")
+//				.attr("dy", ".15em")
+//				.attr("transform", "rotate(-60)")
+				)
 		.call(g => g.selectAll('line')
 				.attr('x1', 0)
 				.attr('x2', 0)
 				.attr('y1', 0)
-				.attr('y2', 10))
+				.attr('y2', 5))
 	} else {
 		xAxis = g => g
 		.attr('transform', `translate(0, ${height - margin.bottom})`)
@@ -266,14 +293,17 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	scaleMaxExtent = (scaleMaxExtent < 0) ? 1 : Math.round(scaleMaxExtent);
 	
 	// detail popup chart 일때만 zoom일 지원한다
-	if (isDetail) {	
+	if (isDetail) {
+		const self = this;
 		// zoom 설정
 		function zoomed() {
 			const _scaleWidth = bandwidth * d3.event.transform.k;
 			
 		    x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
 		    svg.selectAll(".bars rect").attr("x", d => (x.bandwidth()/2)-(_scaleWidth)/2+x(d.key)).attr("width", _scaleWidth);
-		    svg.selectAll(".x-axis").call(xAxis);
+		    svg
+		    	.selectAll(".x-axis").call(xAxis)
+		    	.selectAll(".tick text").call((d)=> self.aXisxWrap(d, x.bandwidth()));
 		    svg.selectAll(".y-axis").call(yAxis);
 		}
 		svg.call(d3.zoom()
@@ -301,9 +331,13 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		.attr('data-y', d => d.value);
 
 	svg.append('g').attr("class", "y-axis").call(yAxis, y);
+
+	const self = this
 	svg.append('g')
-	.attr("clip-path","url(#"+clipPathId+"_sec)")
-	.append('g').attr("class", "x-axis").call(xAxis, x);
+		.attr("clip-path","url(#"+clipPathId+"_sec)")
+		.append('g').attr("class", "x-axis")
+		.call(xAxis, x)
+		.selectAll(".tick text").call((d)=> self.aXisxWrap(d, x.bandwidth()));
 
 	// detail popup chart 일때만 zoom일 지원한다
 	if (isDetail) {	
@@ -328,10 +362,8 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 				tQuery.append(tQueryTemplate)
 				
 				
-				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight - 40;
+				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight;
 				positionLeft = $(target).position().left - tQuery.width()/2 + Number(target.getAttribute('width'))/2
-				
-				console.log('here')
 				
 				tooltip.style.top = positionTop + 'px';
 				tooltip.style.left = positionLeft + 'px';
@@ -357,7 +389,7 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 	
 	const frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog-detail.html"));
 	this._detailElmts = DOM.bind(frame);
-	this._detailLevel = DialogSystem.showDialog(frame, null, 'statistic_dialog_detail_container');
+	this._detailLevel = DialogSystem.showDialog(frame, null, true);
 	
 	const self = this;
 	// btn setting
@@ -370,8 +402,8 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 	$('#graph-title-detail').append(title);
 	
 	// copy chart
-	const width = 800;
-	const height = 600;
+	const width = 970;
+	const height = 300;
 	
 	this._drawSvg(i, 'basic-statistics-chart-Detail', {
 		width: width, 

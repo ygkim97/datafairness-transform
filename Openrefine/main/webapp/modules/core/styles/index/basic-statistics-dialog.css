@@ -133,10 +133,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     font-weight: 600;
 }
 
+/* chart-detail */
 #statistic_dialog_detail {
-	width : 850px;
+	width : 1000px;
 }
-.statistic_dialog_detail_container {
-    /* position: sticky !important; */
-    top : 100px !important;
+#statistic_dialog_detail .dialog-body div {
+	border: 1px solid #ccc;
+}
+#statistic_dialog_detail .dialog-body div:nth-child(1) {
+	margin-bottom : 10px;
+}
+#statistic_dialog_detail #basic-statistics-grid-Detail {
+	min-height: 300px; 
 }
