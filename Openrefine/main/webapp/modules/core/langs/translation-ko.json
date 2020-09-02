@@ -95,5 +95,6 @@
     "core-index-dialog/title-detail": "컬럼 상세 Dialog",
     "core-index-dialog/loading-step1": "데이터 조회 중…",
     "core-index-dialog/loading-step2": "차트 그리는 중…",
+    "core-index-dialog/noty-detail-chart": "차트 클릭시, 상세 화면이 표시됩니다.",
     "": ""
 }

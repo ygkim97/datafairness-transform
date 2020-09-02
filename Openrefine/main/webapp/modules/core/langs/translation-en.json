@@ -768,5 +768,6 @@
     "core-index-dialog/title-detail": "Column's Detail Dialog",
     "core-index-dialog/loading-step1": "Loading data…",
     "core-index-dialog/loading-step2": "Drawing charts…",
+    "core-index-dialog/noty-detail-chart": "When clicking on the chart, the Dialog is displayed.",
     "" : ""
 }

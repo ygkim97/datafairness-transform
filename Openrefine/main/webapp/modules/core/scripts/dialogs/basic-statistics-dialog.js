@@ -29,6 +29,8 @@ BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 			_BasicStatisticsDialogUI._setDialog();
 		}
 	})
+	// noty
+	this._elmts.basic_statistics_noty.html('*' + $.i18n('core-index-dialog/noty-detail-chart'));
 
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog/title'));
@@ -187,10 +189,11 @@ BasicStatisticsDialogUI.prototype.aXisxWrap = function(text, width) {
 
 BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, height, clipPathId, tooltipId, isDetail}) {
 	const UNIQUE_MAX_WIDTH = 55;
-	const margin = {top: 10, right: 10, bottom: 10, left: 40}
+	const margin = {top: 0, right: 10, bottom: 0, left: 40}
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
 
-	margin.bottom += isDetail ? 50 : 0; 
+	margin.top += isDetail ? 25 : 10; 
+	margin.bottom += isDetail ? 50 : 10;
 	
 	const fillColor = 'royalblue';
 	
@@ -214,7 +217,8 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	.append('svg')
 	.attr('viewBox', [0,0,width,height])
 	.style('width', width)
-	.style('height', height).style("display", "block");
+	.style('height', height).style("display", "block")
+	.style('pointer-events', (isDetail ? 'all': 'none'))
 	
 	const x = d3.scaleBand()
 		.domain(data.map(d => d.key))
@@ -362,7 +366,7 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 				tQuery.append(tQueryTemplate)
 				
 				
-				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight;
+				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight + 20;
 				positionLeft = $(target).position().left - tQuery.width()/2 + Number(target.getAttribute('width'))/2
 				
 				tooltip.style.top = positionTop + 'px';
@@ -392,13 +396,16 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 	this._detailLevel = DialogSystem.showDialog(frame, null, true);
 	
 	const self = this;
+	
+	const columnName = self.statData.columnInfo[i].name;
+	
 	// btn setting
 	this._detailElmts.closeButton.html($.i18n('core-buttons/close'));
 	this._detailElmts.closeButton.click(function() {
 		DialogSystem.dismissUntil(self._detailLevel - 1);
 	});
 	
-	var title = $('<h5>').text($.i18n('core-index-dialog/title-detail'));
+	var title = $('<h5>').text('[' + columnName + '] ' + $.i18n('core-index-dialog/title-detail'));
 	$('#graph-title-detail').append(title);
 	
 	// copy chart

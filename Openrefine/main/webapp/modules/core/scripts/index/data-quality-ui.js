@@ -208,7 +208,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	this._elmts.project_select_lebel.text($.i18n('core-index-data/project-label')+":");
 	this._elmts.project_select_btn.text($.i18n('core-index-data/select'));
 	this._elmts.get_sta_bnt.text($.i18n('core-index-data/basic-data-statistics'));
-	this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label') + ' (' + $.i18n('core-index-data/max') + ' ' + MAX_HEADER_SELECED + ' ' + $.i18n('core-index-data/cnt') + ') ');
+	this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label'));
 	
 	// btn click 이벤트
 	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {

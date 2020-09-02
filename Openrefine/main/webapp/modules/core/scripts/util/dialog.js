@@ -58,7 +58,7 @@ DialogSystem.showDialog = function(elmt, onCancel, isSecDialog) {
   var _top = Math.round((overlay.height() - elmt.height()) / 2);
   // When open Dialog In Dialog, set customzed [top] value.
   if (isSecDialog) {
-	  _top = Math.round((overlay.height()/2 - elmt.height()) / 2)
+	  _top = Math.round((overlay.height()/1.5 - elmt.height()) / 2)
   }
   
   container.css("top", _top + "px");
