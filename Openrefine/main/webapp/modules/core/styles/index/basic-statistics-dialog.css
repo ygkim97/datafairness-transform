@@ -45,11 +45,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding-bottom: 0px;
 }
 #statistic_dialog #basic-statics-noty {
+	margin-top: -3px;
 	display: inline-block;
 	width : 100%;
 }
 #statistic_dialog #basic-statics-noty > span {
 	float : right;
+	font-size: smaller;
 }
 #statistic_dialog .dialog-body > div:nth-child(2) {
 	height : 200px;

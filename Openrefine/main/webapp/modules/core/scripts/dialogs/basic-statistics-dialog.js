@@ -230,6 +230,8 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		.range([height - margin.bottom, margin.top]);
 	
 	var xAxis = null;
+	var yAxis = null;
+
 	if (isDetail) {
 		xAxis = g => g
 		.attr('transform', `translate(0, ${height - margin.bottom})`)
@@ -245,6 +247,7 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 				.attr('x2', 0)
 				.attr('y1', 0)
 				.attr('y2', 5))
+            
 	} else {
 		xAxis = g => g
 		.attr('transform', `translate(0, ${height - margin.bottom})`)
@@ -252,12 +255,19 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		.call(g => g.selectAll('line').remove())
 		.selectAll('text')
 		.style('display', 'none')
+		
+//		yAxis = g => g
+//	    .attr("transform", `translate(${margin.left},0)`)
+//	    .call(d3.axisLeft(y))		
 	}
 	
-	const yAxis = g => g
+	yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(y))
-
+    .call(g => g.selectAll(".tick line").clone()
+            .attr("x2", width)
+            .attr("stroke-opacity", 0.05))
+            
 	// 그래프 clip-path
 	svg.append('defs').append("clipPath")
 	.attr("id", clipPathId)
@@ -308,7 +318,12 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		    svg
 		    	.selectAll(".x-axis").call(xAxis)
 		    	.selectAll(".tick text").call((d)=> self.aXisxWrap(d, x.bandwidth()));
-		    svg.selectAll(".y-axis").call(yAxis);
+		    
+//		    const strokeOpacity = 0.05/d3.event.transform.k
+//		    svg.selectAll(".y-axis").call(yAxis)
+//		    	.selectAll('.tick line')
+//		    	.attr("x2", width)
+//		    	.attr("stroke-opacity", strockOpacity)
 		}
 		svg.call(d3.zoom()
 			.scaleExtent([1, scaleMaxExtent]) 
@@ -318,6 +333,8 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 			.on("dblclick.zoom", () => {})
 			.on("click.zoom", () => {});
 	}
+	
+	svg.append('g').attr("class", "y-axis").call(yAxis, y);
 	
 	svg.append('g')
       	.attr("class", "bars")
@@ -334,7 +351,6 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		.attr('data-x', d => d.key)
 		.attr('data-y', d => d.value);
 
-	svg.append('g').attr("class", "y-axis").call(yAxis, y);
 
 	const self = this
 	svg.append('g')
