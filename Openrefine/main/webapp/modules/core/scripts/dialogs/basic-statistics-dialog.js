@@ -230,7 +230,6 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		.range([height - margin.bottom, margin.top]);
 	
 	var xAxis = null;
-	var yAxis = null;
 
 	if (isDetail) {
 		xAxis = g => g
@@ -255,13 +254,9 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 		.call(g => g.selectAll('line').remove())
 		.selectAll('text')
 		.style('display', 'none')
-		
-//		yAxis = g => g
-//	    .attr("transform", `translate(${margin.left},0)`)
-//	    .call(d3.axisLeft(y))		
 	}
 	
-	yAxis = g => g
+	const yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(y))
     .call(g => g.selectAll(".tick line").clone()
