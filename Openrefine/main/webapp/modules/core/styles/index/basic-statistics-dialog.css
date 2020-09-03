@@ -154,6 +154,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #statistic_dialog_detail .dialog-body div:nth-child(1) {
 	margin-bottom : 10px;
 }
+/* grid panel hide  */
+#statistic_dialog_detail .dialog-body div:nth-child(2) {
+	display : none;
+}
 #statistic_dialog_detail #basic-statistics-grid-Detail {
 	min-height: 300px; 
 }
