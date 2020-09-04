@@ -29,6 +29,8 @@ BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 			_BasicStatisticsDialogUI._setDialog();
 		}
 	})
+	// noty
+	this._elmts.basic_statistics_noty.html('*' + $.i18n('core-index-dialog/noty-detail-chart'));
 
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog/title'));
@@ -43,7 +45,6 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 		selectedHeaders = [];
 	}
 	const _self = this;
-//	_self.totalHeaderCnt = selectedHeaders.length;
 	
 	const warningDialog1 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step1'));
 	
@@ -65,16 +66,6 @@ BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) 
 }
 BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 	const _self = this;
-	
-//	// loading 바에 상태를 표시해주기 위한 div tag
-//	var spanAppend = '';
-//	spanAppend += '<div>';
-//	spanAppend += '<span id="now_chart_cnt">0</span>';
-//	spanAppend += '<span>/</span>';
-//	spanAppend += '<span>'+_self.totalHeaderCnt+'</span>';
-//	spanAppend += '</div>';
-//	const warningDialog = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step2') + spanAppend);
-	
 	const warningDialog2 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step2'));
 	
 	setTimeout(()=>{
@@ -132,7 +123,8 @@ BasicStatisticsDialogUI.prototype._createChart_default = function(columnInfo) {
 	dialogChart.append(template);
 }
 
-BasicStatisticsDialogUI.prototype._getD3ChartSeries = function(data) {
+BasicStatisticsDialogUI.prototype._getD3ChartSeries = function(i) {
+	var data = this._datas[i];
 	const keys = Object.keys(data);
 	const values = Object.values(data);
 	
@@ -152,12 +144,59 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	const td = $('#chart_template_'+0)
 	const width = td.width();
 	const height = td.height();
-	const margin = {top: 10, right: 10, bottom: 10, left: 40}
+	
+	this._datas = datas;
+	
+	for (var i = 0, size = columnInfo.length; i < size; i++) {	
+		this._drawSvg(i, ('chart_template_' +i), {
+			width: width, 
+			height: height, 
+			clipPathId: "clip_path_" + i,
+			tooltipId : 'tooltip_chart_template_' + i,
+			isDetail : false
+		});
+
+		// chart click시, detail popup을 표시하는 이벤트 설정.
+		this._setChartEvent(i);
+	};
+}
+
+BasicStatisticsDialogUI.prototype.aXisxWrap = function(text, width) {
+	text.each(function() {
+		var text = d3.select(this),
+		words = text.text().split(/\s+/).reverse(),
+		word,
+		line = [],
+		lineNumber = 0,
+		lineHeight = 1.1, // ems
+		y = text.attr("y"),
+		dy = parseFloat(text.attr("dy")),
+		tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+		
+		while (word = words.pop()) {
+			line.push(word);
+			tspan.text(line.join(" "));
+			
+			if (tspan.node().getComputedTextLength() > width) {
+				line.pop();
+				tspan.text(line.join(" "));
+				line = [word];
+				tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+			}
+		}
+	});
+}
+
+BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, height, clipPathId, tooltipId, isDetail}) {
+	const UNIQUE_MAX_WIDTH = 55;
+	const margin = {top: 0, right: 10, bottom: 0, left: 40}
 	const extent = [[margin.left, margin.top], [width - margin.right, height - margin.top]];
 
+	margin.top += isDetail ? 25 : 10; 
+	margin.bottom += isDetail ? 50 : 10;
+	
 	const fillColor = 'royalblue';
-	// chart 최대 width 길이
-	const UNIQUE_MAX_WIDTH = 55;
+	
 	var maxBandWidth = 0;
 	var bandwidth = 0;
 	var scaleMaxExtent = 0;
@@ -172,105 +211,159 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 	var positionTop = null;
 	var tQueryTemplate = '';
 
-	for (var i = 0, size = columnInfo.length; i < size; i++) {		
-		const svg = d3.select('#chart_template_'+i)
-		.append('svg')
-		.style('width', width)
-		.style('height', height);
+	data = this._getD3ChartSeries(i);
 	
-		data = this._getD3ChartSeries(datas[i]);
-		
-		const x = d3.scaleBand()
-			.domain(data.map(d => d.key))
-			.range([margin.left, width - margin.right])
-			.padding(0.4);
-		 
-		const y = d3.scaleLinear()
-			.domain([0, d3.max(data, d => d.value)]).nice()
-			.range([height - margin.bottom, margin.top]);
-		 
-		const xAxis = g => g
-			.attr('transform', `translate(0, ${height - margin.bottom})`)
-			.call(d3.axisBottom(x).tickSizeOuter(0))
-			.call(g => g.select('.domain').remove())
-			.call(g => g.selectAll('line').remove())
-			.selectAll('text')
-			.style('display', 'none');
-		 
-		// line chart와 동일
-		const yAxis = g => g
-			.attr('transform', `translate(${margin.left}, 0)`)
-			.call(d3.axisLeft(y))
-			.call(g => g.select('.domain').remove())
-			.call(g => g.selectAll('line')
-					.attr('x2', width)
-					.style('stroke', '#f5f5f5'))
-		
-		svg.append('g').call(xAxis);
-		svg.append('g').call(yAxis);
-		
-		// zoom 할때, 영역 잡아줌
-		svg.append("clipPath")
-	      .attr("id", "clip_path_"+i)
-	      .append("rect")
-	      .attr("x", margin.left)
-	      .attr("y", margin.top)
-	      .attr("width", width - margin.left - margin.right)
-	      .attr("height", height - margin.top - margin.bottom);
-		
-		/**
-		 * chart bar의 width 계산 및 zoom sacle max 값 계산
-		 * 각 차트 width의 1/5 값을 width의 최대길이로 가정하고, 그 길이를 기준으로 비율을 계산한다.  
-		 */
-		// chart width 길이 구함 (clipPath의 rect node의 길이가 차트 영역이다.
-		chartViewWidth = $('#chart_template_'+i).find('svg').find('clipPath').find('rect').width();
-		
-		// max 길이에서 1/5로 한 길이가 chart bar의 최대길이가 된다. 
-		maxBandWidth = chartViewWidth/5;
-		maxBandWidth = (maxBandWidth > UNIQUE_MAX_WIDTH) ? UNIQUE_MAX_WIDTH : maxBandWidth;
-		
-		// 기본 bandWidth는 /2로 설정한다.
-		bandwidth =  x.bandwidth();
-		// 만약 bandwidth의 길이가 설정가능한 최대 width를 넘어갈 경우, 최대 width로 설정한다.
-		bandwidth = (bandwidth > maxBandWidth) ? maxBandWidth : bandwidth;
-		
-		// zoom 가능한 scale max 값은 최대 width / 현재 width 값
-		// 그 비율만큼 zoom 가능하다.
-		scaleMaxExtent = maxBandWidth / bandwidth;
-		scaleMaxExtent = (scaleMaxExtent < 0) ? 1 : Math.round(scaleMaxExtent);
-		
+	const svg = d3.select('#'+parentId)
+	.append('svg')
+	.attr('viewBox', [0,0,width,height])
+	.style('width', width)
+	.style('height', height).style("display", "block")
+	.style('pointer-events', (isDetail ? 'all': 'none'))
+	
+	const x = d3.scaleBand()
+		.domain(data.map(d => d.key))
+		.range([margin.left, width - margin.right])
+		.padding(0.3);
+	 
+	const y = d3.scaleLinear()
+		.domain([0, d3.max(data, d => d.value)]).nice()
+		.range([height - margin.bottom, margin.top]);
+	
+	var xAxis = null;
+
+	if (isDetail) {
+		xAxis = g => g
+		.attr('transform', `translate(0, ${height - margin.bottom})`)
+		.call(d3.axisBottom(x).ticks(d => d.length))
+		.call(g => g.selectAll('text')
+				.style("text-anchor", "middle")
+//				.attr("dx", "-.8em")
+//				.attr("dy", ".15em")
+//				.attr("transform", "rotate(-60)")
+				)
+		.call(g => g.selectAll('line')
+				.attr('x1', 0)
+				.attr('x2', 0)
+				.attr('y1', 0)
+				.attr('y2', 5))
+            
+	} else {
+		xAxis = g => g
+		.attr('transform', `translate(0, ${height - margin.bottom})`)
+		.call(d3.axisBottom(x).tickSizeOuter(0))
+		.call(g => g.selectAll('line').remove())
+		.selectAll('text')
+		.style('display', 'none')
+	}
+	
+	const yAxis = g => g
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y))
+    .call(g => g.selectAll(".tick line").clone()
+            .attr("x2", width)
+            .attr("stroke-opacity", 0.05))
+            
+	// 그래프 clip-path
+	svg.append('defs').append("clipPath")
+	.attr("id", clipPathId)
+	.append("rect")
+	.attr("x", margin.left)
+	.attr("y", margin.top)
+	.attr("width", width - margin.left - margin.right)
+	.attr("height", height - margin.top - margin.bottom);
+	
+	// xAxis clip-path
+	svg.select('defs').append("clipPath")
+	.attr("id", clipPathId+'_sec')
+	.append("rect")
+	.attr("x", margin.left)
+	.attr("y", margin.top)
+	.attr("width", width - margin.left - margin.right)
+	.attr("height", height - margin.top);    
+    
+	/**
+	 * chart bar의 width 계산 및 zoom sacle max 값 계산
+	 * 각 차트 width의 1/5 값을 width의 최대길이로 가정하고, 그 길이를 기준으로 비율을 계산한다.  
+	 */
+	// chart width 길이 구함 (clipPath의 rect node의 길이가 차트 영역이다.
+	chartViewWidth = $('#'+parentId).find('svg').find('clipPath').find('rect').width();
+	
+	// max 길이에서 1/5로 한 길이가 chart bar의 최대길이가 된다. 
+	maxBandWidth = chartViewWidth/5;
+	maxBandWidth = (maxBandWidth > UNIQUE_MAX_WIDTH) ? UNIQUE_MAX_WIDTH : maxBandWidth;
+	
+	// 기본 bandWidth는 /2로 설정한다.
+	bandwidth =  x.bandwidth();
+	// 만약 bandwidth의 길이가 설정가능한 최대 width를 넘어갈 경우, 최대 width로 설정한다.
+	bandwidth = (bandwidth > maxBandWidth) ? maxBandWidth : bandwidth;
+	
+	// 그 비율만큼 zoom 가능하다.
+	scaleMaxExtent = maxBandWidth / bandwidth;
+	scaleMaxExtent = (scaleMaxExtent < 0) ? 1 : Math.round(scaleMaxExtent);
+	
+	// detail popup chart 일때만 zoom일 지원한다
+	if (isDetail) {
+		const self = this;
 		// zoom 설정
 		function zoomed() {
-			x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
-			svg.selectAll(".bars rect").attr("x", d => x(d.key)).attr("width", x.bandwidth());
-			svg.selectAll(".x-axis").call(xAxis);
+			const _scaleWidth = bandwidth * d3.event.transform.k;
+			
+		    x.range([margin.left, width - margin.right].map(d => d3.event.transform.applyX(d)));
+		    svg.selectAll(".bars rect").attr("x", d => (x.bandwidth()/2)-(_scaleWidth)/2+x(d.key)).attr("width", _scaleWidth);
+		    svg
+		    	.selectAll(".x-axis").call(xAxis)
+		    	.selectAll(".tick text").call((d)=> self.aXisxWrap(d, x.bandwidth()));
+		    
+//		    const strokeOpacity = 0.05/d3.event.transform.k
+//		    svg.selectAll(".y-axis").call(yAxis)
+//		    	.selectAll('.tick line')
+//		    	.attr("x2", width)
+//		    	.attr("stroke-opacity", strockOpacity)
 		}
 		svg.call(d3.zoom()
-				.scaleExtent([1, scaleMaxExtent]) 
-				.translateExtent(extent)
-				.extent(extent)
-				.on("zoom", zoomed));
-		
-		svg.append('g')
-	      	.attr("class", "bars")
-			.selectAll('rect').data(data).enter().append('rect')
-			.attr("clip-path","url(#clip_path_"+i+")")
-			.attr('x', d => x(d.key))
-			.attr('y', d => y(d.value))
-			.attr('height', d => y(0) - y(d.value))
-			.attr('width', bandwidth)
-			.attr('fill', fillColor)
-			.attr('data-x', d => d.key)
-			.attr('data-y', d => d.value);
-		
+			.scaleExtent([1, scaleMaxExtent]) 
+			.translateExtent(extent)
+			.extent(extent)
+			.on("zoom", zoomed))
+			.on("dblclick.zoom", () => {})
+			.on("click.zoom", () => {});
+	}
+	
+	svg.append('g').attr("class", "y-axis").call(yAxis, y);
+	
+	svg.append('g')
+      	.attr("class", "bars")
+		.attr("clip-path","url(#"+clipPathId+")")
+		.selectAll('rect')
+			.data(data)
+			.enter()
+		.append('rect')
+		.attr('x', d => (x.bandwidth()/2)-bandwidth/2+x(d.key))
+		.attr('y', d => y(d.value))
+		.attr('height', d => y(0) - y(d.value))
+		.attr('width', bandwidth)
+		.attr('fill', fillColor)
+		.attr('data-x', d => d.key)
+		.attr('data-y', d => d.value);
+
+
+	const self = this
+	svg.append('g')
+		.attr("clip-path","url(#"+clipPathId+"_sec)")
+		.append('g').attr("class", "x-axis")
+		.call(xAxis, x)
+		.selectAll(".tick text").call((d)=> self.aXisxWrap(d, x.bandwidth()));
+
+	// detail popup chart 일때만 zoom일 지원한다
+	if (isDetail) {	
 		// tooltip
-		rectEl = document.getElementById('chart_template_'+i).getElementsByTagName('rect');
+		rectEl = document.getElementById(parentId).getElementsByTagName('rect');
 		for(const el of rectEl) {
 			// event reset
 			el.removeEventListener('mouseover', ()=>{})
 			el.addEventListener('mouseover', (event) => {
 				target = event.target;
-				tooltip = target.parentElement.parentElement.previousElementSibling;
+				tooltip = $('#'+tooltipId)[0]; 
 				
 				tQuery = $(tooltip);
 				tQuery.css('visibility', 'visible')
@@ -283,8 +376,10 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 				tQueryTemplate += '</div>';
 				tQuery.append(tQueryTemplate)
 				
-				positionLeft = Number(target.getAttribute('x')) + Number(x.bandwidth()/2) - tooltip.clientWidth/2;
-				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight + 10;
+				
+				positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight + 20;
+				positionLeft = $(target).position().left - tQuery.width()/2 + Number(target.getAttribute('width'))/2
+				
 				tooltip.style.top = positionTop + 'px';
 				tooltip.style.left = positionLeft + 'px';
 				tooltip.style.opacity = 1;
@@ -292,8 +387,49 @@ BasicStatisticsDialogUI.prototype._createChart_d3 = function(columnInfo, datas) 
 			el.addEventListener('mouseout', (event) => {
 				$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
 			});
-		}		
-	};
+		}
+	} else {
+		// 사용하지 않기 때문에 삭제한다.
+		svg.select('defs').remove();
+	}
+}
+BasicStatisticsDialogUI.prototype._setChartEvent = function(i) {
+	$('#chart_template_'+i).off('click', ()=>{});
+	$('#chart_template_'+i).on('click', {_self:this}, function(e) {
+		const _self = e.data._self;
+		_self._showDetailPopup(i);
+	})
+}
+BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
+	
+	const frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog-detail.html"));
+	this._detailElmts = DOM.bind(frame);
+	this._detailLevel = DialogSystem.showDialog(frame, null, true);
+	
+	const self = this;
+	
+	const columnName = self.statData.columnInfo[i].name;
+	
+	// btn setting
+	this._detailElmts.closeButton.html($.i18n('core-buttons/close'));
+	this._detailElmts.closeButton.click(function() {
+		DialogSystem.dismissUntil(self._detailLevel - 1);
+	});
+	
+	var title = $('<h5>').text('[' + columnName + '] ' + $.i18n('core-index-dialog/title-detail'));
+	$('#graph-title-detail').append(title);
+	
+	// copy chart
+	const width = 970;
+	const height = 300;
+	
+	this._drawSvg(i, 'basic-statistics-chart-Detail', {
+		width: width, 
+		height: height, 
+		clipPathId: "detail_clip_path_" + i,
+		tooltipId: 'detail_tooltip',
+		isDetail : true
+	})
 }
 
 BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
@@ -333,6 +469,7 @@ BasicStatisticsDialogUI.prototype._createGrid = function(column, rowNames) {
 // when close Dialog 
 BasicStatisticsDialogUI.prototype._dismiss = function() {
 	this.statData = {}; 
+	this._datas = [];
 	_BasicStatisticsDialogUI = null;
 	
 	DialogSystem.dismissUntil(this._level - 1);

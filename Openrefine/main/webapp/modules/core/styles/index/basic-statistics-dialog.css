@@ -44,10 +44,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	height: 700px;
     padding-bottom: 0px;
 }
-#statistic_dialog .dialog-body > div:nth-child(1) {
+#statistic_dialog #basic-statics-noty {
+	margin-top: -3px;
+	display: inline-block;
+	width : 100%;
+}
+#statistic_dialog #basic-statics-noty > span {
+	float : right;
+	font-size: smaller;
+}
+#statistic_dialog .dialog-body > div:nth-child(2) {
 	height : 200px;
 }  
-#statistic_dialog .dialog-body > div:nth-child(2) {
+#statistic_dialog .dialog-body > div:nth-child(3) {
 	height : calc(100% - 200px);
 }
 #statistic_dialog table {
@@ -108,8 +117,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	position: relative;
 }
 
-#statistic_dialog .chart_tooltip {	
-    position: absolute;
+.chart_tooltip {	
+	position: absolute;
     visibility : hidden;	
     text-align: center;			
     width: 150px;					
@@ -121,14 +130,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     pointer-events: none;			
     z-index:1;
 }
-#statistic_dialog .chart_tooltip .tooltip_text {
+.chart_tooltip .tooltip_text {
 	font: 11px sans-serif;
     padding-left: 10px;
 }
-#statistic_dialog .chart_tooltip .tooltip_text p {
+.chart_tooltip .tooltip_text p {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     text-align: left;
     font-weight: 600;
+}
+
+/* chart-detail */
+#statistic_dialog_detail {
+	width : 1000px;
+}
+#statistic_dialog_detail .dialog-tatistics-detail > div {
+	border: 1px solid #ccc;
+}
+#statistic_dialog_detail .dialog-body div:nth-child(1) {
+	margin-bottom : 10px;
+}
+/* grid panel hide  */
+#statistic_dialog_detail .dialog-body div:nth-child(2) {
+	display : none;
+}
+#statistic_dialog_detail #basic-statistics-grid-Detail {
+	min-height: 300px; 
+}
+#basic-statistics-grid-Detail {
+	padding : 10px;
 }
