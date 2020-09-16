@@ -153,6 +153,7 @@ function registerCommands() {
   RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
 
   RS.registerCommand(module, "get-based-statistic", new Packages.com.google.refine.commands.statistic.GetBasedStatisticCommand());
+  RS.registerCommand(module, "get-quantitative-evaluation", new Packages.com.google.refine.commands.statistic.GetQuantitativeEvaluationCommand());
 }
 
 function registerOperations() {
@@ -407,7 +408,8 @@ function init() {
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
       "scripts/index/edit-metadata-dialog.js",
 
-      "scripts/dialogs/basic-statistics-dialog.js"
+      "scripts/dialogs/basic-statistics-dialog.js",
+      "scripts/dialogs/quantitative-evaluation-dialog.js"
     ]
   );
 
@@ -434,6 +436,7 @@ function init() {
       "styles/index/import-project-ui.less",
       "styles/index/data-quality-ui.less",
       "styles/index/basic-statistics-dialog.css",
+      "styles/index/quantitative-evaluation-dialog.less",
 
       "styles/index/default-importing-controller.less",
       "styles/index/default-importing-file-selection-panel.less",

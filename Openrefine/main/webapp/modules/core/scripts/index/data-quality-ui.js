@@ -13,6 +13,7 @@ var PAGE_INFO = {
 	START : 0
 }
 var UI_CHART_INFO = {
+	selectedPName : '',
 	selectedPId : '',
 	headerIndex : {},
 }
@@ -207,7 +208,10 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	// text 처리
 	this._elmts.project_select_lebel.text($.i18n('core-index-data/project-label')+":");
 	this._elmts.project_select_btn.text($.i18n('core-index-data/select'));
-	this._elmts.get_sta_bnt.text($.i18n('core-index-data/basic-data-statistics'));
+	this._elmts.get_sta_btn.text($.i18n('core-index-data/basic-data-statistics'));
+	
+	this._elmts.view_qe_btn.text($.i18n('core-index-dialog-qe/quantitative_evaluation'));
+	
 	this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label'));
 	
 	// btn click 이벤트
@@ -230,7 +234,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		_self.GridInstance = null;
 		_self.staticGridInstance2 = null;
 		
-		_self.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
+		UI_CHART_INFO.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 		
 		setTimeout(()=>{
@@ -248,7 +252,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	this._elmts.check_all.on('change', {_self : this}, (e) => {
 		const _self = e.data._self;
 		// 프로젝트 선택 전일경우 alert을 띄운다.
-		if (_self.selectedPName == undefined) {
+		if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 			alert($.i18n('core-index-data/no-selected-project'))
 			$(e.target).removeProp('checked');
 	       return;
@@ -278,8 +282,8 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	})
 	
 	// 데이터 통계 팝업 버튼 클릭
-	this._elmts.get_sta_bnt.on('click', {_self : this}, (e) => {
-		// focus out
+	this._elmts.get_sta_btn.on('click', {_self : this}, (e) => {
+		// focus out - prevent dbl click
 		$(e.target).blur();
 		
 		const _self = e.data._self;
@@ -291,13 +295,28 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		})
 		
 		// 선택된 프로젝트가 없음 > 진행불가능
-		if (_self.selectedPName == undefined) {
+		if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 			alert($.i18n('core-index-data/no-selected-project'))
 		} else if (headerOriginalNames.length == 0) {
 			alert($.i18n('core-index-data/no-selected-headers'))
 		} else {
 			// 선택된 header가 있음 > 그 header로 진행
 			new BasicStatisticsDialogUI(headerOriginalNames);
+		}
+	})
+	
+	this._elmts.view_qe_btn.on('click', {_self : this}, (e) => {
+		// focus out - prevent dbl click 
+		$(e.target).blur();
+		
+		const _self = e.data._self;
+		
+		// 선택된 프로젝트가 없음 > 진행불가능
+		if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+			alert($.i18n('core-index-data/no-selected-project'))
+		} else {
+			// 정량평가 팝업 표시
+			new QEDialogUI(UI_CHART_INFO.selectedPId);
 		}
 	})
 }
@@ -390,7 +409,7 @@ Refine.SetDataQualityUI.prototype._setGridData = function(data) {
 	const newData = this._makeDataObj(rows);
 	this.GridInstance.resetData(newData); // Call API of instance's public method
 
-	this._elmts.get_sta_bnt.attr('disabled', false);
+	this._elmts.get_sta_btn.attr('disabled', false);
 	
 	function headerClicked(target, _self) {
 		const checked = $('#data-quality-body .custom_table_header_check:checked');

@@ -769,5 +769,7 @@
     "core-index-dialog/loading-step1": "Loading data…",
     "core-index-dialog/loading-step2": "Drawing charts…",
     "core-index-dialog/noty-detail-chart": "When clicking on the chart, the Dialog is displayed.",
+    "core-index-dialog-qe/quantitative_evaluation": "Quantitative Evaluation(QE)",
+    "core-index-dialog-qe/title": "QE Dialog",
     "" : ""
 }
