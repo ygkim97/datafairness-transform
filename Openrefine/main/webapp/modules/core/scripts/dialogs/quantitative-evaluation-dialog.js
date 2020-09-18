@@ -266,6 +266,7 @@ QEDialogUI.prototype._createDetailChartTemplate = function() {
 		template1 += '<section>';
 		template1 += '<h1>'+h.name+'</h1>';
 		template1 += '<div class="qe-chart" id="'+divId+pageCnt+'" data-i='+pageCnt+' data-headerIndex='+h.index+'>';
+		template1 += '<div id="qe_detail_tooltip_'+i+'" class="chart_tooltip"></div>';
 		template1 += '</div>';
 		template1 += '<label for="rad'+prevPageCnt+'"><i class="fa fa-chevron-left"></i></label>';
 		template1 += '<label for="rad'+nextPageCnt+'"><i class="fa fa-chevron-right"></i></label>';
@@ -385,7 +386,7 @@ function createChart_bar(params) {
 			target = event.target;
 			target.classList.add('fill-selected')
 			
-			tooltip = $('#detail_tooltip')[0]; 
+			tooltip = $('#qe_detail_tooltip_'+i)[0]; 
 			
 			tQuery = $(tooltip);
 			tQuery.css('visibility', 'visible')
@@ -399,7 +400,7 @@ function createChart_bar(params) {
 			tQuery.append(tQueryTemplate)
 			
 			positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight + 20;
-			positionLeft = $(target).position().left - tQuery.width()/2 + Number(target.getAttribute('width'))/2 + 5
+			positionLeft = Number($(target).attr('x')) - tQuery.width()/2 + Number(target.getAttribute('width'))/2 + 15
 			
 			tooltip.style.top = positionTop + 'px';
 			tooltip.style.left = positionLeft + 'px';
