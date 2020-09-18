@@ -61,10 +61,87 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #qe_dialog td {
     border: 1px solid #ccc;
 	border-collapse:collapse;
-	height : 220px;
+	height : 190px;
+}
+#qe_dialog tr:nth-child(3n) {
+	border-bottom: double #ccc;
+}
+#qe_dialog tr:nth-child(3n) td {
+	height : 30px;
 }
 #qe_dialog .qe-chart {
 	border-collapse:collapse; 
 	padding: 5px;
-	height: 210px;
+	height: 100%;
+	opacity: 0.8;
+}
+.qe-chart.chart-type-bar {
+	background-image: url('../../images/sample_chart/bar.png');
+}
+.qe-chart.chart-type-dot {
+	background-image: url('../../images/sample_chart/dot.png');
+}
+.qe-chart.chart-type-line {
+	background-image: url('../../images/sample_chart/line.png');
+}
+.qe-chart.chart-type-radar {
+	background-image: url('../../images/sample_chart/radar.png');
+}
+.qe-chart.chart-type-heatmap{
+	background-image: url('../../images/sample_chart/heatmap.png');
+}
+#qe_dialog .qe-chart-wrap {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+#qe_dialog_detail {
+	width : 1000px; 
+}
+#qe_dialog_detail .qe-chart-wrap {
+	margin : 10px;
+    height: 500px;
+    border : 1px solid #ccc;
+}
+
+#qe_dialog_detail input[type="radio"] { display: none; }
+#qe_dialog_detail input[type="radio"]:checked + section { display: block; }
+
+#qe_dialog_detail .qe-chart-wrap section {
+	position: relative;
+	display: none;
+	height: 490px;
+	padding: 5px;
+	text-align: center;
+	background : #f6fbff;
+}
+#qe_dialog_detail .qe-chart-wrap .qe-chart {
+	background: white;
+	height: 410px;
+    width: 890px;
+    margin: 20px;
+    border : 1px solid #ccc;
+}
+
+#qe_dialog_detail .qe-chart-wrap section h1 {
+    font-weight: 500;
+    font-size: 1.5em;
+    height: 20px;
+}
+
+#qe_dialog_detail .qe-chart-wrap section label {
+	position: absolute;
+	display: inline-block;
+	cursor: pointer;
+    font-size: 3em;
+    color: #848484;
+	bottom: 0;
+    height: 55%;
+}
+#qe_dialog_detail .qe-chart-wrap label:nth-child(odd) { 
+	left : 10px;
+}
+#qe_dialog_detail .qe-chart-wrap label:nth-child(even) { 
+    right: 10px;
 }

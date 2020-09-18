@@ -42,7 +42,7 @@ var escapeKey = function(event) {
   }
 }
 
-DialogSystem.showDialog = function(elmt, onCancel, isSecDialog) {
+DialogSystem.showDialog = function(elmt, onCancel) {
   var overlay = $('<div>&nbsp;</div>')
   .addClass("dialog-overlay")
   .css("z-index", 101 + DialogSystem._layers.length * 2)
@@ -56,10 +56,6 @@ DialogSystem.showDialog = function(elmt, onCancel, isSecDialog) {
   elmt.css("visibility", "hidden").appendTo(container);
   
   var _top = Math.round((overlay.height() - elmt.height()) / 2);
-  // When open Dialog In Dialog, set customzed [top] value.
-  if (isSecDialog) {
-	  _top = Math.round((overlay.height()/1.5 - elmt.height()) / 2)
-  }
   
   container.css("top", _top + "px");
   elmt.css("visibility", "visible");

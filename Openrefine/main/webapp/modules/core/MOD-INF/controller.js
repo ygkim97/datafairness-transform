@@ -370,6 +370,8 @@ function init() {
       "externals/chart/v4.js",
       "externals/chart/d3-array.min.js",
       "externals/chart/stdlib.min.js",
+      
+      "externals/fontawesome/all.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",

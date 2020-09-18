@@ -57,7 +57,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	height : 200px;
 }  
 #statistic_dialog .dialog-body > div:nth-child(3) {
-	height : calc(100% - 200px);
+	/* height : calc(100% - 200px); */
+	height : 500px;
 }
 #statistic_dialog table {
 	height : 95%;
@@ -145,6 +146,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* chart-detail */
 #statistic_dialog_detail {
 	width : 1000px;
+	min-height : 400px;
 }
 #statistic_dialog_detail .dialog-tatistics-detail > div {
 	border: 1px solid #ccc;
@@ -161,4 +163,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 #basic-statistics-grid-Detail {
 	padding : 10px;
+}
+rect.fill-default {
+	fill : #688eff;
+}
+rect.fill-default.fill-selected {
+	fill : #ff72a3;
 }

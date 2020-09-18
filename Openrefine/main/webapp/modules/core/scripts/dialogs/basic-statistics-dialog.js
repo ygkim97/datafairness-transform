@@ -195,8 +195,6 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	margin.top += isDetail ? 25 : 10; 
 	margin.bottom += isDetail ? 50 : 10;
 	
-	const fillColor = 'royalblue';
-	
 	var maxBandWidth = 0;
 	var bandwidth = 0;
 	var scaleMaxExtent = 0;
@@ -217,7 +215,8 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 	.append('svg')
 	.attr('viewBox', [0,0,width,height])
 	.style('width', width)
-	.style('height', height).style("display", "block")
+	.style('height', height)
+	.style("display", "block")
 	.style('pointer-events', (isDetail ? 'all': 'none'))
 	
 	const x = d3.scaleBand()
@@ -338,11 +337,11 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 			.data(data)
 			.enter()
 		.append('rect')
+		.attr('class', 'fill-default')
 		.attr('x', d => (x.bandwidth()/2)-bandwidth/2+x(d.key))
 		.attr('y', d => y(d.value))
 		.attr('height', d => y(0) - y(d.value))
 		.attr('width', bandwidth)
-		.attr('fill', fillColor)
 		.attr('data-x', d => d.key)
 		.attr('data-y', d => d.value);
 
@@ -363,6 +362,8 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 			el.removeEventListener('mouseover', ()=>{})
 			el.addEventListener('mouseover', (event) => {
 				target = event.target;
+				target.classList.add('fill-selected')
+				
 				tooltip = $('#'+tooltipId)[0]; 
 				
 				tQuery = $(tooltip);
@@ -385,6 +386,7 @@ BasicStatisticsDialogUI.prototype._drawSvg = function(i, parentId, {width, heigh
 				tooltip.style.opacity = 1;
 			});
 			el.addEventListener('mouseout', (event) => {
+				event.target.classList.remove('fill-selected')
 				$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
 			});
 		}
@@ -404,7 +406,7 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 	
 	const frame = $(DOM.loadHTML("core", "scripts/dialogs/basic-statistics-dialog-detail.html"));
 	this._detailElmts = DOM.bind(frame);
-	this._detailLevel = DialogSystem.showDialog(frame, null, true);
+	this._detailLevel = DialogSystem.showDialog(frame);
 	
 	const self = this;
 	
