@@ -49,28 +49,27 @@ QEDialogUI.prototype._getStatisticData = function(chartId) {
 	
 	// header Index 순서대로 chartData 를 return해야함.
 	response = [];
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
+	response.push(bar_data);
 	
 //	response.push(dot_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(dot_data);
-	response.push(bar_data);
-	response.push(dot_data);
-	response.push(line_data);
-	response.push(radar_data);
-	response.push(heat_data);
-	
+//	response.push(bar_data);
+//	response.push(bar_data);
+//	response.push(dot_data);
+//	response.push(bar_data);
+//	response.push(dot_data);
+//	response.push(line_data);
+//	response.push(radar_data);
+//	response.push(heat_data);
 	return response;
 }
 
@@ -268,33 +267,40 @@ QEDialogUI.prototype._createDetailChartTemplate = function() {
 		template1 += '<div class="qe-chart" id="'+divId+pageCnt+'" data-i='+pageCnt+' data-headerIndex='+h.index+'>';
 		template1 += '<div id="qe_detail_tooltip_'+i+'" class="chart_tooltip"></div>';
 		template1 += '</div>';
-		template1 += '<label for="rad'+prevPageCnt+'"><i class="fa fa-chevron-left"></i></label>';
-		template1 += '<label for="rad'+nextPageCnt+'"><i class="fa fa-chevron-right"></i></label>';
+		template1 += '<label class="qe-btn-label" for="rad'+prevPageCnt+'"><i class="fa fa-chevron-left"></i></label>';
+		template1 += '<label class="qe-btn-label" for="rad'+nextPageCnt+'"><i class="fa fa-chevron-right"></i></label>';
 		template1 += '</section>';
 	})	
 	chartWrap.append(template1);
 }
 QEDialogUI.prototype._createDetailChart = function(i, chartInfo, _chartData) {
 	const margin = {top: 20, right: 30, bottom: 50, left: 50}
-	const width = 890;
-	const height = 410;
+	
+	// get parent element's width
+	const width = $('#qe_dialog_detail .qe-chart').width();
+	const height = 440;
 	
 	const chartData = _chartData;
 	const _self = this;
-	
-	// create chart
-	$('#qe_dialog_detail .qe-chart').each((j, e)=>{
-		const chartWrap = $(e);
-		
-		_self.createChartByType(chartInfo.type, {
-			i: j,
-			pId: chartWrap.attr('id'), 
-			width: width, 
-			height: height, 
-			data: chartData[j],
-			margin: margin
-		});
-	}) 
+
+	const warningDialog1 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step2'));
+
+	setTimeout(()=>{
+		// create chart
+		$('#qe_dialog_detail .qe-chart').each((j, e)=>{
+			const chartWrap = $(e);
+			
+			_self.createChartByType(chartInfo.type, {
+				i: j,
+				pId: chartWrap.attr('id'), 
+				width: width, 
+				height: height, 
+				data: chartData[j],
+				margin: margin
+			});
+		})
+		warningDialog1();
+	}, 10) 
 }
 
 QEDialogUI.prototype.createChartByType = function(type, params) {
