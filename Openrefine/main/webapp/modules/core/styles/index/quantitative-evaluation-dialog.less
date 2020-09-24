@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	width : 50%;
 }
 #qe_dialog .dialog-body {
-	height : 500px; 
+	min-height : 500px; 
 }
 #qe_dialog table {
 	height : 100%;
@@ -73,7 +73,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	border-collapse:collapse; 
 	padding: 5px;
 	height: 100%;
-	opacity: 0.8;
+	opacity: 0.4;
+	position: relative;
 }
 .qe-chart.chart-type-bar {
 	background-image: url('../../images/sample_chart/bar.png');
@@ -87,8 +88,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .qe-chart.chart-type-radar {
 	background-image: url('../../images/sample_chart/radar.png');
 }
-.qe-chart.chart-type-heatmap{
-	background-image: url('../../images/sample_chart/heatmap.png');
+.qe-chart.chart-type-dataheatmap {
+	background-image: url('../../images/sample_chart/dataheatmap.png');
 }
 #qe_dialog .qe-chart-wrap {
 	display: flex;
@@ -147,3 +148,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .qe-btn-label svg:hover {
 	filter: drop-shadow(2px 3px 2px darkgray);
 }
+.qe-chart-sample {
+	position: relative;
+    top: -110px;
+}
+.qe-chart-sample span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3px 10px;
+    border: 1px solid red;
+    background: white;
+    color: red;
+    font-weight: 500;
+    font-size: x-large;
+    margin: 0 20px;

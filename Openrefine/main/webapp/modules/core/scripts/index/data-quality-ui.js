@@ -313,8 +313,10 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 
 		const checked = $('#data-quality-body .custom_table_header_check:checked');
 		var headerOriginalNames = [];
+		var headerOriginalIndexes = [];
 		checked.each((i, _c) => {
-			headerOriginalNames.push({name : _c.name, index : UI_CHART_INFO.headerIndex[_c.name]})
+			headerOriginalNames.push(_c.name)
+			headerOriginalIndexes.push(UI_CHART_INFO.headerIndex[_c.name])
 		})
 		
 		// 선택된 프로젝트가 없음 > 진행불가능
@@ -324,7 +326,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			alert($.i18n('core-index-data/no-selected-headers'))
 		} else {
 			// 정량평가 팝업 표시
-			new QEDialogUI(headerOriginalNames);
+			new QEDialogUI(headerOriginalNames, headerOriginalIndexes);
 		}
 	})
 }

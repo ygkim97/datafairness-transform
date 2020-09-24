@@ -362,9 +362,6 @@ function init() {
       "externals/tui/tui-pagination.js",
       "externals/tui/tui-code-snippet.js",
       "externals/tui/raphael-min-2.1.0.js",
-      "externals/tui/tui-chart.min.js",
-      
-      "externals/chart/Chart.min.js",
       
       "externals/chart/d3.min.js",
       "externals/chart/v4.js",
@@ -430,7 +427,6 @@ function init() {
 
       "styles/tui-grid.css",
       "styles/tui-pagination.css",
-      "styles/tui-chart.min.css",
       
       "styles/index.less",
       "styles/index/create-project-ui.less",

@@ -1,18 +1,22 @@
 // for window resize event.
 var _QEDialogUI = null;
-var QE_SELECTED_HEADER = [];
+var QE_SELECTED_HEADER = {
+		NAMES : null,
+		INDEXES : null
+};
 
 const CHART_DIV_ID = 'qe_chart'
 
-function QEDialogUI(selectedHeaders) {
+function QEDialogUI(selectedHeaderNames, headerOriginalIndexes) {
 
 	_QEDialogUI = this;
-	QE_SELECTED_HEADER = selectedHeaders;
+	QE_SELECTED_HEADER.NAMES = selectedHeaderNames;
+	QE_SELECTED_HEADER.INDEXES = headerOriginalIndexes;
 	
-	this._createDialog(selectedHeaders);
+	this._createDialog();
 } 
 
-QEDialogUI.prototype._getStatisticData = function(chartId) {
+QEDialogUI.prototype._getStatisticData = function(chartType) {
 	const warningDialog1 = DialogSystem.showBusy();
 	
 	var response = null;
@@ -20,56 +24,16 @@ QEDialogUI.prototype._getStatisticData = function(chartId) {
 	$.ajax({
 		type : 'POST',
 		url : "command/core/get-quantitative-evaluation?" + $.param({ project: UI_CHART_INFO.selectedPId}),
-//		{headers: QE_SELECTED_HEADER.join(',')},	// no history option
-		data : null,
+		data : {
+			headers : QE_SELECTED_HEADER.INDEXES.join(','),
+			chartType : chartType
+		},
 		async : false,
 		success : function(data) {
 			warningDialog1();
-			response = data;
+			response = data.data;
 		}
 	})
-	
-	// temp data
-	var bar_str = '[{"name":"E","value":0.12702},{"name":"T","value":0.09056},{"name":"A","value":0.08167},{"name":"O","value":0.07507},{"name":"I","value":0.06966},{"name":"N","value":0.06749},{"name":"S","value":0.06327},{"name":"H","value":0.06094},{"name":"R","value":0.05987},{"name":"D","value":0.04253},{"name":"L","value":0.04025},{"name":"C","value":0.02782},{"name":"U","value":0.02758},{"name":"M","value":0.02406},{"name":"W","value":0.0236},{"name":"F","value":0.02288},{"name":"G","value":0.02015},{"name":"Y","value":0.01974},{"name":"P","value":0.01929},{"name":"B","value":0.01492},{"name":"V","value":0.00978},{"name":"K","value":0.00772},{"name":"J","value":0.00153},{"name":"X","value":0.0015},{"name":"Q","value":0.00095},{"name":"Z","value":0.00074}]';
-	var bar_data = JSON.parse(bar_str);
-	var line_str = '[{"date":"2007-11-25T00:00:00.000Z","value":172.54},{"date":"2007-11-26T00:00:00.000Z","value":174.81},{"date":"2007-11-27T00:00:00.000Z","value":180.22},{"date":"2007-11-28T00:00:00.000Z","value":184.29},{"date":"2007-11-29T00:00:00.000Z","value":182.22},{"date":"2007-12-03T00:00:00.000Z","value":178.86},{"date":"2007-12-04T00:00:00.000Z","value":179.81},{"date":"2007-12-05T00:00:00.000Z","value":185.5},{"date":"2007-12-06T00:00:00.000Z","value":189.95},{"date":"2007-12-07T00:00:00.000Z","value":194.3},{"date":"2007-12-09T00:00:00.000Z","value":194.21},{"date":"2007-12-10T00:00:00.000Z","value":188.54},{"date":"2007-12-11T00:00:00.000Z","value":190.86},{"date":"2007-12-12T00:00:00.000Z","value":191.83},{"date":"2007-12-13T00:00:00.000Z","value":190.39},{"date":"2007-12-16T00:00:00.000Z","value":184.4},{"date":"2007-12-17T00:00:00.000Z","value":182.98},{"date":"2007-12-18T00:00:00.000Z","value":183.12},{"date":"2007-12-19T00:00:00.000Z","value":187.21},{"date":"2007-12-20T00:00:00.000Z","value":193.91},{"date":"2007-12-23T00:00:00.000Z","value":198.8},{"date":"2007-12-25T00:00:00.000Z","value":198.95},{"date":"2007-12-26T00:00:00.000Z","value":198.57},{"date":"2007-12-27T00:00:00.000Z","value":199.83},{"date":"2007-12-30T00:00:00.000Z","value":198.08},{"date":"2008-01-02T00:00:00.000Z","value":194.84},{"date":"2008-01-03T00:00:00.000Z","value":194.93},{"date":"2008-01-04T00:00:00.000Z","value":180.05},{"date":"2008-01-07T00:00:00.000Z","value":177.64},{"date":"2008-01-08T00:00:00.000Z","value":171.25},{"date":"2008-01-09T00:00:00.000Z","value":179.4},{"date":"2008-01-09T00:00:00.000Z","value":178.02},{"date":"2008-01-10T00:00:00.000Z","value":172.69},{"date":"2008-01-13T00:00:00.000Z","value":178.78},{"date":"2008-01-14T00:00:00.000Z","value":169.04},{"date":"2008-01-15T00:00:00.000Z","value":159.64},{"date":"2008-01-16T00:00:00.000Z","value":160.89},{"date":"2008-01-17T00:00:00.000Z","value":161.36},{"date":"2008-01-21T00:00:00.000Z","value":155.64},{"date":"2008-01-22T00:00:00.000Z","value":139.07},{"date":"2008-01-23T00:00:00.000Z","value":135.6},{"date":"2008-01-24T00:00:00.000Z","value":130.01},{"date":"2008-01-27T00:00:00.000Z","value":130.01},{"date":"2008-01-28T00:00:00.000Z","value":131.54},{"date":"2008-01-29T00:00:00.000Z","value":132.18},{"date":"2008-01-30T00:00:00.000Z","value":135.36},{"date":"2008-02-01T00:00:00.000Z","value":133.75},{"date":"2008-02-04T00:00:00.000Z","value":131.65},{"date":"2008-02-05T00:00:00.000Z","value":129.36},{"date":"2008-02-06T00:00:00.000Z","value":122}]';
-	var line_data = JSON.parse(line_str).map(d=>{return {date: new Date(d.date), value:d.value}})
-	var dot_str = '[{"category":"setosa","x":5.1,"y":3.5},{"category":"setosa","x":4.9,"y":3},{"category":"setosa","x":4.7,"y":3.2},{"category":"setosa","x":4.6,"y":3.1},{"category":"setosa","x":5,"y":3.6},{"category":"setosa","x":5.4,"y":3.9},{"category":"setosa","x":4.6,"y":3.4},{"category":"setosa","x":5,"y":3.4},{"category":"setosa","x":4.4,"y":2.9},{"category":"setosa","x":4.9,"y":3.1},{"category":"setosa","x":5.4,"y":3.7},{"category":"setosa","x":4.8,"y":3.4},{"category":"setosa","x":4.8,"y":3},{"category":"setosa","x":4.3,"y":3},{"category":"setosa","x":5.8,"y":4},{"category":"setosa","x":5.7,"y":4.4},{"category":"setosa","x":5.4,"y":3.9},{"category":"setosa","x":5.1,"y":3.5},{"category":"setosa","x":5.7,"y":3.8},{"category":"setosa","x":5.1,"y":3.8},{"category":"setosa","x":5.4,"y":3.4},{"category":"setosa","x":5.1,"y":3.7},{"category":"setosa","x":4.6,"y":3.6},{"category":"setosa","x":5.1,"y":3.3},{"category":"setosa","x":4.8,"y":3.4},{"category":"setosa","x":5,"y":3},{"category":"setosa","x":5,"y":3.4},{"category":"setosa","x":5.2,"y":3.5},{"category":"setosa","x":5.2,"y":3.4},{"category":"setosa","x":4.7,"y":3.2},{"category":"setosa","x":4.8,"y":3.1},{"category":"setosa","x":5.4,"y":3.4},{"category":"setosa","x":5.2,"y":4.1},{"category":"setosa","x":5.5,"y":4.2},{"category":"setosa","x":4.9,"y":3.1},{"category":"setosa","x":5,"y":3.2},{"category":"setosa","x":5.5,"y":3.5},{"category":"setosa","x":4.9,"y":3.6},{"category":"setosa","x":4.4,"y":3},{"category":"setosa","x":5.1,"y":3.4},{"category":"setosa","x":5,"y":3.5},{"category":"setosa","x":4.5,"y":2.3},{"category":"setosa","x":4.4,"y":3.2},{"category":"setosa","x":5,"y":3.5},{"category":"setosa","x":5.1,"y":3.8},{"category":"setosa","x":4.8,"y":3},{"category":"setosa","x":5.1,"y":3.8},{"category":"setosa","x":4.6,"y":3.2},{"category":"setosa","x":5.3,"y":3.7},{"category":"setosa","x":5,"y":3.3},{"category":"versicolor","x":7,"y":3.2},{"category":"versicolor","x":6.4,"y":3.2},{"category":"versicolor","x":6.9,"y":3.1},{"category":"versicolor","x":5.5,"y":2.3},{"category":"versicolor","x":6.5,"y":2.8},{"category":"versicolor","x":5.7,"y":2.8},{"category":"versicolor","x":6.3,"y":3.3},{"category":"versicolor","x":4.9,"y":2.4},{"category":"versicolor","x":6.6,"y":2.9},{"category":"versicolor","x":5.2,"y":2.7},{"category":"versicolor","x":5,"y":2},{"category":"versicolor","x":5.9,"y":3},{"category":"versicolor","x":6,"y":2.2},{"category":"versicolor","x":6.1,"y":2.9},{"category":"versicolor","x":5.6,"y":2.9},{"category":"versicolor","x":6.7,"y":3.1},{"category":"versicolor","x":5.6,"y":3},{"category":"versicolor","x":5.8,"y":2.7},{"category":"versicolor","x":6.2,"y":2.2},{"category":"versicolor","x":5.6,"y":2.5},{"category":"versicolor","x":5.9,"y":3.2},{"category":"versicolor","x":6.1,"y":2.8},{"category":"versicolor","x":6.3,"y":2.5},{"category":"versicolor","x":6.1,"y":2.8},{"category":"versicolor","x":6.4,"y":2.9},{"category":"versicolor","x":6.6,"y":3},{"category":"versicolor","x":6.8,"y":2.8},{"category":"versicolor","x":6.7,"y":3},{"category":"versicolor","x":6,"y":2.9},{"category":"versicolor","x":5.7,"y":2.6},{"category":"versicolor","x":5.5,"y":2.4},{"category":"versicolor","x":5.5,"y":2.4},{"category":"versicolor","x":5.8,"y":2.7},{"category":"versicolor","x":6,"y":2.7},{"category":"versicolor","x":5.4,"y":3},{"category":"versicolor","x":6,"y":3.4},{"category":"versicolor","x":6.7,"y":3.1},{"category":"versicolor","x":6.3,"y":2.3},{"category":"versicolor","x":5.6,"y":3},{"category":"versicolor","x":5.5,"y":2.5},{"category":"versicolor","x":5.5,"y":2.6},{"category":"versicolor","x":6.1,"y":3},{"category":"versicolor","x":5.8,"y":2.6},{"category":"versicolor","x":5,"y":2.3},{"category":"versicolor","x":5.6,"y":2.7},{"category":"versicolor","x":5.7,"y":3},{"category":"versicolor","x":5.7,"y":2.9},{"category":"versicolor","x":6.2,"y":2.9},{"category":"versicolor","x":5.1,"y":2.5},{"category":"versicolor","x":5.7,"y":2.8},{"category":"virginica","x":6.3,"y":3.3},{"category":"virginica","x":5.8,"y":2.7},{"category":"virginica","x":7.1,"y":3},{"category":"virginica","x":6.3,"y":2.9},{"category":"virginica","x":6.5,"y":3},{"category":"virginica","x":7.6,"y":3},{"category":"virginica","x":4.9,"y":2.5},{"category":"virginica","x":7.3,"y":2.9},{"category":"virginica","x":6.7,"y":2.5},{"category":"virginica","x":7.2,"y":3.6},{"category":"virginica","x":6.5,"y":3.2},{"category":"virginica","x":6.4,"y":2.7},{"category":"virginica","x":6.8,"y":3},{"category":"virginica","x":5.7,"y":2.5},{"category":"virginica","x":5.8,"y":2.8},{"category":"virginica","x":6.4,"y":3.2},{"category":"virginica","x":6.5,"y":3},{"category":"virginica","x":7.7,"y":3.8},{"category":"virginica","x":7.7,"y":2.6},{"category":"virginica","x":6,"y":2.2},{"category":"virginica","x":6.9,"y":3.2},{"category":"virginica","x":5.6,"y":2.8},{"category":"virginica","x":7.7,"y":2.8},{"category":"virginica","x":6.3,"y":2.7},{"category":"virginica","x":6.7,"y":3.3},{"category":"virginica","x":7.2,"y":3.2},{"category":"virginica","x":6.2,"y":2.8},{"category":"virginica","x":6.1,"y":3},{"category":"virginica","x":6.4,"y":2.8},{"category":"virginica","x":7.2,"y":3},{"category":"virginica","x":7.4,"y":2.8},{"category":"virginica","x":7.9,"y":3.8},{"category":"virginica","x":6.4,"y":2.8},{"category":"virginica","x":6.3,"y":2.8},{"category":"virginica","x":6.1,"y":2.6},{"category":"virginica","x":7.7,"y":3},{"category":"virginica","x":6.3,"y":3.4},{"category":"virginica","x":6.4,"y":3.1},{"category":"virginica","x":6,"y":3},{"category":"virginica","x":6.9,"y":3.1},{"category":"virginica","x":6.7,"y":3.1},{"category":"virginica","x":6.9,"y":3.1},{"category":"virginica","x":5.8,"y":2.7},{"category":"virginica","x":6.8,"y":3.2},{"category":"virginica","x":6.7,"y":3.3},{"category":"virginica","x":6.7,"y":3},{"category":"virginica","x":6.3,"y":2.5},{"category":"virginica","x":6.5,"y":3},{"category":"virginica","x":6.2,"y":3.4},{"category":"virginica","x":5.9,"y":3}]';
-	var dot_data = JSON.parse(dot_str);
-	var heat_str= '[{"group":"A","variable":"v1","value":"30"},{"group":"A","variable":"v2","value":"95"},{"group":"A","variable":"v3","value":"22"},{"group":"A","variable":"v4","value":"14"},{"group":"A","variable":"v5","value":"59"},{"group":"A","variable":"v6","value":"52"},{"group":"A","variable":"v7","value":"88"},{"group":"A","variable":"v8","value":"20"},{"group":"A","variable":"v9","value":"99"},{"group":"A","variable":"v10","value":"66"},{"group":"B","variable":"v1","value":"37"},{"group":"B","variable":"v2","value":"50"},{"group":"B","variable":"v3","value":"81"},{"group":"B","variable":"v4","value":"79"},{"group":"B","variable":"v5","value":"84"},{"group":"B","variable":"v6","value":"91"},{"group":"B","variable":"v7","value":"82"},{"group":"B","variable":"v8","value":"89"},{"group":"B","variable":"v9","value":"6"},{"group":"B","variable":"v10","value":"67"},{"group":"C","variable":"v1","value":"96"},{"group":"C","variable":"v2","value":"13"},{"group":"C","variable":"v3","value":"98"},{"group":"C","variable":"v4","value":"10"},{"group":"C","variable":"v5","value":"86"},{"group":"C","variable":"v6","value":"23"},{"group":"C","variable":"v7","value":"74"},{"group":"C","variable":"v8","value":"47"},{"group":"C","variable":"v9","value":"73"},{"group":"C","variable":"v10","value":"40"},{"group":"D","variable":"v1","value":"75"},{"group":"D","variable":"v2","value":"18"},{"group":"D","variable":"v3","value":"92"},{"group":"D","variable":"v4","value":"43"},{"group":"D","variable":"v5","value":"16"},{"group":"D","variable":"v6","value":"27"},{"group":"D","variable":"v7","value":"76"},{"group":"D","variable":"v8","value":"24"},{"group":"D","variable":"v9","value":"1"},{"group":"D","variable":"v10","value":"87"},{"group":"E","variable":"v1","value":"44"},{"group":"E","variable":"v2","value":"29"},{"group":"E","variable":"v3","value":"58"},{"group":"E","variable":"v4","value":"55"},{"group":"E","variable":"v5","value":"65"},{"group":"E","variable":"v6","value":"56"},{"group":"E","variable":"v7","value":"9"},{"group":"E","variable":"v8","value":"78"},{"group":"E","variable":"v9","value":"49"},{"group":"E","variable":"v10","value":"36"},{"group":"F","variable":"v1","value":"35"},{"group":"F","variable":"v2","value":"80"},{"group":"F","variable":"v3","value":"8"},{"group":"F","variable":"v4","value":"46"},{"group":"F","variable":"v5","value":"48"},{"group":"F","variable":"v6","value":"100"},{"group":"F","variable":"v7","value":"17"},{"group":"F","variable":"v8","value":"41"},{"group":"F","variable":"v9","value":"33"},{"group":"F","variable":"v10","value":"11"},{"group":"G","variable":"v1","value":"77"},{"group":"G","variable":"v2","value":"62"},{"group":"G","variable":"v3","value":"94"},{"group":"G","variable":"v4","value":"15"},{"group":"G","variable":"v5","value":"69"},{"group":"G","variable":"v6","value":"63"},{"group":"G","variable":"v7","value":"61"},{"group":"G","variable":"v8","value":"54"},{"group":"G","variable":"v9","value":"38"},{"group":"G","variable":"v10","value":"93"},{"group":"H","variable":"v1","value":"39"},{"group":"H","variable":"v2","value":"26"},{"group":"H","variable":"v3","value":"90"},{"group":"H","variable":"v4","value":"83"},{"group":"H","variable":"v5","value":"31"},{"group":"H","variable":"v6","value":"2"},{"group":"H","variable":"v7","value":"51"},{"group":"H","variable":"v8","value":"28"},{"group":"H","variable":"v9","value":"42"},{"group":"H","variable":"v10","value":"7"},{"group":"I","variable":"v1","value":"5"},{"group":"I","variable":"v2","value":"60"},{"group":"I","variable":"v3","value":"21"},{"group":"I","variable":"v4","value":"25"},{"group":"I","variable":"v5","value":"3"},{"group":"I","variable":"v6","value":"70"},{"group":"I","variable":"v7","value":"34"},{"group":"I","variable":"v8","value":"68"},{"group":"I","variable":"v9","value":"57"},{"group":"I","variable":"v10","value":"32"},{"group":"J","variable":"v1","value":"19"},{"group":"J","variable":"v2","value":"85"},{"group":"J","variable":"v3","value":"53"},{"group":"J","variable":"v4","value":"45"},{"group":"J","variable":"v5","value":"71"},{"group":"J","variable":"v6","value":"64"},{"group":"J","variable":"v7","value":"4"},{"group":"J","variable":"v8","value":"12"},{"group":"J","variable":"v9","value":"97"},{"group":"J","variable":"v10","value":"72"}]';
-	var heat_data = JSON.parse(heat_str);
-	var radar_data = [[
-        {"area": "Central ", "value": 80},
-        {"area": "Kirkdale", "value": 40},
-        {"area": "Kensington ", "value": 40},
-        {"area": "Everton ", "value": 90},
-        {"area": "Picton ", "value": 60},
-        {"area": "Riverside ", "value": 80}
-	]];
-	
-	// header Index 순서대로 chartData 를 return해야함.
-	response = [];
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	response.push(bar_data);
-	
-//	response.push(dot_data);
-//	response.push(bar_data);
-//	response.push(bar_data);
-//	response.push(dot_data);
-//	response.push(bar_data);
-//	response.push(dot_data);
-//	response.push(line_data);
-//	response.push(radar_data);
-//	response.push(heat_data);
 	return response;
 }
 
@@ -115,40 +79,40 @@ QEDialogUI.prototype._createChartTemplate = function() {
 	this.chartInfos = [{
 		id : 'CS',
 		text : 'CORRELATED SCATTERPLOTS', 
-		type : 'dot'
+		type : 'DOT'
 	},{
 		id : 'SH',
 		text : 'SKEWED HISTOGRAMS', 
-		type : 'bar'
+		type : 'BAR'
 	},{
 		id : 'GH',
 		text : 'GAPS HISTOGRAMS', 
-		type : 'bar'
+		type : 'BAR'
 	},{
 		id : 'BIP',
 		text : 'BIPLOTS', 
-		type : 'dot'
+		type : 'DOT'
 	},{
 		id : 'OUT',
 		text : 'OUTLIERS', 
-		type : 'bar'
+		type : 'BAR'
 	},{
 		id : 'CG',
 		text : 'CORRELATION GRAPH', 
-		type : 'dot'
+		type : 'DOT'
 	}, {
 		id : 'PCP',
 		text : 'PARALLEL COORDINATES PLOT', 
-		type : 'line'
+		type : 'LINE'
 	}, {
 		id : 'RP',
 		text : 'RADAR PLOT', 
-		type : 'radar'
+		type : 'RADAR'
 	}, {
 		id : 'DH',
 		text : 'DATA HEATMAP',
-		type : 'heatmap'
-	}]
+		type : 'DATAHEATMAP'
+	}];
 	
 	var template = '';
 	template += '<table>';
@@ -159,8 +123,13 @@ QEDialogUI.prototype._createChartTemplate = function() {
 	trI += chartCnt%5 == 0 ? 0 : 1;
 	var divId = '';
 	
-	var _len = (parseInt(chartCnt/5)+1) * lineMaxCnt;
-
+	// line
+	var _tempChartCnt = chartCnt;
+	if (chartCnt%5 == 0) {
+		_tempChartCnt--;
+	}
+	var _len = (parseInt(_tempChartCnt/5)+1) * lineMaxCnt;
+	
 	var trTemplate1 = '';
 	var trTemplate2 = '';
 	var trTemplate3 = '';
@@ -191,7 +160,10 @@ QEDialogUI.prototype._createChartTemplate = function() {
 			trTemplate1 += '</th>';
 			
 			trTemplate2 += '<td>';
-			trTemplate2 += '<div class="qe-chart chart-type-'+ci.type+'" id="'+CHART_DIV_ID+'_'+i+'">';
+			trTemplate2 += '<div class="qe-chart chart-type-'+ci.type.toLowerCase()+'" id="'+CHART_DIV_ID+'_'+i+'">';
+			trTemplate2 += '</div>';
+			trTemplate2 += '<div class="qe-chart-sample">';
+			trTemplate2 += '<span>SAMPLE</span>';
 			trTemplate2 += '</div>';
 			
 			trTemplate2 += '</div>';
@@ -233,8 +205,7 @@ QEDialogUI.prototype._showDetailPopup = function(i) {
 	// get chart data. use selected header list and chart ID.
 	// ** chart Id already defined.
 	const chartInfo = this.chartInfos[i];
-	const chartId = chartInfo.chartId;
-	const chartData = this._getStatisticData(chartId);
+	const chartData = this._getStatisticData(chartInfo.type);
 	
 	// btn setting
 	this._detailElmts.closeButton.html($.i18n('core-buttons/close'));
@@ -254,17 +225,18 @@ QEDialogUI.prototype._createDetailChartTemplate = function() {
 	var template1 = '';
 	var divId = 'qe_detail_chart_';
 
+	const selectedHeaderLen = QE_SELECTED_HEADER.NAMES.length;
 	// detail card
-	QE_SELECTED_HEADER.forEach(function(h, i) {
+	QE_SELECTED_HEADER.NAMES.forEach(function(h, i) {
 		const pageCnt = i+1;
-		const prevPageCnt = pageCnt == 1 ? QE_SELECTED_HEADER.length : pageCnt-1;
-		const nextPageCnt = pageCnt == QE_SELECTED_HEADER.length ? 1 : pageCnt+1;
+		const prevPageCnt = pageCnt == 1 ? selectedHeaderLen : pageCnt-1;
+		const nextPageCnt = pageCnt == selectedHeaderLen ? 1 : pageCnt+1;
 		const isChecked = pageCnt == 1 ? 'checked' : '';
 		
 		template1 += '<input id="rad'+pageCnt+'" type="radio" name="rad" '+isChecked+'>';
 		template1 += '<section>';
-		template1 += '<h1>'+h.name+'</h1>';
-		template1 += '<div class="qe-chart" id="'+divId+pageCnt+'" data-i='+pageCnt+' data-headerIndex='+h.index+'>';
+		template1 += '<h1>'+h+'</h1>';
+		template1 += '<div class="qe-chart" id="'+divId+pageCnt+'" data-i='+pageCnt+' data-headerIndex='+QE_SELECTED_HEADER.INDEXES[i]+'>';
 		template1 += '<div id="qe_detail_tooltip_'+i+'" class="chart_tooltip"></div>';
 		template1 += '</div>';
 		template1 += '<label class="qe-btn-label" for="rad'+prevPageCnt+'"><i class="fa fa-chevron-left"></i></label>';
@@ -284,12 +256,10 @@ QEDialogUI.prototype._createDetailChart = function(i, chartInfo, _chartData) {
 	const _self = this;
 
 	const warningDialog1 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step2'));
-
 	setTimeout(()=>{
 		// create chart
 		$('#qe_dialog_detail .qe-chart').each((j, e)=>{
 			const chartWrap = $(e);
-			
 			_self.createChartByType(chartInfo.type, {
 				i: j,
 				pId: chartWrap.attr('id'), 
@@ -305,19 +275,19 @@ QEDialogUI.prototype._createDetailChart = function(i, chartInfo, _chartData) {
 
 QEDialogUI.prototype.createChartByType = function(type, params) {
 	switch(type) {
-		case 'bar':
+		case 'BAR':
 			createChart_bar(params)
 			break;
-		case 'line':
+		case 'LINE':
 			createChart_line(params)
 			break;
-		case 'dot':
+		case 'DOT':
 			createChart_dot(params)
 			break;
-		case 'heatmap':
+		case 'DATAHEATMAP':
 			createChart_heatmap(params)
 			break;
-		case 'radar':
+		case 'RADAR':
 			createChart_radar(params)
 			break;
 	}
@@ -430,6 +400,8 @@ function createChart_line(params) {
 	.append('svg')
 	.attr('id', pId+'_'+i+'_svg')
 	.attr('viewBox', [0, 0, width, height])
+	.style('width', width)
+	.style('height', height)
 	.style('pointer-events', 'all')
 	
 	const line = d3.line()
@@ -484,6 +456,8 @@ function createChart_dot(params) {
 	.append('svg')
 	.attr('id', pId+'_'+i+'_svg')
 	.attr('viewBox', [0, 0, width, height])
+	.style('width', width)
+	.style('height', height)
 	.style('pointer-events', 'all')
 	
 	const x = d3.scaleLinear()
@@ -566,6 +540,8 @@ function createChart_heatmap(params) {
 	.append('svg')
 	.attr('id', pId+'_'+i+'_svg')
 	.attr('viewBox', [0, 0, width, height])
+	.style('width', width)
+	.style('height', height)
 	.style('pointer-events', 'all')
 	.append("g")
 	  .attr("transform",
@@ -611,9 +587,11 @@ function createChart_heatmap(params) {
 function createChart_radar(params) {
 	const i = params.i;
 	const pId = params.pId;
-	const width = params.width;
-	const height = params.height;
 	const margin = params.margin;
+	margin.left = margin.right;
+	margin.top += 100;
+	const height = params.height-70;
+	const width =  params.height-70;
 	const data = params.data;
 	const id = pId+'_'+i+'_svg';
 	
@@ -625,7 +603,7 @@ function createChart_radar(params) {
 			radians: 2 * Math.PI,
 			opacityArea: 0.5,
 			ToRight: 5,
-			TranslateX: 80,
+			TranslateX: 30,
 			TranslateY: 30,
 			ExtraWidthX: 100,
 			ExtraWidthY: 100,
@@ -635,39 +613,35 @@ function createChart_radar(params) {
 	var g = d3.select('#'+pId)
 	.append('svg')
 	.attr('id', id)
-	.attr('viewBox', [0, 0, width, height])
+	.attr('viewBox', [0, 0, width+cfg.ExtraWidthX, height+cfg.ExtraWidthY])
+	.style('width', width+cfg.ExtraWidthX)
+	.style('height', height+cfg.ExtraWidthY)
 	.style('pointer-events', 'all')
+	.attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
 		
-  if('undefined' !== typeof options){
-  	for(var j in options){
-  		if('undefined' !== typeof options[j]){
-  			cfg[j] = options[j];
-  		}
-  	}
-  }
+	if('undefined' !== typeof options){
+		for(var j in options){
+			if('undefined' !== typeof options[j]){
+				cfg[j] = options[j];
+			}
+		}
+	}
 	    
-  cfg.maxValue = 100;
+	cfg.maxValue = 100;
 	    
-  var allAxis = (data[0].map(function(j, k){return j.area}));
-  var total = allAxis.length;
-  var radius = cfg.factor*Math.min(width/2, height/2);
-  var Format = d3.format('%');
-  d3.select(id).select("svg").remove();
-
-//  var g = d3.select(id)
-//      .append("svg")
-//      .attr("width", width+cfg.ExtraWidthX)
-//      .attr("height", height+cfg.ExtraWidthY)
-//      .append("g")
-//      .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+	var allAxis = (data[0].map(function(j, k){return j.area}));
+	var total = allAxis.length;
+	var radius = cfg.factor*Math.min(width/2, height/2);
+	var Format = d3.format('%');
+	d3.select(id).select("svg").remove();
 
 	var tooltip;
 		
-  //Circular segments
-  for(var j=0; j<cfg.levels; j++){
-  	var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
+	//Circular segments
+	for(var j=0; j<cfg.levels; j++){
+		var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
   	
-  	g.selectAll(".levels")
+		g.selectAll(".levels")
 	    	.data(allAxis)
 	    	.enter()
 	    	.append("svg:line")
@@ -680,16 +654,16 @@ function createChart_radar(params) {
 	    	.style("stroke-opacity", "0.75")
 	    	.style("stroke-width", "0.3px")
 	    	.attr("transform", "translate(" + (width/2-levelFactor) + ", " + (height/2-levelFactor) + ")");
-  }
-
-  //Text indicating at what % each level is
-  for(var j=0; j<cfg.levels; j++){
-  	var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
-  	g.selectAll(".levels")
-  	.data([1]) //dummy data
-  	.enter()
-  	.append("svg:text")
-  	.attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
+	}
+	
+	//Text indicating at what % each level is
+	for(var j=0; j<cfg.levels; j++){
+		var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
+		g.selectAll(".levels")
+		.data([1]) //dummy data
+		.enter()
+		.append("svg:text")
+		.attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
 		.attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
 		.attr("class", "legend")
 		.style("font-family", "sans-serif")
@@ -697,17 +671,17 @@ function createChart_radar(params) {
 		.attr("transform", "translate(" + (width/2-levelFactor + cfg.ToRight) + ", " + (height/2-levelFactor) + ")")
 		.attr("fill", "#737373")
 		.text((j+1)*100/cfg.levels);
-  }
+	}
+	
+	series = 0;
 
-  series = 0;
-
-  var axis = g.selectAll(".axis")
-  .data(allAxis)
+	var axis = g.selectAll(".axis")
+	.data(allAxis)
 	.enter()
 	.append("g")
 	.attr("class", "axis");
 
-  axis.append("line")
+	axis.append("line")
 	.attr("x1", width/2)
 	.attr("y1", height/2)
 	.attr("x2", function(d, i){return width/2*(1-cfg.factor*Math.sin(i*cfg.radians/total));})
@@ -716,7 +690,7 @@ function createChart_radar(params) {
 	.style("stroke", "grey")
 	.style("stroke-width", "1px");
 
-  axis.append("text")
+	axis.append("text")
 	.attr("class", "legend")
 	.text(function(d){return d})
 	.style("font-family", "sans-serif")
@@ -727,16 +701,16 @@ function createChart_radar(params) {
 	.attr("x", function(d, i){return width/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
 	.attr("y", function(d, i){return height/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
 	 
-  data.forEach(function(y, x){
-  	dataValues = [];
-  	g.selectAll(".nodes")
-  	.data(y, function(j, i){
-  		dataValues.push([
-  			width/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
-  			height/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
-  		]);
-  	});
-  	dataValues.push(dataValues[0]);
+	data.forEach(function(y, x) {
+		dataValues = [];
+		g.selectAll(".nodes")
+		.data(y, function(j, i){
+			dataValues.push([
+	  			width/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
+	  			height/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
+  			]);
+		});
+		dataValues.push(dataValues[0]);
   	
 		g.selectAll(".area")
 		.data([dataValues])
@@ -770,7 +744,7 @@ function createChart_radar(params) {
 		});
 		series++;
 	});
-  series=0;
+	series=0;
 }
 
 // when close Dialog 

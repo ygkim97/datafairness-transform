@@ -39,26 +39,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #statistic_dialog .dialog-body {
-	overflow-x: visible;
-    overflow-y: visible;
+	overflow-x: auto;
+    overflow-y: auto;
 	height: 700px;
-    padding-bottom: 0px;
 }
-#statistic_dialog #basic-statics-noty {
-	margin-top: -3px;
-	display: inline-block;
-	width : 100%;
-}
-#statistic_dialog #basic-statics-noty > span {
-	float : right;
-	font-size: smaller;
-}
-#statistic_dialog .dialog-body > div:nth-child(2) {
+#statistic_dialog .dialog-body > div:nth-child(1) {
 	height : 200px;
+	margin-bottom: 20px;
 }  
-#statistic_dialog .dialog-body > div:nth-child(3) {
-	/* height : calc(100% - 200px); */
-	height : 500px;
+#statistic_dialog .dialog-body > div:nth-child(2) {
+	height : 480px;
 }
 #statistic_dialog table {
 	height : 95%;
@@ -66,6 +56,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     border: 1px solid #ccc;
     border-collapse: collapse;
     width : -webkit-fill-available;
+}
+#statistic_dialog table caption {
+	text-align:right;
+	margin-bottom:5px;
+    font-size: smaller;
 }
 #statistic_dialog table td {
 	min-width : 120px;
@@ -168,5 +163,9 @@ rect.fill-default {
 	fill : #688eff;
 }
 rect.fill-default.fill-selected {
-	fill : #ff72a3;
+	fill : #ff72a3 !important;
+}
+
+rect.zoom-panel {
+	fill: #fff;
 }
