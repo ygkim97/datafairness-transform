@@ -375,7 +375,6 @@ function setTooltip(parentId, tooltipId, height, margin) {
 	var tQueryTemplate = '';
 	
 	const rectEl = document.getElementById(parentId).querySelectorAll('rect.bar');
-	console.log(rectEl)
 	for(const el of rectEl) {
 		// event reset
 		el.removeEventListener('mouseover', ()=>{})

@@ -136,7 +136,7 @@ $(function() {
           $("#openrefine-version").text($.i18n('core-index/version')+" " + OpenRefineVersion.full_version);
           
 
-            $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
+           /* $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
              function( data ) {
               var latestVersion = data.tag_name;
               var latestVersionName = data.name;
@@ -160,7 +160,7 @@ $(function() {
                 .text($.i18n('core-index/download')+' ' + latestVersionName + ' '+$.i18n('core-index/now')+'.')
                 .appendTo(notification);
               }
-            });
+            });*/
         }
     );
   };

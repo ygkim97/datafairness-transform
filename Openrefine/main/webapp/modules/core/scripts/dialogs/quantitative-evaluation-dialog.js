@@ -78,7 +78,7 @@ QEDialogUI.prototype._createChartTemplate = function() {
 	
 	this.chartInfos = [{
 		id : 'CS',
-		text : 'CORRELATED SCATTERPLOTS', 
+		text : 'CORRELATED <br>SCATTERPLOTS', 
 		type : 'DOT'
 	},{
 		id : 'SH',
@@ -102,7 +102,7 @@ QEDialogUI.prototype._createChartTemplate = function() {
 		type : 'DOT'
 	}, {
 		id : 'PCP',
-		text : 'PARALLEL COORDINATES PLOT', 
+		text : 'PARALLEL <br>COORDINATES PLOT', 
 		type : 'LINE'
 	}, {
 		id : 'RP',
@@ -274,20 +274,27 @@ QEDialogUI.prototype._createDetailChart = function(i, chartInfo, _chartData) {
 }
 
 QEDialogUI.prototype.createChartByType = function(type, params) {
+	const tooltip = $('#qe_detail_tooltip_'+params.i);
+	
 	switch(type) {
 		case 'BAR':
+			tooltip.addClass('bar');
 			createChart_bar(params)
 			break;
 		case 'LINE':
+			tooltip.addClass('line');
 			createChart_line(params)
 			break;
 		case 'DOT':
+			tooltip.addClass('dot');
 			createChart_dot(params)
 			break;
 		case 'DATAHEATMAP':
+			tooltip.addClass('heatmap');
 			createChart_heatmap(params)
 			break;
 		case 'RADAR':
+			tooltip.addClass('radar');
 			createChart_radar(params)
 			break;
 	}
@@ -300,7 +307,6 @@ function createChart_bar(params) {
 	const height = params.height;
 	const margin = params.margin;
 	const data = params.data;
-
 	
 	var svg = d3.select('#'+pId)
 	.append('svg')
@@ -314,28 +320,30 @@ function createChart_bar(params) {
 	.style('pointer-events', 'all')
 	
 	const x = d3.scaleBand()
-  .domain(d3.range(data.length))
-  .range([margin.left, width - margin.right])
-  .padding(0.1)
+	.domain(d3.range(data.length))
+	.range([margin.left, width - margin.right])
+	.padding(0.1)
 	
-  const y = d3.scaleLinear()
-  .domain([0, d3.max(data, d => d.value)]).nice()
-  .range([height - margin.bottom, margin.top])
+	const y = d3.scaleLinear()
+	.domain([0, d3.max(data, d => d.value)]).nice()
+	.range([height - margin.bottom, margin.top])
   
-  const xAxis = g => g
-  .attr("transform", `translate(0,${height - margin.bottom})`)
-  .call(d3.axisBottom(x).tickFormat(i => data[i].name).tickSizeOuter(0))
+	const xAxis = g => g
+	.attr("transform", `translate(0,${height - margin.bottom})`)
+	.call(d3.axisBottom(x).tickFormat(i => data[i].name).tickSizeOuter(0))
   
-  const yAxis = g => g
-  .attr("transform", `translate(${margin.left},0)`)
-  .call(d3.axisLeft(y).ticks(null, data.format))
-  .call(g => g.select(".domain").remove())
-  .call(g => g.append("text")
-      .attr("x", -margin.left)
-      .attr("y", 10)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "start")
-      .text(data.y))
+	const yAxis = g => g
+	.attr("transform", `translate(${margin.left},0)`)
+	.call(d3.axisLeft(y).ticks(null, data.format))
+	.call(g => g.select(".domain").remove())
+	.call(g => g.append("text")
+		.attr("x", -margin.left)
+		.attr("y", 10)
+		.attr("fill", "currentColor")
+		.attr("text-anchor", "start")
+		.text(data.y))
+		
+	var tooltip = $('#qe_detail_tooltip_'+i+'.bar');
 	
 	svg.append("g")
 	.attr("class", "bars")
@@ -349,44 +357,37 @@ function createChart_bar(params) {
 	.attr("height", d => y(0) - y(d.value))
 	.attr("width", x.bandwidth())
 	.attr('data-x', d => d.name)
-	.attr('data-y', d => d.value);
+	.attr('data-y', d => d.value)
+	.on('mouseover', function (d){
+		const rect = $(this);
+		rect[0].classList.add('fill-selected')
+		
+		newX = rect.offset().left - (tooltip.width()/2);
+		newY = rect.offset().top - tooltip.height() - 10;
+		
+		var tooltipTemplate = '';
+		tooltipTemplate += '<div>';
+		tooltipTemplate += '<div class="tooltip_text">';
+		tooltipTemplate += '<p>name: ' + d.name+ '</p>';
+		tooltipTemplate += '<p>value: ' + d.value+ '</p>';
+		tooltipTemplate += '</div>';
+		
+		tooltip
+		.offset({top:newY, left:newX})
+		.css('visibility', 'visible')
+		.html(tooltipTemplate)
+		.animate({'opacity': 1}, 200);
+	})
+	.on('mouseout', function(){
+		$(this)[0].classList.remove('fill-selected')
+		
+		tooltip
+		.css('visibility', 'hidden')
+		.animate({'opacity' : 0}, 200);
+	});
 
 	svg.append("g").call(xAxis);
 	svg.append("g").call(yAxis);
-	
-	// 상세 팝업 일때만, 표시한다.
-	const rectEl = document.getElementById(pId).getElementsByTagName('rect');
-	for(const el of rectEl) {
-		el.removeEventListener('mouseover', ()=>{})
-		el.addEventListener('mouseover', (event) => {
-			target = event.target;
-			target.classList.add('fill-selected')
-			
-			tooltip = $('#qe_detail_tooltip_'+i)[0]; 
-			
-			tQuery = $(tooltip);
-			tQuery.css('visibility', 'visible')
-			
-			tQuery.empty();
-			tQueryTemplate = '';
-			tQueryTemplate += '<div class="tooltip_text">';
-			tQueryTemplate += '<p>key : ' + target.dataset.x + '</p>';
-			tQueryTemplate += '<p>count : ' + target.dataset.y + '</p>';
-			tQueryTemplate += '</div>';
-			tQuery.append(tQueryTemplate)
-			
-			positionTop = height - margin.top - target.getAttribute('height') - tooltip.clientHeight + 20;
-			positionLeft = Number($(target).attr('x')) - tQuery.width()/2 + Number(target.getAttribute('width'))/2 + 15
-			
-			tooltip.style.top = positionTop + 'px';
-			tooltip.style.left = positionLeft + 'px';
-			tooltip.style.opacity = 1;
-		});
-		el.addEventListener('mouseout', (event) => {
-			event.target.classList.remove('fill-selected')
-			$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
-		});
-	}
 }
 function createChart_line(params) {
 	const i = params.i;
@@ -405,35 +406,37 @@ function createChart_line(params) {
 	.style('pointer-events', 'all')
 	
 	const line = d3.line()
-  .defined(d => !isNaN(d.value))
-  .x(d => x(d.date))
-  .y(d => y(d.value))
+	.defined(d => !isNaN(d.value))
+	.x(d => x(d.date))
+	.y(d => y(d.value))
   
-  const x = d3.scaleUtc()
-  .domain(d3.extent(data, d => d.date))
-  .range([margin.left, width - margin.right])
+	const x = d3.scaleUtc()
+	.domain(d3.extent(data, d => d.date))
+	.range([margin.left, width - margin.right])
   
-  const y = d3.scaleLinear()
-  .domain([0, d3.max(data, d => d.value)]).nice()
-  .range([height - margin.bottom, margin.top])
+	const y = d3.scaleLinear()
+	.domain([0, d3.max(data, d => d.value)]).nice()
+	.range([height - margin.bottom, margin.top])
   
-  const xAxis = g => g
-  .attr("transform", `translate(0,${height - margin.bottom})`)
-  .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
+	const xAxis = g => g
+	.attr("transform", `translate(0,${height - margin.bottom})`)
+	.call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
   
-  const yAxis = g => g
-  .attr("transform", `translate(${margin.left},0)`)
-  .call(d3.axisLeft(y))
-  .call(g => g.select(".domain").remove())
-  .call(g => g.select(".tick:last-of-type text").clone()
-      .attr("x", 3)
-      .attr("text-anchor", "start")
-      .attr("font-weight", "bold")
-      .text(data.y))
+	const yAxis = g => g
+	.attr("transform", `translate(${margin.left},0)`)
+	.call(d3.axisLeft(y))
+	.call(g => g.select(".domain").remove())
+	.call(g => g.select(".tick:last-of-type text").clone()
+			.attr("x", 3)
+			.attr("text-anchor", "start")
+			.attr("font-weight", "bold")
+			.text(data.y))
 	
 	svg.append("g").call(xAxis);
 	svg.append("g").call(yAxis);
 
+	var tooltip = $('#qe_detail_tooltip_'+i+'.line');
+	
 	svg.append("path")
 	.datum(data)
 	.attr("fill", "none")
@@ -441,7 +444,34 @@ function createChart_line(params) {
 	.attr("stroke-width", 1.5)
 	.attr("stroke-linejoin", "round")
 	.attr("stroke-linecap", "round")
-	.attr("d", line);
+	.attr("d", line)
+	.on('mouseover', function (d){
+		const path = $(this);
+		path[0].classList.add('fill-selected')
+		
+		newX = path.offset().left - (tooltip.width()/2);
+		newY = path.offset().top - tooltip.height() - 10;
+		
+		var tooltipTemplate = '';
+		tooltipTemplate += '<div>';
+		tooltipTemplate += '<div class="tooltip_text">';
+		tooltipTemplate += '<p>name: ' + d.name+ '</p>';
+		tooltipTemplate += '<p>value: ' + d.value+ '</p>';
+		tooltipTemplate += '</div>';
+		
+		tooltip
+		.offset({top:newY, left:newX})
+		.css('visibility', 'visible')
+		.html(tooltipTemplate)
+		.animate({'opacity': 1}, 200);
+	})
+	.on('mouseout', function(){
+		$(this)[0].classList.remove('fill-selected')
+		
+		tooltip
+		.css('visibility', 'hidden')
+		.animate({'opacity' : 0}, 200);
+	});;
 
 }
 function createChart_dot(params) {
@@ -458,64 +488,68 @@ function createChart_dot(params) {
 	.attr('viewBox', [0, 0, width, height])
 	.style('width', width)
 	.style('height', height)
-	.style('pointer-events', 'all')
+	.style('pointer-events', 'all');
 	
 	const x = d3.scaleLinear()
-  .domain(d3.extent(data, d => d.x)).nice()
-  .range([margin.left, width - margin.right])
+	.domain(d3.extent(data, d => d.x)).nice()
+	.range([margin.left, width - margin.right]);
   
-  const y = d3.scaleLinear()
-  .domain(d3.extent(data, d => d.y)).nice()
-  .range([height - margin.bottom, margin.top])
+	const y = d3.scaleLinear()
+	.domain(d3.extent(data, d => d.y)).nice()
+	.range([height - margin.bottom, margin.top]);
 	
-  const color = d3.scaleOrdinal(data.map(d => d.category), d3.schemeCategory10)
-	const shape = d3.scaleOrdinal(data.map(d => d.category), d3.symbols.map(s => d3.symbol().type(s)()))
+  	const color = d3.scaleOrdinal(data.map(d => d.category), d3.schemeCategory10);
+	const shape = d3.scaleOrdinal(data.map(d => d.category), d3.symbols.map(s => d3.symbol().type(s)()));
 	
-  const xAxis = g => g
-  .attr("transform", `translate(0,${height - margin.bottom})`)
-  .call(d3.axisBottom(x).ticks(width / 80))
-  .call(g => g.select(".domain").remove())
-  .call(g => g.append("text")
-      .attr("x", width)
-      .attr("y", margin.bottom - 4)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "end")
-      .text(data.x));
+	const xAxis = g => g
+	.attr("transform", `translate(0,${height - margin.bottom})`)
+	.call(d3.axisBottom(x).ticks(width / 80))
+	.call(g => g.select(".domain").remove())
+	.call(g => g.append("text")
+		.attr("x", width)
+		.attr("y", margin.bottom - 4)
+		.attr("fill", "currentColor")
+		.attr("text-anchor", "end")
+		.text(data.x));
   
-  const yAxis = g => g
-  .attr("transform", `translate(${margin.left},0)`)
-  .call(d3.axisLeft(y))
-  .call(g => g.select(".domain").remove())
-  .call(g => g.append("text")
-      .attr("x", -margin.left)
-      .attr("y", 10)
-      .attr("fill", "currentColor")
-      .attr("text-anchor", "start")
-      .text(data.y))
+	const yAxis = g => g
+	.attr("transform", `translate(${margin.left},0)`)
+	.call(d3.axisLeft(y))
+	.call(g => g.select(".domain").remove())
+	.call(g => g.append("text")
+		.attr("x", -margin.left)
+		.attr("y", 10)
+		.attr("fill", "currentColor")
+		.attr("text-anchor", "start")
+		.text(data.y));
 
-  const grid = g => g
-  .attr("stroke", "currentColor")
-  .attr("stroke-opacity", 0.1)
-  .call(g => g.append("g")
-    .selectAll("line")
-    .data(x.ticks())
-    .join("line")
-      .attr("x1", d => 0.5 + x(d))
-      .attr("x2", d => 0.5 + x(d))
-      .attr("y1", margin.top)
-      .attr("y2", height - margin.bottom))
-  .call(g => g.append("g")
-    .selectAll("line")
-    .data(y.ticks())
-    .join("line")
-      .attr("y1", d => 0.5 + y(d))
-      .attr("y2", d => 0.5 + y(d))
-      .attr("x1", margin.left)
-      .attr("x2", width - margin.right));
+	var tooltip = $('#qe_detail_tooltip_'+i+'.dot');
 	
+	const grid = g => g
+	.attr("stroke", "currentColor")
+	.attr("stroke-opacity", 0.1)
+	.call(g => g.append("g")
+		.selectAll("line")
+		.data(x.ticks())
+		.join("line")
+		.attr("x1", d => 0.5 + x(d))
+		.attr("x2", d => 0.5 + x(d))
+		.attr("y1", margin.top)
+		.attr("y2", height - margin.bottom))
+	.call(g => g.append("g")
+		.selectAll("line")
+		.data(y.ticks())
+		.join("line")
+		.attr("y1", d => 0.5 + y(d))
+		.attr("y2", d => 0.5 + y(d))
+		.attr("x1", margin.left)
+		.attr("x2", width - margin.right));
+
 	svg.append('g').call(xAxis);
 	svg.append('g').call(yAxis);
 	svg.append('g').call(grid);
+
+	var tooltip = $('#qe_detail_tooltip_'+i+'.dot');
 	
 	svg.append("g")
 		.attr("stroke-width", 1.5)
@@ -526,7 +560,44 @@ function createChart_dot(params) {
 	.join("path")
 	.attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
 	.attr("fill", d => color(d.category))
-	.attr("d", d => shape(d.category));
+	.attr("d", d => shape(d.category))
+	.on('mouseover', function (d){
+		const path = $(this);
+		newX = path.offset().left - (tooltip.width()/2);
+		newY = path.offset().top - tooltip.height() - 10;
+		
+		var tooltipTemplate = '';
+		tooltipTemplate += '<div>';
+		tooltipTemplate += '<div class="tooltip_text">';
+		tooltipTemplate += '<p>category: ' + d.category+ '</p>';
+		tooltipTemplate += '<p>x: ' + d.x+ '</p>';
+		tooltipTemplate += '<p>y: ' + d.y+ '</p>';
+		tooltipTemplate += '</div>';
+		
+		tooltip
+		.offset({top:newY, left:newX})
+		.css('height', 50)
+		.css('visibility', 'visible')
+		.html(tooltipTemplate)
+		.animate({'opacity': 1}, 200);
+		
+		z = "polygon."+d3.select(this).attr("class");
+		svg.selectAll("polygon")
+		.transition(200)
+		.style("fill-opacity", 0.1); 
+		svg.selectAll(z)
+		.transition(200)
+		.style("fill-opacity", .7);
+	})
+	.on('mouseout', function(){
+		tooltip
+		.css('visibility', 'hidden')
+		.animate({'opacity' : 0}, 200);
+		
+		svg.selectAll("polygon")
+		.transition(200)
+		.style("fill-opacity", 0.5);
+	});
 }
 function createChart_heatmap(params) {
 	const i = params.i;
@@ -535,17 +606,20 @@ function createChart_heatmap(params) {
 	const height = params.height;
 	const margin = params.margin;
 	const data = params.data;
+	margin.top = 0;
 	
 	var svg = d3.select('#'+pId)
 	.append('svg')
 	.attr('id', pId+'_'+i+'_svg')
 	.attr('viewBox', [0, 0, width, height])
+	.attr('width', width)
+	.attr('height', height)
 	.style('width', width)
 	.style('height', height)
 	.style('pointer-events', 'all')
 	.append("g")
 	  .attr("transform",
-	        "translate(" + margin.left + "," + margin.top + ")");
+		        "translate(" + margin.top + "," + 0 + ")");
 
 	// Labels of row and columns
 	var myGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
@@ -553,36 +627,77 @@ function createChart_heatmap(params) {
 
 	// Build X scales and axis:
 	var x = d3.scaleBand()
-	  .range([ 0, width ])
-	  .domain(myGroups)
-	  .padding(0.01);
+	.range([ 0, width-margin.left-margin.right])
+	.domain(myGroups)
+	.padding(0.01);
 	svg.append("g")
-	  .attr("transform", "translate(0," + height + ")")
-	  .call(d3.axisBottom(x))
+	.attr("transform", `translate(${margin.left},${height - margin.bottom})`)
+	.call(d3.axisBottom(x))
 
 	// Build X scales and axis:
 	var y = d3.scaleBand()
-	  .range([ height, 0 ])
-	  .domain(myVars)
-	  .padding(0.01);
+	.range([ height-margin.top-margin.bottom, margin.left ])
+	.domain(myVars)
+	.padding(0.01);
 	svg.append("g")
-	  .call(d3.axisLeft(y));
+	.attr("transform", `translate(${margin.left},0)`)
+	.call(d3.axisLeft(y));
 
 	// Build color scale
 	var myColor = d3.scaleLinear()
-	  .range(["white", "#69b3a2"])
-	  .domain([1,100])
-
+	  .range(["white", "#185ba5"])
+	  .domain([1,100]);
+	 
 	//Read the data
-	svg.selectAll()
+	svg.append('g')
+	.selectAll()
 	.data(data, function(d) {return d.group+':'+d.variable;})
 	.enter()
 	.append("rect")
-	.attr("x", function(d) { return x(d.group) })
-	.attr("y", function(d) { return y(d.variable) })
-	.attr("width", x.bandwidth() )
-	.attr("height", y.bandwidth() )
-	.style("fill", function(d) { return myColor(d.value)} )
+		.attr('class', 'heatmap')
+		.attr("x", function(d) { return margin.left+x(d.group) })
+		.attr("y", function(d) { return y(d.variable) })
+		.attr("width", x.bandwidth() )
+		.attr("height", y.bandwidth() )
+		.attr('data-variable', d => d.variable)
+		.attr('data-value', d => d.value)
+		.attr('data-group', d => d.group)
+		.style("fill", function(d) { return myColor(d.value)} );
+	
+	// tooltip 설정
+	const rectEl = document.getElementById(pId).querySelectorAll('rect.heatmap');
+	for(const el of rectEl) {
+		el.removeEventListener('mouseover', ()=>{})
+		el.addEventListener('mouseover', (event) => {
+			target = event.target;
+			target.classList.add('fill-selected')
+			
+			tooltip = $('#qe_detail_tooltip_'+i+'.heatmap')[0]; 
+			
+			tQuery = $(tooltip);
+			tQuery.css('visibility', 'visible')
+			
+			tQuery.empty();
+			tQueryTemplate = '';
+			tQueryTemplate += '<div class="tooltip_text">';
+			tQueryTemplate += '<p>group: ' + target.dataset.group + '</p>';
+			tQueryTemplate += '<p>variable : ' + target.dataset.variable + '</p>';
+			tQueryTemplate += '<p>value : ' + target.dataset.value + '</p>';
+			tQueryTemplate += '</div>';
+			tQuery.append(tQueryTemplate)
+			
+			positionTop = Number($(target).attr('y')) + Number(target.getAttribute('height'))/2 - 30;
+			positionLeft = Number($(target).attr('x')) + Number(target.getAttribute('width'))/2 - 30;
+			
+			tooltip.style.top = positionTop + 'px';
+			tooltip.style.left = positionLeft + 'px';
+			tooltip.style.opacity = 1;
+		});
+		el.addEventListener('mouseout', (event) => {
+			event.target.classList.remove('fill-selected')
+			$(event.target.parentElement.parentElement.previousElementSibling).css('visibility', 'hidden')
+		});
+	}
 }
 function createChart_radar(params) {
 	const i = params.i;
@@ -596,6 +711,7 @@ function createChart_radar(params) {
 	const id = pId+'_'+i+'_svg';
 	
 	var cfg = {
+		    radius: 5,
 			factor: 1,
 			factorLegend: .85,
 			levels: 3,
@@ -603,13 +719,13 @@ function createChart_radar(params) {
 			radians: 2 * Math.PI,
 			opacityArea: 0.5,
 			ToRight: 5,
-			TranslateX: 30,
-			TranslateY: 30,
+			TranslateX: 50,
+			TranslateY: 35,
 			ExtraWidthX: 100,
 			ExtraWidthY: 100,
-			color: d3.scaleOrdinal().range(["#6F257F", "#CA0D59"])
+			color: d3.scaleOrdinal().range(["#185ba5", "#CA0D59"])
 	};
-	
+
 	var g = d3.select('#'+pId)
 	.append('svg')
 	.attr('id', id)
@@ -617,7 +733,9 @@ function createChart_radar(params) {
 	.style('width', width+cfg.ExtraWidthX)
 	.style('height', height+cfg.ExtraWidthY)
 	.style('pointer-events', 'all')
-	.attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+	.style('position', 'absolute')
+	.style('left', (width+cfg.ExtraWidthX)/2)
+	.attr("transform", "translate(0,0)");
 		
 	if('undefined' !== typeof options){
 		for(var j in options){
@@ -626,7 +744,7 @@ function createChart_radar(params) {
 			}
 		}
 	}
-	    
+	
 	cfg.maxValue = 100;
 	    
 	var allAxis = (data[0].map(function(j, k){return j.area}));
@@ -634,17 +752,18 @@ function createChart_radar(params) {
 	var radius = cfg.factor*Math.min(width/2, height/2);
 	var Format = d3.format('%');
 	d3.select(id).select("svg").remove();
-
-	var tooltip;
+	
+	const nodeLevels = g.append('g').attr('class', 'node-levels').attr("transform", `translate(${cfg.TranslateX},${cfg.TranslateY})`);
 		
 	//Circular segments
 	for(var j=0; j<cfg.levels; j++){
 		var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
   	
-		g.selectAll(".levels")
+		nodeLevels
+		.selectAll(".levels")
 	    	.data(allAxis)
 	    	.enter()
-	    	.append("svg:line")
+	    	.append("line")
 	    	.attr("x1", function(d, i){return levelFactor*(1-cfg.factor*Math.sin(i*cfg.radians/total));})
 	    	.attr("y1", function(d, i){return levelFactor*(1-cfg.factor*Math.cos(i*cfg.radians/total));})
 	    	.attr("x2", function(d, i){return levelFactor*(1-cfg.factor*Math.sin((i+1)*cfg.radians/total));})
@@ -659,10 +778,11 @@ function createChart_radar(params) {
 	//Text indicating at what % each level is
 	for(var j=0; j<cfg.levels; j++){
 		var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
-		g.selectAll(".levels")
+		nodeLevels
+		.selectAll(".levels")
 		.data([1]) //dummy data
 		.enter()
-		.append("svg:text")
+		.append("text")
 		.attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
 		.attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
 		.attr("class", "legend")
@@ -675,7 +795,9 @@ function createChart_radar(params) {
 	
 	series = 0;
 
-	var axis = g.selectAll(".axis")
+	var axis = g.append('g').attr('class', 'radar-axis')
+	.attr("transform", `translate(${cfg.TranslateX},${cfg.TranslateY})`)
+	.selectAll(".axis")
 	.data(allAxis)
 	.enter()
 	.append("g")
@@ -703,7 +825,10 @@ function createChart_radar(params) {
 	 
 	data.forEach(function(y, x) {
 		dataValues = [];
-		g.selectAll(".nodes")
+		g
+		.append('g')
+		.attr('class', 'radar-nodes')
+		.selectAll(".nodes")
 		.data(y, function(j, i){
 			dataValues.push([
 	  			width/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
@@ -712,10 +837,14 @@ function createChart_radar(params) {
 		});
 		dataValues.push(dataValues[0]);
   	
-		g.selectAll(".area")
+		g
+		.append('g')
+		.attr('class', 'radar-area')
+		.selectAll(".area")
 		.data([dataValues])
 		.enter()
 		.append("polygon")
+		.attr("transform", `translate(${cfg.TranslateX},${cfg.TranslateY})`)
 		.attr("class", "radar-chart-serie"+series)
 		.style("stroke-width", "2px")
 		.style("stroke", cfg.color(series))
@@ -745,6 +874,76 @@ function createChart_radar(params) {
 		series++;
 	});
 	series=0;
+
+	var tooltip = $('#qe_detail_tooltip_'+i+'.radar');
+	
+    data.forEach(function(y, x){
+		g
+		.append('g')
+		.attr('class', 'circles')
+		.selectAll(".nodes")
+		.data(y).enter()
+		.append("circle")
+		.attr("class", "radar-chart-serie"+series)
+		.attr("transform", `translate(${cfg.TranslateX},${cfg.TranslateY})`)
+		.attr('r', cfg.radius)
+		.attr("alt", function(j){return Math.max(j.value, 0)})
+		.attr("cx", function(j, i){
+        	dataValues.push([
+        		width/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total)), 
+        		cfg.height/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total))
+    		]);
+        	return width/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.sin(i*cfg.radians/total));
+        })
+        .attr("cy", function(j, i){
+        	return height/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*cfg.factor*Math.cos(i*cfg.radians/total));
+        })
+        .attr("data-id", function(j){return j.area})
+		.style("fill", "#fff")
+		.style("stroke-width", "2px")
+		.style("stroke", cfg.color(series)).style("fill-opacity", .9)
+		.on('mouseover', function (d){
+			
+			const circle = $(this);
+			newX = circle.offset().left - (tooltip.width()/2);
+			newY = circle.offset().top - tooltip.height() - 10;
+			
+			var tooltipTemplate = '';
+			tooltipTemplate += '<div>';
+			tooltipTemplate += '<div class="tooltip_text">';
+			tooltipTemplate += '<p>key : ' + d.area + '</p>';
+			tooltipTemplate += '<p>count : ' + d.value + '</p>';
+			tooltipTemplate += '</div>';
+			
+			tooltip
+			.offset({top:newY, left:newX})
+			.css('visibility', 'visible')
+			.html(tooltipTemplate)
+			.animate({'opacity': 1}, 200);
+			
+			z = "polygon."+d3.select(this).attr("class");
+			g.selectAll("polygon")
+			.transition(200)
+			.style("fill-opacity", 0.1); 
+			g.selectAll(z)
+			.transition(200)
+			.style("fill-opacity", .7);
+		})
+		.on('mouseout', function(){
+            
+			tooltip
+			.css('visibility', 'hidden')
+			.animate({'opacity' : 0}, 200);
+			
+			g.selectAll("polygon")
+			.transition(200)
+			.style("fill-opacity", cfg.opacityArea);
+		})
+		.append("title")
+		.text(function(j){return Math.max(j.value, 0)});
+
+		series++;
+    })
 }
 
 // when close Dialog 

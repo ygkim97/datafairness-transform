@@ -126,6 +126,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     pointer-events: none;			
     z-index:1;
 }
+.chart_tooltip.heatmap {	
+    width: 150px;					
+    height: 50px;					
+}
 .chart_tooltip .tooltip_text {
 	font: 11px sans-serif;
     padding-left: 10px;
