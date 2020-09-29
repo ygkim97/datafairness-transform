@@ -1,3 +1,34 @@
+Date.prototype.format = function (f) {
+    if (!this.valueOf()) return " ";
+    var weekKorName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+    var weekKorShortName = ["일", "월", "화", "수", "목", "금", "토"];
+    var weekEngName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var weekEngShortName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var d = this;
+    return f.replace(/(yyyy|yy|MM|dd|KS|KL|ES|EL|HH|hh|mm|ss|a\/p)/gi, function ($1) {
+        switch ($1) {
+            case "yyyy": return d.getFullYear(); // 년 (4자리)
+            case "yy": return (d.getFullYear() % 1000).zf(2); // 년 (2자리)
+            case "MM": return (d.getMonth() + 1).zf(2); // 월 (2자리)
+            case "dd": return d.getDate().zf(2); // 일 (2자리)
+            case "KS": return weekKorShortName[d.getDay()]; // 요일 (짧은 한글)
+            case "KL": return weekKorName[d.getDay()]; // 요일 (긴 한글)
+            case "ES": return weekEngShortName[d.getDay()]; // 요일 (짧은 영어)
+            case "EL": return weekEngName[d.getDay()]; // 요일 (긴 영어)
+            case "HH": return d.getHours().zf(2); // 시간 (24시간 기준, 2자리)
+            case "hh": return ((h = d.getHours() % 12) ? h : 12).zf(2); // 시간 (12시간 기준, 2자리)
+            case "mm": return d.getMinutes().zf(2); // 분 (2자리)
+            case "ss": return d.getSeconds().zf(2); // 초 (2자리)
+            case "a/p": return d.getHours() < 12 ? "오전" : "오후"; // 오전/오후 구분
+            default: return $1;
+        }
+    });
+};
+String.prototype.string = function (len) { var s = '', i = 0; while (i++ < len) { s += this; } return s; };
+String.prototype.zf = function (len) { return "0".string(len - this.length) + this; };
+Number.prototype.zf = function (len) { return this.toString().zf(len); };
+
+
 // for window resize event.
 var _QEDialogUI = null;
 var QE_SELECTED_HEADER = {
@@ -395,7 +426,11 @@ function createChart_line(params) {
 	const width = params.width;
 	const height = params.height;
 	const margin = params.margin;
-	const data = params.data;
+	
+	var data = [];
+	params.data.forEach((e)=>{
+		data.push({date:new Date(e.date), value:e.value})
+	})
 	
 	var svg = d3.select('#'+pId)
 	.append('svg')
@@ -417,7 +452,9 @@ function createChart_line(params) {
 	const y = d3.scaleLinear()
 	.domain([0, d3.max(data, d => d.value)]).nice()
 	.range([height - margin.bottom, margin.top])
-  
+	
+	const keys = d3.keys(data[0]);
+	
 	const xAxis = g => g
 	.attr("transform", `translate(0,${height - margin.bottom})`)
 	.call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
@@ -437,14 +474,24 @@ function createChart_line(params) {
 
 	var tooltip = $('#qe_detail_tooltip_'+i+'.line');
 	
-	svg.append("path")
+	const lineG = svg.append("path")
 	.datum(data)
 	.attr("fill", "none")
 	.attr("stroke", "steelblue")
 	.attr("stroke-width", 1.5)
 	.attr("stroke-linejoin", "round")
 	.attr("stroke-linecap", "round")
-	.attr("d", line)
+	.attr("d", line);
+	
+	svg.append('g').selectAll("dot")
+	.data(data)
+	.enter().append("circle")
+	.attr("fill", "rgb(255, 255, 255)")
+	.attr("stroke-width", "2px")
+	.attr("stroke", "rgb(24, 91, 165)")
+	.attr("r", 3)
+	.attr("cx", function(d) { return x(d.date); })
+	.attr("cy", function(d) { return y(d.value);})
 	.on('mouseover', function (d){
 		const path = $(this);
 		path[0].classList.add('fill-selected')
@@ -455,7 +502,7 @@ function createChart_line(params) {
 		var tooltipTemplate = '';
 		tooltipTemplate += '<div>';
 		tooltipTemplate += '<div class="tooltip_text">';
-		tooltipTemplate += '<p>name: ' + d.name+ '</p>';
+		tooltipTemplate += '<p>date: ' + new Date(d.date).format('yyyy-MM-dd') + '</p>';
 		tooltipTemplate += '<p>value: ' + d.value+ '</p>';
 		tooltipTemplate += '</div>';
 		
