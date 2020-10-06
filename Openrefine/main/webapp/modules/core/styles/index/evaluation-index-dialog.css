@@ -1,0 +1,142 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+@import-less url("../../theme.less");
+
+#ei_dialog {
+	width : 50%;
+}
+#ei_dialog .dialog-body {
+	min-height : 500px; 
+}
+#ei_dialog table {
+	height : 100%;
+	table-layout: fixed;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width : -webkit-fill-available;
+}
+#ei_dialog table th {
+	text-align: center;
+    height: 25px;
+    font-size: small;
+	vertical-align: middle;
+}
+#ei_dialog table th.qe-border-none {
+	border-bottom : transparent;
+}
+#ei_dialog table td.qe-border-none {
+	border-top : transparent;
+}
+#ei_dialog td {
+    border: 1px solid #ccc;
+	border-collapse:collapse;
+	height : 190px;
+}
+#ei_dialog tr:nth-child(3n) {
+	border-bottom: double #ccc;
+}
+#ei_dialog tr:nth-child(3n) td {
+	height : 30px;
+}
+#ei_dialog .dialog-body {
+	position: relative;
+}
+#ei_dialog .ei-card {
+    position: absolute;
+	height : 450px;
+	width: calc(100% - 40px);
+}
+#ei_dialog #ei_card1 {
+}
+#ei_dialog #ei_card2 {
+	display: none;
+}
+#ei_dialog #ei_card3 {
+	display: none;
+}
+#ei_dialog #ei_card4 {
+	display: none;
+}
+#ei_dialog .body-header {
+    border: 1px solid #ccc;
+	height : 30px;
+}
+#ei_dialog .body-header .navi {
+	float : left;
+	width : 80%;
+	display: flex;
+}
+#ei_dialog .body-header .navi .navi-item {
+	width : 150px;
+	border : 1px solid #ccc;
+	padding : 3px;
+	margin: 3px 3px;
+}
+#ei_dialog .body-header .navi .navi-item.active {
+	background : yellow;
+}
+#ei_dialog .body-header .navi .navi-arrows {
+	width : 30px;
+}
+
+#ei_dialog .body-header .btn-wrap {
+	float : right;
+}
+#ei_dialog .body-header button {
+	margin : 5px;
+	
+}
+#ei_dialog .body_wrap {
+    margin-top: 10px;
+}
+#ei_dialog .body_wrap > div {
+    padding : 5px;
+    border: 1px solid #ccc;
+    height: 450px;
+}
+#ei_dialog td.evaluation_index .id {
+	height: 30px;
+	padding: 10px;
+	font-size: x-large;
+	text-align: center;
+	border-bottom : 1px solid #ccc;
+    background: #e4f3ff54;
+}
+#ei_dialog td.evaluation_index .desc {
+	font-size: medium;
+	padding: 10px;
+}
+#ei_dialog td.evaluation_index .radio {
+	margin-right: 10px;
+}

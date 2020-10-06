@@ -1,11 +1,19 @@
 // for window resize event.
 var _BasicStatisticsDialogUI = null;
 
-function BasicStatisticsDialogUI(headerOriginalNameIndex) {
-	this._createDialog(headerOriginalNameIndex);
+const BASIC_STAT_HEADER = {
+	NAMES : null,
+	INDEXES : null
+}
+
+function BasicStatisticsDialogUI({names, indexes}) {
+
+	BASIC_STAT_HEADER.NAMES = names;
+	BASIC_STAT_HEADER.INDEXES = indexes;
+	this._createDialog();
 } 
 
-BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
+BasicStatisticsDialogUI.prototype._createDialog = function() {
 	_BasicStatisticsDialogUI = this;
 	
 	var self = this;
@@ -32,13 +40,15 @@ BasicStatisticsDialogUI.prototype._createDialog = function(selectedHeaders) {
 
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog/title'));
-	$('#graph-title').append(title);
+	$('#statistic_dialog #graph-title').append(title);
 	
 	// Create Dialog
-	this._getStatisticData(selectedHeaders);
+	this._getStatisticData();
 }
 
-BasicStatisticsDialogUI.prototype._getStatisticData = function(selectedHeaders) {
+BasicStatisticsDialogUI.prototype._getStatisticData = function() {
+	const selectedHeaders = BASIC_STAT_HEADER.INDEXES;
+	
 	if (selectedHeaders == 'all') {
 		selectedHeaders = [];
 	}
@@ -75,6 +85,7 @@ BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 		_self._createChart_d3();
 		if (drawType == 'all') {
 			_self._createGrid();
+			_self._setGridDetailBtn();
 		}
 		warningDialog2();
 	}, 10)
@@ -489,6 +500,17 @@ BasicStatisticsDialogUI.prototype._showDetailPopup = function(i) {
 	}, 10)
 }
 
+BasicStatisticsDialogUI.prototype._setGridDetailBtn = function() {
+
+	$('.view_detail_btn').click((e)=>{
+		const columnIndex = $(e.target).attr('columnIndex')
+		
+		new QEDialogUI({
+			name : BASIC_STAT_HEADER.NAMES[columnIndex],
+			index : BASIC_STAT_HEADER.INDEXES[columnIndex]
+		});
+	})
+}
 BasicStatisticsDialogUI.prototype._createGrid = function() {
 	// reset grid panel 
 	var dialogChart = this._elmts.basic_statistics_grid.empty();
@@ -522,6 +544,34 @@ BasicStatisticsDialogUI.prototype._createGrid = function() {
 		}
 		template += '</tr>';
 	})
+	
+	template += '<tr>';
+	
+	
+	for (var i = 0, size = column.length+1; i < size; i++) {
+		if (i == 0) {
+			template += '<th>';
+			template += $.i18n('core-index-data/view-detail');
+			template += '</th>';
+			continue;
+		}
+		const columnIndex = i-1; 
+		const c = column[columnIndex];
+		if (c == undefined || c.type == 'string') {
+			template += '<td>';
+			template += '</td>';
+			
+		} else {
+			template += '<td class="has_btn">';
+			template += '<button id="view_detail_btn_'+columnIndex+'" class="view_detail_btn" columnIndex="'+columnIndex+'">';
+			template += $.i18n('core-index-data/view');
+			template += '</button>';
+			template += '</td>';
+		}
+		
+	}
+	template += '</tr>';
+	
 	template += '</table>';
 	dialogChart.append(template);	
 }

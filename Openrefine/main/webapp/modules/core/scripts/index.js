@@ -216,7 +216,8 @@ $(function() {
   var renderActionArea = function(actionArea) {
     actionArea.bodyElmt = $('<div>')
     .addClass('action-area-tab-body')
-    .appendTo('#right-panel-body');
+    .appendTo('#right-panel-body')
+    .attr('DOM_ID', actionArea.id);
 
     actionArea.tabElmt = $('<li>')
     .addClass('action-area-tab')

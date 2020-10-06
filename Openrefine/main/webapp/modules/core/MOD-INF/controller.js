@@ -154,6 +154,7 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-based-statistic", new Packages.com.google.refine.commands.statistic.GetBasedStatisticCommand());
   RS.registerCommand(module, "get-quantitative-evaluation", new Packages.com.google.refine.commands.statistic.GetQuantitativeEvaluationCommand());
+  RS.registerCommand(module, "get-evaluation-index", new Packages.com.google.refine.commands.statistic.GetEvaluationIndexCoomand());
 }
 
 function registerOperations() {
@@ -385,9 +386,9 @@ function init() {
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
       "scripts/index/open-project-ui.js",
+      "scripts/index/data-quality-ui.js",
       "scripts/index/import-project-ui.js",
       "scripts/index/lang-settings-ui.js",
-      "scripts/index/data-quality-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",
@@ -408,7 +409,8 @@ function init() {
       "scripts/index/edit-metadata-dialog.js",
 
       "scripts/dialogs/basic-statistics-dialog.js",
-      "scripts/dialogs/quantitative-evaluation-dialog.js"
+      "scripts/dialogs/quantitative-evaluation-dialog.js",
+      "scripts/dialogs/evaluation-index-dialog.js"
     ]
   );
 
@@ -435,6 +437,7 @@ function init() {
       "styles/index/data-quality-ui.less",
       "styles/index/basic-statistics-dialog.css",
       "styles/index/quantitative-evaluation-dialog.less",
+      "styles/index/evaluation-index-dialog.css",
 
       "styles/index/default-importing-controller.less",
       "styles/index/default-importing-file-selection-panel.less",

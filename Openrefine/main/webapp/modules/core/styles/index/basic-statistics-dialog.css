@@ -99,8 +99,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 #statistic_dialog #basic-statistics-grid tr:not(:first-child) td {
 	vertical-align: middle;
-	text-align: right;	
 	padding-right: 5px;
+	text-align: right;	
+}
+#statistic_dialog #basic-statistics-grid tr:not(:first-child) td.has_btn {
+	text-align: center;	
 }
 
 #statistic_dialog #basic-statistics-grid tr:nth-child(odd) {
@@ -169,7 +172,6 @@ rect.fill-default {
 rect.fill-default.fill-selected {
 	fill : #ff72a3 !important;
 }
-
 rect.zoom-panel {
 	fill: #fff;
 }

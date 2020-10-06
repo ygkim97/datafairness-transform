@@ -32,17 +32,17 @@ Number.prototype.zf = function (len) { return this.toString().zf(len); };
 // for window resize event.
 var _QEDialogUI = null;
 var QE_SELECTED_HEADER = {
-		NAMES : null,
-		INDEXES : null
+		NAME : null,
+		INDEX : null
 };
 
 const CHART_DIV_ID = 'qe_chart'
 
-function QEDialogUI(selectedHeaderNames, headerOriginalIndexes) {
+function QEDialogUI({name, index}) {
 
 	_QEDialogUI = this;
-	QE_SELECTED_HEADER.NAMES = selectedHeaderNames;
-	QE_SELECTED_HEADER.INDEXES = headerOriginalIndexes;
+	QE_SELECTED_HEADER.NAME = name;
+	QE_SELECTED_HEADER.INDEX = index;
 	
 	this._createDialog();
 } 
@@ -56,7 +56,7 @@ QEDialogUI.prototype._getStatisticData = function(chartType) {
 		type : 'POST',
 		url : "command/core/get-quantitative-evaluation?" + $.param({ project: UI_CHART_INFO.selectedPId}),
 		data : {
-			headers : QE_SELECTED_HEADER.INDEXES.join(','),
+			headers : QE_SELECTED_HEADER.INDEX,
 			chartType : chartType
 		},
 		async : false,
@@ -92,7 +92,7 @@ QEDialogUI.prototype._createDialog = function() {
 
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog-qe/title'));
-	$('#graph-title').append(title);
+	$('#qe_dialog #graph-title').append(title);
 	
 	// draw qe dialog
 	this._createChartTemplate();
@@ -256,9 +256,13 @@ QEDialogUI.prototype._createDetailChartTemplate = function() {
 	var template1 = '';
 	var divId = 'qe_detail_chart_';
 
-	const selectedHeaderLen = QE_SELECTED_HEADER.NAMES.length;
+//	const selectedHeaderLen = QE_SELECTED_HEADER.NAMES.length;
+	const selectedHeaderLen = 1;
 	// detail card
-	QE_SELECTED_HEADER.NAMES.forEach(function(h, i) {
+//	QE_SELECTED_HEADER.NAME.forEach(function(h, i) {
+		const h = QE_SELECTED_HEADER.NAME
+		const i = 0;
+		
 		const pageCnt = i+1;
 		const prevPageCnt = pageCnt == 1 ? selectedHeaderLen : pageCnt-1;
 		const nextPageCnt = pageCnt == selectedHeaderLen ? 1 : pageCnt+1;
@@ -267,13 +271,13 @@ QEDialogUI.prototype._createDetailChartTemplate = function() {
 		template1 += '<input id="rad'+pageCnt+'" type="radio" name="rad" '+isChecked+'>';
 		template1 += '<section>';
 		template1 += '<h1>'+h+'</h1>';
-		template1 += '<div class="qe-chart" id="'+divId+pageCnt+'" data-i='+pageCnt+' data-headerIndex='+QE_SELECTED_HEADER.INDEXES[i]+'>';
+		template1 += '<div class="qe-chart" id="'+divId+pageCnt+'" data-i='+pageCnt+' data-headerIndex='+QE_SELECTED_HEADER.INDEX+'>';
 		template1 += '<div id="qe_detail_tooltip_'+i+'" class="chart_tooltip"></div>';
 		template1 += '</div>';
 		template1 += '<label class="qe-btn-label" for="rad'+prevPageCnt+'"><i class="fa fa-chevron-left"></i></label>';
 		template1 += '<label class="qe-btn-label" for="rad'+nextPageCnt+'"><i class="fa fa-chevron-right"></i></label>';
 		template1 += '</section>';
-	})	
+//	})	
 	chartWrap.append(template1);
 }
 QEDialogUI.prototype._createDetailChart = function(i, chartInfo, _chartData) {
