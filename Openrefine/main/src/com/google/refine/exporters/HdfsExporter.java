@@ -87,7 +87,7 @@ public class HdfsExporter implements WriterExporter{
         try {
                 out.write(rowData.getBytes("UTF-8"));
         } catch (Exception e) {
-                logger.error("hdfs error :: {}", e.getMessage());
+                logger.error("Error Msg :: {}", e.getMessage());
         }
         /*
         rowCount += 1;
@@ -148,7 +148,7 @@ public class HdfsExporter implements WriterExporter{
                 }
         }
         catch (Exception e) {
-                logger.error("hdfs error :: {}", e.getMessage());
+                logger.error("Error Msg :: {}", e.getMessage());
         } 
 
         TabularSerializer serializer = new TabularSerializer() {

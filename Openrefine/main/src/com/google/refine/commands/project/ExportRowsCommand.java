@@ -40,6 +40,7 @@ import java.io.Writer;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,6 +71,22 @@ public class ExportRowsCommand extends Command {
 	/**
 	 * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
 	 */
+
+    static JSONArray makeColumnsInfo(List columnsName) {
+        JSONObject columns = null;
+        JSONArray columnsArray = new JSONArray();
+        for (Object object : columnsName) {
+            columns = new JSONObject();
+            columns.put("name", (String) object);
+            columns.put("size", "0");
+            columns.put("type", "TEXT");
+            columns.put("allowNull", "true");
+            columns.put("defaultValue", "");
+            columns.put("nullValueToEmptyStr", "true");
+            columnsArray.add(columns);
+        }
+        return columnsArray;
+    }
 
     @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {
@@ -112,8 +129,15 @@ public class ExportRowsCommand extends Command {
             if (format.equals("sql") == true) {
                 String options = params.getProperty("options");
                 JSONParser jsonParser = new JSONParser();
-                JSONObject jsonObj = (JSONObject) jsonParser.parse(options);
-                iris = (boolean) jsonObj.get("iris");
+                JSONObject jsonOpt = (JSONObject) jsonParser.parse(options);
+                String columnsInfo = jsonOpt.get("columns").toString();
+                
+                if (columnsInfo.length() == 0) {
+                    JSONArray columnsArray = makeColumnsInfo(project.columnModel.getColumnNames());
+                    jsonOpt.put("columns", columnsArray);
+                    params.setProperty("options", jsonOpt.toJSONString());
+                }
+                iris = (boolean) jsonOpt.get("iris");
             }           
             
             String preview = params.getProperty("preview");
