@@ -35,8 +35,6 @@ package com.google.refine.exporters;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.io.InputStream;
-import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
 import java.net.URI;
@@ -52,7 +50,6 @@ import com.google.refine.util.ParsingUtilities;
 import com.google.refine.util.IOUtils;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -116,7 +113,6 @@ public class HdfsExporter implements WriterExporter{
         
         final String separator = options.separator;
         final String lineSeparator = System.getProperty("line.separator");
-        final boolean quoteAll = options.quoteAll;
         
         final boolean printColumnHeader =
             (params != null && params.getProperty("printColumnHeader") != null) ?
