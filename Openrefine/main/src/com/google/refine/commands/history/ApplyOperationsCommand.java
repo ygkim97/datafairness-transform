@@ -33,6 +33,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.google.refine.commands.history;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -49,6 +52,7 @@ import com.google.refine.operations.UnknownOperation;
 import com.google.refine.process.Process;
 import com.google.refine.util.ParsingUtilities;
 
+
 public class ApplyOperationsCommand extends Command {
     
     @Override
@@ -61,13 +65,29 @@ public class ApplyOperationsCommand extends Command {
         
         Project project = getProject(request);
         String jsonString = request.getParameter("operations");
+        File filePath = new File(String.format("%s/rules/%s.json", System.getProperty("user.dir"), jsonString));
+        if (filePath.exists()) {
+        	String columnName = request.getParameter("columnName");
+                        
+        	try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+        		String newjsonString = new String();
+        		String line = null;
+        		while ((line = br.readLine()) != null) {
+        			newjsonString += line;
+				}
+
+        		jsonString = newjsonString.replace("INPUT", columnName);
+        	} catch (IOException e) {
+                e.printStackTrace();
+			}
+        }
+        
         try {
             ArrayNode a = ParsingUtilities.evaluateJsonStringToArrayNode(jsonString);
             int count = a.size();
             for (int i = 0; i < count; i++) {
             	if (a.get(i) instanceof ObjectNode) {
 	                ObjectNode obj = (ObjectNode) a.get(i);
-	                
 	                reconstructOperation(project, obj);
             	}
             }
