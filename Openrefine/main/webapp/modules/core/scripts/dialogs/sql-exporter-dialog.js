@@ -66,9 +66,6 @@ function SqlExporterDialog(options) {
     this._elmts.includeContentLabel.html($.i18n('core-dialogs/for-include-content-checkbox'));
     this._elmts.includeIfExistDropStatementLabel.html($.i18n('core-dialogs/for-include-if-exist-drop-stmt-checkbox'));
     this._elmts.irisLabel.html($.i18n('core-dialogs/iris'));
-    this._elmts.irisDatabaseLabel.html($.i18n('core-dialogs/iris-database'));
-    this._elmts.irisUserLabel.html($.i18n('core-dialogs/iris-user'));
-    this._elmts.irisPasswordLabel.html($.i18n('core-dialogs/iris-password'));
     this._elmts.irisKeyLabel.html($.i18n('core-dialogs/iris-key'));
     this._elmts.irisDateKeyLabel.html($.i18n('core-dialogs/iris-date-key'));
     
@@ -289,21 +286,7 @@ function SqlExporterDialog(options) {
           
         }
     });
-    
-    this._elmts.iris.click(function() {
-        var checked =  $(this).is(':checked');
-        if(checked == true){
-            $('#irisDatabaseTextBoxId').removeAttr("disabled");
-            $('#irisUserTextBoxId').removeAttr("disabled");
-            $('#irisPasswordTextBoxId').removeAttr("disabled");
-        }else{
-            $('#irisDatabaseTextBoxId').attr("disabled", true);
-            $('#irisUserTextBoxId').attr("disabled", true);
-            $('#irisPasswordTextBoxId').attr("disabled", true);
-          
-        }
-    });
-   
+       
 
     this._elmts.cancelButton.click(function() { self._dismiss(); });
     this._elmts.downloadButton.click(function() { self._download(); });
@@ -318,10 +301,6 @@ function SqlExporterDialog(options) {
       this._elmts.sqlExportOutputEmptyRowsCheckbox.attr('checked', 'checked');
       this._elmts.sqlExportTrimAllColumnsCheckbox.attr('checked', 'checked');
       this._elmts.nullCellValueToEmptyStringLabel.attr('checked', 'checked');
-        
-      this._elmts.irisDatabaseTextBox.val("EPS");
-      this._elmts.irisUserTextBox.val("eps");
-      this._elmts.irisPasswordTextBox.val("");
 
       $("input:text[class=defaultValueTextBoxStyle]").each(function () {
           $(this).prop("disabled", true);
@@ -464,9 +443,6 @@ function SqlExporterDialog(options) {
     options.includeStructure = this._elmts.includeStructureCheckbox[0].checked;
     options.includeDropStatement = this._elmts.includeDropStatementCheckbox[0].checked;
     options.iris= this._elmts.iris[0].checked;
-    options.irisDB= $.trim(this._elmts.irisDatabaseTextBox.val());
-    options.irisUser= $.trim(this._elmts.irisUserTextBox.val());
-    options.irisPass= $.trim(this._elmts.irisPasswordTextBox.val());
     options.irisKey= $.trim(this._elmts.irisKeyTextBox.val());
     options.irisDateKey= $.trim(this._elmts.irisDateKeyTextBox.val());
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
