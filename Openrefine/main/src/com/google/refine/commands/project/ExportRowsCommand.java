@@ -37,9 +37,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +56,6 @@ import com.google.refine.ProjectManager;
 import com.google.refine.browsing.Engine;
 import com.google.refine.commands.Command;
 import com.google.refine.exporters.CsvExporter;
-import com.google.refine.exporters.HdfsExporter;
 import com.google.refine.exporters.Exporter;
 import com.google.refine.exporters.ExporterRegistry;
 import com.google.refine.exporters.StreamExporter;
@@ -64,12 +63,30 @@ import com.google.refine.exporters.WriterExporter;
 import com.google.refine.exporters.sql.SqlExporterException;
 import com.google.refine.model.Project;
 
+import arq.iri;
+
 public class ExportRowsCommand extends Command {
     private  static final Logger logger = LoggerFactory.getLogger("ExportRowsCommand");
     
 	/**
 	 * This command uses POST but is left CSRF-unprotected as it does not incur a state change.
 	 */
+
+    static JSONArray makeColumnsInfo(List<String> columnsName) {
+        JSONObject columns = null;
+        JSONArray columnsArray = new JSONArray();
+        for (Object object : columnsName) {
+            columns = new JSONObject();
+            columns.put("name", (String) object);
+            columns.put("size", "0");
+            columns.put("type", "TEXT");
+            columns.put("allowNull", "true");
+            columns.put("defaultValue", "");
+            columns.put("nullValueToEmptyStr", "true");
+            columnsArray.add(columns);
+        }
+        return columnsArray;
+    }
 
     @SuppressWarnings("unchecked")
     static public Properties getRequestParameters(HttpServletRequest request) {
@@ -112,8 +129,15 @@ public class ExportRowsCommand extends Command {
             if (format.equals("sql") == true) {
                 String options = params.getProperty("options");
                 JSONParser jsonParser = new JSONParser();
-                JSONObject jsonObj = (JSONObject) jsonParser.parse(options);
-                iris = (boolean) jsonObj.get("iris");
+                JSONObject jsonOpt = (JSONObject) jsonParser.parse(options);
+                iris = (boolean) jsonOpt.get("iris");
+                String columnsInfo = jsonOpt.get("columns").toString();
+                
+                if (columnsInfo.length() == 0) {
+                    JSONArray columnsArray = makeColumnsInfo(project.columnModel.getColumnNames());
+                    jsonOpt.put("columns", columnsArray);
+                    params.setProperty("options", jsonOpt.toJSONString());
+                }
             }           
             
             String preview = params.getProperty("preview");

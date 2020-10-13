@@ -242,7 +242,7 @@ public class ImportingUtilities {
             InputStream stream = fileItem.getInputStream();
             
             String name = fileItem.getFieldName().toLowerCase();
-            if (fileItem.isFormField()) {
+            if (fileItem.isFormField() || name.equals("hdfs")) {
                 if (name.equals("clipboard")) {
                     String encoding = request.getCharacterEncoding();
                     if (encoding == null) {
@@ -402,7 +402,7 @@ public class ImportingUtilities {
                             result = ByteSource.wrap(c).openStream();
 
                     } catch (Exception e) {
-                            logger.error("hdsf error :: {}", e.getMessage());
+                            logger.error("Error Msg :: {}", e.getMessage());
                     } finally {
                             in.close();
                             fs.close();        

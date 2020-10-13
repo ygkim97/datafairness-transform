@@ -148,10 +148,10 @@ public class SqlExporter implements WriterExporter {
                     boolean iris = sqlOptions.get("iris").asBoolean();
                     Properties irisInfo = IOUtils.getProperty(propertPath);
  
-                    String url = IRIS_DB_DRIVER + "//" + irisInfo.get("irisHost") + ":" 
-                                + irisInfo.get("irisPort") + "/" + sqlOptions.get("irisDB").textValue();
-                    String user = sqlOptions.get("irisUser").textValue();
-                    String password = sqlOptions.get("irisPass").textValue();
+                    String url = IRIS_DB_DRIVER + "//" + irisInfo.getProperty("irisHost") + ":" 
+                                + irisInfo.getProperty("irisPort") + "/" + irisInfo.getProperty("irisDB");
+                    String user = irisInfo.getProperty("irisUser");
+                    String password = irisInfo.getProperty("irisPass");
                     String createQuery = null;
                     String partitionKey = null;
                     String partitionDate = null;
