@@ -46,12 +46,23 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.refine.commands.Command;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
+import com.google.refine.statistic.AccuracyIndex;
+import com.google.refine.statistic.CompeletenessIndex;
+import com.google.refine.statistic.DataQualityIndex;
 import com.google.refine.util.ParsingUtilities;
 
-public class GetEvaluationIndexCoomand extends Command {
+public class SetEvaluationIndexCorrectedCommand extends Command {
 
-	public static enum CHART_TYPE {
-	}
+	public static enum INDEX_TYPE {
+		ACCURACY,
+		COMPLETENESS,
+		CONSISTENCY,
+		PRESENT,
+		COMPLIANCE,
+		PRECISION,
+		TRACEABILITY,
+		UNDERSTANDING
+	}	
 
 	/**
 	 * This command accepts POST. It is not CSRF-protected as it does not incur any
@@ -74,18 +85,25 @@ public class GetEvaluationIndexCoomand extends Command {
 			}
 
 			ColumnModel projectModel = project.columnModel;
-
-			String chartTypeParam = request.getParameter("chartType");
-			
 			List<String> columnNames = projectModel.getColumnNames();
-			String[] selectedColumns = request.getParameter("headers").split(",");
-			String[] chartTypes = request.getParameter("chartType").split(",");
 
+			String[] selectedColumns = request.getParameter("columnId").split(",");
+			String indexId = request.getParameter("indexId");
+			String correctedIndex = request.getParameter("correctedIndex");
+			
+			List<Object> chartRow = DataQualityUtils.createChartRows(project, columnNames, selectedColumns).get(0);
+			
+			DataQualityIndex index = getIndexClass(indexId, chartRow);
+			if (index == null) {
+				// do something 
+				throw new Exception();
+			}
 
+//			index.corrected(correctedIndex, request, response);
 			
 			Map<String, Object> result = new HashMap<String, Object>();
 			// add params
-			result.put("data", "");
+			result.put("success", true);
 
 			response.setCharacterEncoding("UTF-8");
 			response.setHeader("Content-Type", "application/json");
@@ -104,5 +122,19 @@ public class GetEvaluationIndexCoomand extends Command {
 				writer.close();
 			}
 		}
+	}
+	
+	private DataQualityIndex getIndexClass(String indexId, List<Object> chartRow) {
+		if (indexId.equals(INDEX_TYPE.ACCURACY.name())) {
+			return new AccuracyIndex(chartRow);
+		} else if (indexId.equals(INDEX_TYPE.COMPLETENESS.name())) {
+			return new CompeletenessIndex(chartRow);
+		} else if (indexId.equals(INDEX_TYPE.CONSISTENCY.name())) {
+		} else if (indexId.equals(INDEX_TYPE.PRESENT.name())) {
+		} else if (indexId.equals(INDEX_TYPE.PRECISION.name())) {
+		} else if (indexId.equals(INDEX_TYPE.TRACEABILITY.name())) {
+		} else if (indexId.equals(INDEX_TYPE.UNDERSTANDING.name())) {
+		}
+		return null;
 	}
 }

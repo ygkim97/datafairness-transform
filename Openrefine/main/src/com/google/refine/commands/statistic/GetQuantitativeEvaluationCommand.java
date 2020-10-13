@@ -35,7 +35,6 @@ package com.google.refine.commands.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +51,6 @@ import org.json.simple.parser.ParseException;
 import com.google.refine.commands.Command;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
 public class GetQuantitativeEvaluationCommand extends Command {
@@ -87,7 +85,7 @@ public class GetQuantitativeEvaluationCommand extends Command {
 			
 			List<String> columnNames = projectModel.getColumnNames();
 			String[] selectedColumns = request.getParameter("headers").split(",");
-			List<List<Object>> chartRows = createChartRows(project, columnNames, selectedColumns);
+			List<List<Object>> chartRows = DataQualityUtils.createChartRows(project, columnNames, selectedColumns);
 
 			Iterator<List<Object>> it = chartRows.iterator();
 			
@@ -167,32 +165,5 @@ public class GetQuantitativeEvaluationCommand extends Command {
 
 		JSONParser jsonParser = new JSONParser();
 		return (JSONArray) jsonParser.parse(str);
-	}
-	
-	private List<List<Object>> createChartRows(Project project, List<String> columnNames, String[] selectedColumns) {
-		List<List<Object>> chartRows = new ArrayList<List<Object>>();
-		Iterator<Row> it = project.rows.iterator();
-		
-		Row row = null;
-		int chartRowI = 0;
-		int selectedColumnIndex = 0;
-		
-		while (it.hasNext()) {
-			row = it.next(); // project row
-
-			chartRowI = 0;
-			for (int i = 0, size = selectedColumns.length; i < size; i++) {
-				selectedColumnIndex = Integer.valueOf(selectedColumns[i]);
-				if (chartRows.size() <= chartRowI) {
-					chartRows.add(new ArrayList<Object>());
-				}
-				Object columnRow = row.getCellValue(selectedColumnIndex);
-				chartRows.get(chartRowI).add(columnRow);
-
-				chartRowI++;
-			}
-		}
-
-		return chartRows;
 	}
 }

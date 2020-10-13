@@ -35,8 +35,8 @@ var CustomColumnHeader = function(props) {
         chkEl.name = `${columnInfo.header}`;
     } else {
     	chkEl.type = 'radio';
-//        chkEl.name = `${columnInfo.header}`;
         chkEl.name = 'project-radio';
+        chkEl.value = `${columnInfo.header}`;
     }
     chkEl.className = 'custom_table_header_check';
     chkElWrapper.appendChild(chkEl);
@@ -393,20 +393,19 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			const _self = e.data._self;
 			_self._getDOM_ID();
 			
-			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked');
-			var headerOriginalIndex = [];
-			checked.each((i, _c) => {
-				headerOriginalIndex.push(UI_CHART_INFO.headerIndex[_c.name])
-			})
+			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked')[0];
 			
 			// 선택된 프로젝트가 없음 > 진행불가능
 			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 				alert($.i18n('core-index-data/no-selected-project'))
-			} else if (headerOriginalIndex.length == 0) {
+			} else if (checked == undefined) {
 				alert($.i18n('core-index-data/no-selected-headers'))
 			} else {
+				const index = UI_CHART_INFO.headerIndex[checked.value];
+				const name = checked.value;
+				
 				// 선택된 header가 있음 > 그 header로 진행
-				new EIDialogUI(headerOriginalIndex[0])
+				new EIDialogUI(index, name)
 			}
 		});
 	}

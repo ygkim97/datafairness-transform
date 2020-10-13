@@ -785,5 +785,17 @@
     "core-index-dialog-ei/navi4": "Editing",
     "core-index-data/evaluation-index-title": "Quality Assessment",
     
+	"core-index-data-ei/left-title-column-name": "Column Name",    
+	"core-index-data-ei/left-title-evaluation-index": "Evaluation Index",
+	"core-index-data-ei/left-title-test-column": "Test Column",
+	"core-index-data-ei/left-title-edit-column": "Edit Column",
+	"core-index-data-ei/left-title-setting": "Evaluate Info",
+	"core-index-data-ei/left-title-quality-score": "Quality Index",
+	"core-index-data-ei/left-title-quality-total-cnt": "Total Count",
+	"core-index-data-ei/left-title-quality-right-cnt": "Suitable Count",
+	"core-index-data-ei/left-title-quality-wrong-cnt": "unSuitable Count",
+	"core-index-data-ei/left-title-": "",
     "" : ""
 }
+
+

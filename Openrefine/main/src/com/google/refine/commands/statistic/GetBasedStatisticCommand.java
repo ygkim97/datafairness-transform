@@ -54,7 +54,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.refine.commands.Command;
 import com.google.refine.model.ColumnModel;
 import com.google.refine.model.Project;
-import com.google.refine.model.Row;
 import com.google.refine.util.ParsingUtilities;
 
 public class GetBasedStatisticCommand extends Command {
@@ -150,7 +149,7 @@ public class GetBasedStatisticCommand extends Command {
 
 			// 선택한 column이 없을 경우, 전체 column을 배열에 추가해준다.
 			String[] selectedColumns = request.getParameter("headers").split(",");
-			List<List<Object>> chartRows = createChartRows(project, columnNames, selectedColumns);
+			List<List<Object>> chartRows = DataQualityUtils.createChartRows(project, columnNames, selectedColumns);
 
 			List<Map<String, Object>> columnInfo = new ArrayList<Map<String, Object>>();
 			List<Map<Object, Long>> frequencyList = new ArrayList<Map<Object, Long>>();
@@ -299,33 +298,6 @@ public class GetBasedStatisticCommand extends Command {
 		} else {
 			return stringValue;
 		}
-	}
-
-	private List<List<Object>> createChartRows(Project project, List<String> columnNames, String[] selectedColumns) {
-		List<List<Object>> chartRows = new ArrayList<List<Object>>();
-		Iterator<Row> it = project.rows.iterator();
-		
-		Row row = null;
-		int chartRowI = 0;
-		int selectedColumnIndex = 0;
-		
-		while (it.hasNext()) {
-			row = it.next(); // project row
-
-			chartRowI = 0;
-			for (int i = 0, size = selectedColumns.length; i < size; i++) {
-				selectedColumnIndex = Integer.valueOf(selectedColumns[i]);
-				if (chartRows.size() <= chartRowI) {
-					chartRows.add(new ArrayList<Object>());
-				}
-				Object columnRow = row.getCellValue(selectedColumnIndex);
-				chartRows.get(chartRowI).add(columnRow);
-
-				chartRowI++;
-			}
-		}
-
-		return chartRows;
 	}
 
 	private String getColumnType(List<Object> list) {
