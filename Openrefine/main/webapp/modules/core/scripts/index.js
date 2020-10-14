@@ -37,17 +37,33 @@ var Refine = {
   actionAreas: []
 };
 
-// Requests a CSRF token and calls the supplied callback
-// with the token
+//Requests a CSRF token and calls the supplied callback
+//with the token
 Refine.wrapCSRF = function(onCSRF) {
-   $.get(
-      "command/core/get-csrf-token",
-      {},
-      function(response) {
-         onCSRF(response['token']);
-      },
-      "json"
-   );
+$.get(
+   "command/core/get-csrf-token",
+   {},
+   function(response) {
+      onCSRF(response['token']);
+   },
+   "json"
+);
+};
+
+//Requests a CSRF token and calls the supplied callback
+//with async false
+//with the token
+Refine.wrapCSRFAsync = function(onCSRF) {
+	var resp = null;
+	$.ajax({
+	   url : "command/core/get-csrf-token",
+	   data : {},
+	   success : function(response) {
+		   resp = onCSRF(response['token']); 
+	   },
+	   async : false
+	});
+	return resp;
 };
 
 // Performs a POST request where an additional CSRF token
@@ -136,7 +152,7 @@ $(function() {
           $("#openrefine-version").text($.i18n('core-index/version')+" " + OpenRefineVersion.full_version);
           
 
-            $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
+           /* $.getJSON("https://api.github.com/repos/openrefine/openrefine/releases/latest",
              function( data ) {
               var latestVersion = data.tag_name;
               var latestVersionName = data.name;
@@ -160,7 +176,7 @@ $(function() {
                 .text($.i18n('core-index/download')+' ' + latestVersionName + ' '+$.i18n('core-index/now')+'.')
                 .appendTo(notification);
               }
-            });
+            });*/
         }
     );
   };
@@ -216,7 +232,8 @@ $(function() {
   var renderActionArea = function(actionArea) {
     actionArea.bodyElmt = $('<div>')
     .addClass('action-area-tab-body')
-    .appendTo('#right-panel-body');
+    .appendTo('#right-panel-body')
+    .attr('DOM_ID', actionArea.id);
 
     actionArea.tabElmt = $('<li>')
     .addClass('action-area-tab')

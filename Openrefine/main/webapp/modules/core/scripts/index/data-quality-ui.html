@@ -6,30 +6,16 @@
 			<button bind="project_select_btn"></button>
 		</div>
 		<div class="btn-group">
-			<div>
-				<button bind="get_sta_bnt"></button>
-			</div>
-			<div>
-				<div class="select_all_warpper">
-					<span>
-						<label class="cursor_pointer" bind="select_all_label"></label>
-						<input type="checkbox" bind="check_all">
-					</span>
-					<!-- <span class="separator"> | </span> -->
-					<div class="selected_wrapper" style="display: none;">
-						<label bind="selected_header"></label>
-						<label bind="selected_header_count"></label>
-					</div>
-				</div>
-				<!-- <button bind="check_all"></button> -->
+			<div class="btn-popup">
+				<button bind="get_evaluation_index"></button>
 			</div>
 		</div>
 	</div>
 	
 	<div class="data-quality-bottom">
 		<div class="bottom-grid" >
-			<div id="project_table" bind="project_table" ></div>
-			<div id="data-quality-pagination" class="tui-pagination"></div>
+			<div class="project_table" bind="project_table" ></div>
+			<div class="data-quality-pagination tui-pagination"></div>
 		</div>
 	</div>
 </div>    	

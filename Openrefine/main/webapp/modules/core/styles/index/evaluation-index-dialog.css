@@ -1,0 +1,335 @@
+/*
+
+Copyright 2011, Google Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+    * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,           
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY           
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+@import-less url("../../theme.less");
+
+#ei_dialog {
+	width : 960px;
+}
+#ei_dialog .dialog-body {
+	min-height : 700px; 
+}
+#ei_dialog table {
+	height : 100%;
+	table-layout: fixed;
+    /* border: 1px solid #ccc; */
+    border-collapse: collapse;
+    width : -webkit-fill-available;
+}
+#ei_dialog table th {
+	text-align: center;
+    height: 25px;
+    font-size: small;
+	vertical-align: middle;
+}
+#ei_dialog table th.qe-border-none {
+	border-bottom : transparent;
+}
+#ei_dialog table td.qe-border-none {
+	border-top : transparent;
+}
+#ei_dialog table td {
+    border: 1px solid #ccc;
+	border-collapse:collapse;
+}
+#ei_dialog table.card1-table td {
+	height : 190px;
+}
+#ei_dialog table.card3-table td {
+	height: 20px;
+    padding: 1px 5px;
+}
+#ei_dialog table.card3-table thead {
+	background: aliceblue;
+}
+#ei_dialog table.card1-table tr:nth-child(3n) {
+	border-bottom: double #ccc;
+}
+#ei_dialog table.card1-table tr:nth-child(3n) td {
+	height : 30px;
+}
+#ei_dialog .dialog-body {
+	position: relative;
+}
+#ei_dialog .ei-card {
+    position: absolute;
+	height : 600px;
+	width: calc(100% - 55px);
+}
+#ei_dialog #ei_card1 {
+	
+}
+#ei_dialog #ei_card2 {
+	display: none;
+}
+#ei_dialog #ei_card3 {
+	display: none;
+}
+#ei_dialog #ei_card4 {
+	display: none;
+}
+#ei_dialog .body-header {
+    border: 1px solid #ccc;
+	height : 50px;
+}
+#ei_dialog .body-header .navi {
+	float : left;
+	width : 80%;
+	display: flex;
+	height : 100%;
+	padding-left: 10px;
+}
+#ei_dialog .body-header .navi .navi-item {
+	width: 150px;
+    border: 1px solid #ccc;
+	padding: 3px 8px;
+    margin: 8px 3px;
+    font-size: 1.4em;
+    text-align: center;
+}
+#ei_dialog .body-header .navi .navi-item.active {
+    border: 1px solid #89a7ff;
+    background: #e8f2ff;
+	font-weight : 550;
+}
+#ei_dialog .body-header .navi .navi-arrows {
+	width : 50px;
+	padding : 5px;
+	text-align: center;
+}
+#ei_dialog .body-header .btn-wrap {
+	float : right;
+	height : 100%;
+    padding: 10px 5px;
+}
+#ei_dialog .body-header button {
+	margin : 0px 5px;;
+	
+}
+#ei_dialog .body_wrap {
+    margin-top: 10px;
+}
+#ei_dialog .body_wrap > div {
+    padding : 10px;
+    border: 1px solid #ccc;
+    height: 600px;
+}
+#ei_dialog td.evaluation_index div {
+	pointer-events: none;
+}
+#ei_dialog td.evaluation_index.active {
+	background: #a7d8ff54;
+}
+#ei_dialog td.evaluation_index.active .id {
+	background: #a9d9ff9c;
+}
+#ei_dialog td.evaluation_index .id {
+	height: 30px;
+    padding: 10px;
+    font-size: 1.6em;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    background: #e4f3ff54;
+}
+#ei_dialog td.evaluation_index .desc {
+    font-size: 1.1em;
+    padding: 15px;
+    color: #525252;
+}
+#ei_dialog td.evaluation_index .radio {
+	margin-right: 10px;
+}
+#ei_dialog label {
+    pointer-events: none;
+    cursor: default;	
+}
+
+.ei-card .ei-left {
+	border: 1px solid #ccc;
+    float: left;
+    /* width: 150px; */
+    width : 15%;
+    height: 100%;
+    margin-right: 10px;
+    padding: 10px;
+    display: table;
+}
+.ei-card .ei-right {
+    border: 1px solid #ccc;
+    height: 100%;
+    float: right;
+	/* width: 700px; */
+	width : 79%;
+    padding: 10px;
+    display: table;
+}
+
+.ei-card .ei-items {
+	height: 30px;
+    font-size: 15px;
+    margin-bottom: 10px;
+    padding: 5px;
+    text-align: center;
+	border-bottom: 1px dotted #ccc;
+}
+.ei-card .ei-right .ei-items {
+	text-align: left;
+}
+
+.ei-card .ei-items select {
+	width : 200px;
+    height: 30px;
+    margin-top: -5px;
+}
+.ei-card .ei-right .ei-items span.desc {
+	font-size: small;
+    float: right;
+    width: 300px;
+}
+.ei-card .ei-right .ei-items span.desc svg {
+	margin-right : 3px;
+	color: #ff0000ad;
+	width: 10px;
+}
+.ei-card .ei-right .ei-items span.seperator {
+	margin : 0px 20px;
+}
+.ei-card .chart-row {
+    height: 300px;
+    padding-bottom: 15px;
+}
+.ei-card .chart-row .ei-left {
+	float : left;
+	width : 40%;
+}
+.ei-card .chart-row .ei-right {
+	width : 52%;
+}
+
+.ei-card .chart-row .count-row:nth-child(1) {
+	text-align: center;
+	height : 70px;
+	font-size: xx-large;
+    background: #e4e4e49e;
+    border: double #a7a7a7c7;
+	margin: 0 35px;
+	margin-bottom: 5px;
+}
+.ei-card .chart-row .count-row:nth-child(1) > span {
+	line-height: 70px;
+    color: red;
+    font-weight: 600;
+    font-size: 45px;
+}
+.ei-card .chart-row .count-row:nth-child(2) {
+	height: 200px;
+}
+.ei-card .chart-row .count-row:nth-child(2) > div {
+	height : 55px;
+	border: double #e8e8e8;
+	margin-bottom: 5px;
+}
+.ei-card .chart-row .count-row:nth-child(2) > div > span {
+	line-height: 55px;
+	text-align: center;
+	width : 130px;
+	font-size: 15px;;	
+}
+.ei-card .chart-row .count-row:nth-child(2) > div > span:nth-child(1) {
+	float: left;
+}
+.ei-card .chart-row .count-row:nth-child(2) > div > span:nth-child(2) {
+    float: right;
+}
+.pie-chart-wrap {
+	padding : 0px 55px 5px 55px;
+}
+.pie-chart-wrap svg:nth-child(2) {
+	margin-left : 10px;
+}
+.pie-chart-legend text {
+	font-size : 15px;
+}
+	
+.ei-card .grid-row {
+	width: 700px;
+    height: 185px;
+    overflow-y: auto;
+    margin-bottom: 0px;
+}
+.ei-items .ei-box-span {
+    width: auto;
+    display: inline;
+    padding: 5px 10px;
+    margin: 10px;
+}
+
+.ei-box-shadow {
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 3px 0px #a5a5a5;	
+}
+
+path.ei-selected {
+    stroke: black !important;
+    stroke-width: 0.6px !important;
+    cursor: pointer;
+}
+.ei-card .export-row fieldset > div {
+	margin: 10px 0px;
+}
+.ei-card .export-row label {
+    cursor: default;
+    display: inline-block;
+    width: 200px;
+}
+.ei-card .export-row input {
+	width: 300px;
+}
+
+.ei-card .btn-row {
+	text-align: right;
+}
+.clickable-text {
+	cursor: pointer;
+}
+
+.ei-box-item {
+    width: fit-content;
+    padding: 5px 15px;
+    float: left;
+    margin: -6px 0px;
+}
+.grid-notice {
+	padding: 5px;
+    font-size: 0.9em;
+}

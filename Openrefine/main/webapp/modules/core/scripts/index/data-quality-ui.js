@@ -13,6 +13,7 @@ var PAGE_INFO = {
 	START : 0
 }
 var UI_CHART_INFO = {
+	selectedPName : '',
 	selectedPId : '',
 	headerIndex : {},
 }
@@ -29,8 +30,14 @@ var CustomColumnHeader = function(props) {
     
     const chkElWrapper = document.createElement('div');
     const chkEl = document.createElement('input');
-    chkEl.type = 'checkbox';
-    chkEl.name = `${columnInfo.header}`;
+    if (DOM_ID.indexOf('profiling') > -1) {
+    	chkEl.type = 'checkbox';
+        chkEl.name = `${columnInfo.header}`;
+    } else {
+    	chkEl.type = 'radio';
+        chkEl.name = 'project-radio';
+        chkEl.value = `${columnInfo.header}`;
+    }
     chkEl.className = 'custom_table_header_check';
     chkElWrapper.appendChild(chkEl);
     el.appendChild(chkElWrapper);
@@ -55,20 +62,30 @@ CustomColumnHeader.prototype.render = function(props) {
  * data-quality-ui.js start
  * ************************************/
 Refine.SetDataQualityUI = function(elmt) {
+	// same file used two section.
 	var self = this;
-
-	elmt.html(DOM.loadHTML("core", "scripts/index/data-quality-ui.html"));
+	
+	const actionAreaId = $(elmt).attr('DOM_ID');
+	elmt.html(DOM.loadHTML("core", "scripts/index/"+actionAreaId+".html"));
 
 	this._elmt = elmt;
 	this._elmts = DOM.bind(elmt);
-
-	ui = DOM.bind($("#data-quality-body"));
+	
+	DOM_ID = $(this._elmt).attr('DOM_ID').indexOf('profiling') > -1 ? 'data-profiling-body' : 'data-quality-body'
+	ui = DOM.bind($("#"+DOM_ID));
 
 	// initialzed
 	this._getProjectList();
 	this._btnSetting();
 };
 
+Refine.SetDataQualityUI.prototype._getDOM_ID = function() {
+	DOM_ID = $(this._elmt).attr('DOM_ID').indexOf('profiling') > -1 ? 'data-profiling-body' : 'data-quality-body';	
+}
+Refine.SetDataQualityUI.prototype._hasOwnProperty = function(self, elmtsId) {
+	return self._elmts.hasOwnProperty(elmtsId);
+	
+}
 /* ************************************
  * Grid Creator
  * ************************************/
@@ -76,8 +93,11 @@ Refine.SetDataQualityUI.prototype._createGrid = function() {
 	const columns = this._createColumns(false);
 	const headerColumns = this._createColumns(true);
 	
+	this._getDOM_ID();
+	const container = $('#' + DOM_ID + ' .project_table');
+	
 	this.GridInstance = new Grid({
-		  el: document.getElementById('project_table'), // Container element
+		  el: container[0], // Container element
 //		  rowHeaders: ['rowNum'],
 		  columns: columns,
 		  data: [],
@@ -142,10 +162,13 @@ Refine.SetDataQualityUI.prototype._createGrid = function() {
  * Create Pagination
  * ************************************/
 Refine.SetDataQualityUI.prototype._createPagination = function(totalCount) {
-	$('#data-quality-pagination').show();
+	this._getDOM_ID();
+	const dom = $('#' + DOM_ID + ' .data-quality-pagination');
+	
+	dom.show();
 	
 	// pagination
-	this.pageInstance = new Pagination('data-quality-pagination', {
+	this.pageInstance = new Pagination(dom[0], {
         totalItems: totalCount,
         itemsPerPage: PAGE_INFO.ITEM_PER_PAGE,
         visiblePages: 10,
@@ -204,14 +227,24 @@ Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
  * - Select All Checkbox
  * ************************************/
 Refine.SetDataQualityUI.prototype._btnSetting = function() {
+	this._getDOM_ID();
+	
 	// text 처리
 	this._elmts.project_select_lebel.text($.i18n('core-index-data/project-label')+":");
 	this._elmts.project_select_btn.text($.i18n('core-index-data/select'));
-	this._elmts.get_sta_bnt.text($.i18n('core-index-data/basic-data-statistics'));
-	this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label'));
+	
+	if (DOM_ID.indexOf('profiling') > -1) {
+		// use these btns st data profiling page.
+		this._elmts.get_sta_btn.text($.i18n('core-index-data/basic-data-statistics'));
+		this._elmts.view_qe_btn.text($.i18n('core-index-dialog-qe/quantitative_evaluation'));
+		this._elmts.select_all_label.text($.i18n('core-index-data/select-all-label'));
+	} else {
+		// use these btns st data assessment page.
+		this._elmts.get_evaluation_index.text($.i18n('core-index-data/evaluation-index'));
+	}
 	
 	// btn click 이벤트
-	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
+	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {		
 		// focus out
 		$(e.target).blur();
 		
@@ -222,15 +255,22 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		_self.columnModel = null;
 		
 		// reset
+		// grid pagination reset
+		PAGE_INFO.PAGE_VAL= 1;
+		PAGE_INFO.START = 0;
+		
 		_self._elmts.project_table.empty();
-		_self._elmts.check_all.attr('checked', false)
-		$('#data-quality-pagination').hide();
-		_self._elmts.selected_header_count.text('0');
+		
+		if (_self._hasOwnProperty(_self, 'check_all')) {
+			_self._elmts.check_all.attr('checked', false)
+		}
+		_self._getDOM_ID();
+		$('#'+DOM_ID+' .data-quality-pagination').hide();
 		
 		_self.GridInstance = null;
 		_self.staticGridInstance2 = null;
 		
-		_self.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
+		UI_CHART_INFO.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 		
 		setTimeout(()=>{
@@ -239,67 +279,140 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		}, 10)
 	})
 	
-	// label 클릭 = checkbox 체크 이벤트
-	this._elmts.select_all_label.on('click', {_self : this}, (e) => {
-		const _self = e.data._self;
-		_self._elmts.check_all.click()
-	})
-	// 전체 선택 체크박스 체크시, 모든 header를 check 한다.
-	this._elmts.check_all.on('change', {_self : this}, (e) => {
-		const _self = e.data._self;
-		// 프로젝트 선택 전일경우 alert을 띄운다.
-		if (_self.selectedPName == undefined) {
-			alert($.i18n('core-index-data/no-selected-project'))
-			$(e.target).removeProp('checked');
-	       return;
-		}
-		
-		const selectAllChecked = $(e.target).is(':checked');
-		var checkBtns = $('#data-quality-body .custom_table_header_check');
-		
-		if (checkBtns.length > MAX_HEADER_SELECED) {
-			const checked = $('#data-quality-body .custom_table_header_check:checked');
-			const maxHeaderVal = MAX_HEADER_SELECED - checked.length;
-			
-			checkBtns.each((i, cb)=>{
-				if (selectAllChecked) {
-					if (i < maxHeaderVal) {
-						$(cb).attr('checked', selectAllChecked)
-					}
-				} else {
-					$(cb).attr('checked', selectAllChecked)	
-				}
-			})			
-		} else {
-			checkBtns.each((i, cb)=>{
-				$(cb).attr('checked', selectAllChecked)	
-			})
-		}
-	})
-	
-	// 데이터 통계 팝업 버튼 클릭
-	this._elmts.get_sta_bnt.on('click', {_self : this}, (e) => {
-		// focus out
-		$(e.target).blur();
-		
-		const _self = e.data._self;
-
-		const checked = $('#data-quality-body .custom_table_header_check:checked');
-		var headerOriginalNames = [];
-		checked.each((i, _c) => {
-			headerOriginalNames.push(UI_CHART_INFO.headerIndex[_c.name])
+	if (this._hasOwnProperty(this, 'select_all_label')) {
+		// label 클릭 = checkbox 체크 이벤트
+		this._elmts.select_all_label.on('click', {_self : this}, (e) => {
+			const _self = e.data._self;
+			_self._elmts.check_all.click()
 		})
-		
-		// 선택된 프로젝트가 없음 > 진행불가능
-		if (_self.selectedPName == undefined) {
-			alert($.i18n('core-index-data/no-selected-project'))
-		} else if (headerOriginalNames.length == 0) {
-			alert($.i18n('core-index-data/no-selected-headers'))
-		} else {
-			// 선택된 header가 있음 > 그 header로 진행
-			new BasicStatisticsDialogUI(headerOriginalNames);
-		}
-	})
+	}
+	
+	if (this._hasOwnProperty(this, 'check_all')) {
+		// 전체 선택 체크박스 체크시, 모든 header를 check 한다.
+		this._elmts.check_all.on('change', {_self : this}, (e) => {
+			const _self = e.data._self;
+			
+			_self._getDOM_ID();
+			
+			// 프로젝트 선택 전일경우 alert을 띄운다.
+			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+				alert($.i18n('core-index-data/no-selected-project'))
+				$(e.target).removeProp('checked');
+				return;
+			}
+			
+			const selectAllChecked = $(e.target).is(':checked');
+			var checkBtns = $('#'+DOM_ID+' .custom_table_header_check');
+			
+			if (checkBtns.length > MAX_HEADER_SELECED) {
+				const checked = $('#'+DOM_ID+' .custom_table_header_check:checked');
+				const maxHeaderVal = MAX_HEADER_SELECED - checked.length;
+				
+				checkBtns.each((i, cb)=>{
+					if (selectAllChecked) {
+						if (i < maxHeaderVal) {
+							$(cb).attr('checked', selectAllChecked)
+						}
+					} else {
+						$(cb).attr('checked', selectAllChecked)	
+					}
+				})			
+			} else {
+				checkBtns.each((i, cb)=>{
+					$(cb).attr('checked', selectAllChecked)	
+				})
+			}
+		});
+	}
+	
+	if (this._hasOwnProperty(this, 'get_sta_btn')) {
+		// 데이터 통계 팝업 버튼 클릭
+		this._elmts.get_sta_btn.on('click', {_self : this}, (e) => {
+			// focus out - prevent dbl click
+			$(e.target).blur();
+			
+			const _self = e.data._self;
+			_self._getDOM_ID();
+
+			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked');
+			var headerOriginalNames = [];
+			var headerOriginalIndexes = [];
+			checked.each((i, _c) => {
+				headerOriginalNames.push(_c.name)
+				headerOriginalIndexes.push(UI_CHART_INFO.headerIndex[_c.name])
+			})
+			
+			// 선택된 프로젝트가 없음 > 진행불가능
+			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+				alert($.i18n('core-index-data/no-selected-project'))
+			} else if (headerOriginalNames.length == 0) {
+				alert($.i18n('core-index-data/no-selected-headers'))
+			} else {
+				// 정량평가 팝업 표시
+				new BasicStatisticsDialogUI({
+					names : headerOriginalNames,
+					indexes : headerOriginalIndexes 
+				});
+			}
+		});
+	}
+
+//	if (this._hasOwnProperty(this, 'view_qe_btn')) {
+//		this._elmts.view_qe_btn.on('click', {_self : this}, (e) => {
+//			// focus out - prevent dbl click 
+//			$(e.target).blur();
+//			
+//			const _self = e.data._self;
+//			self._getDOM_ID();
+//		
+//			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked');
+//			var headerOriginalNames = [];
+//			var headerOriginalIndexes = [];
+//			checked.each((i, _c) => {
+//				headerOriginalNames.push(_c.name)
+//				headerOriginalIndexes.push(UI_CHART_INFO.headerIndex[_c.name])
+//			})
+//			
+//			// 선택된 프로젝트가 없음 > 진행불가능
+//			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+//				alert($.i18n('core-index-data/no-selected-project'))
+//			} else if (headerOriginalNames.length == 0) {
+//				alert($.i18n('core-index-data/no-selected-headers'))
+//			} else {
+//				// 정량평가 팝업 표시
+//				new QEDialogUI({
+//					names : headerOriginalNames,
+//					indexes : headerOriginalIndexes 
+//				});
+//			}
+//		})
+//	}
+
+	if (this._hasOwnProperty(this, 'get_evaluation_index')) {
+		// 평가 지표 버튼 클릭
+		this._elmts.get_evaluation_index.on('click', {_self : this}, (e) => {
+			// focus out - prevent dbl click
+			$(e.target).blur();
+			
+			const _self = e.data._self;
+			_self._getDOM_ID();
+			
+			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked')[0];
+			
+			// 선택된 프로젝트가 없음 > 진행불가능
+			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+				alert($.i18n('core-index-data/no-selected-project'))
+			} else if (checked == undefined) {
+				alert($.i18n('core-index-data/no-selected-headers'))
+			} else {
+				const index = UI_CHART_INFO.headerIndex[checked.value];
+				const name = checked.value;
+				
+				// 선택된 header가 있음 > 그 header로 진행
+				new EIDialogUI(index, name)
+			}
+		});
+	}
 }
 
 /* ************************************
@@ -390,10 +503,14 @@ Refine.SetDataQualityUI.prototype._setGridData = function(data) {
 	const newData = this._makeDataObj(rows);
 	this.GridInstance.resetData(newData); // Call API of instance's public method
 
-	this._elmts.get_sta_bnt.attr('disabled', false);
+	if (this._hasOwnProperty(this, 'get_sta_btn')) {
+		this._elmts.get_sta_btn.attr('disabled', false);
+	}
 	
 	function headerClicked(target, _self) {
-		const checked = $('#data-quality-body .custom_table_header_check:checked');
+		_self._getDOM_ID();
+		
+		const checked = $('#'+DOM_ID+' .custom_table_header_check:checked');
 		if (checked.length > MAX_HEADER_SELECED) {
 			return false;
 		} else {
@@ -401,16 +518,18 @@ Refine.SetDataQualityUI.prototype._setGridData = function(data) {
 			return true;
 		}
 	}
-	$('#data-quality-body th').off('click');
-	$('#data-quality-body th span').off('click');
+	this._getDOM_ID();
+	
+	$('#'+DOM_ID+' th').off('click');
+	$('#'+DOM_ID+' th span').off('click');
 	//after grid data loaded, set Header Click EVENT
-	$('#data-quality-body th').on('click', {_self:this}, (e)=>{
+	$('#'+DOM_ID+' th').on('click', {_self:this}, (e)=>{
 		const result = headerClicked(e.target, e.data._self);
 		if (!result) {
 			e.preventDefault();
 		}
 	})
-	$('#data-quality-body th span').on('click', {_self:this}, (e)=>{
+	$('#'+DOM_ID+' th span').on('click', {_self:this}, (e)=>{
 		$(e.target.parentNode.parentNode).click();
 	})
 }
@@ -442,8 +561,19 @@ Refine.SetDataQualityUI.prototype._createColumns = function(isHeaderColumn) {
 Refine.SetDataQualityUI.prototype.resize = function() {
 };
 
+/**
+ * SetDataQualityUI used two section.
+ * 1. Data profiling. 
+ * 2. Data Quality. 
+ */
 Refine.actionAreas.push({
-	id : "data-qulity",
-	label : $.i18n('core-index-data/data-quality-asses'),
+	id : "data-profiling-ui",
+	label : $.i18n('core-index-data/data-profiling-asses'),
+	uiClass : Refine.SetDataQualityUI
+});
+
+Refine.actionAreas.push({
+	id : "data-quality-ui",
+	label : $.i18n('core-index-data/evaluation-index-title'),
 	uiClass : Refine.SetDataQualityUI
 });

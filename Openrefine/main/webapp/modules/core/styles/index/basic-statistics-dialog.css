@@ -39,25 +39,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #statistic_dialog .dialog-body {
-	overflow-x: visible;
-    overflow-y: visible;
+	overflow-x: auto;
+    overflow-y: auto;
 	height: 700px;
-    padding-bottom: 0px;
 }
-#statistic_dialog #basic-statics-noty {
-	margin-top: -3px;
-	display: inline-block;
-	width : 100%;
-}
-#statistic_dialog #basic-statics-noty > span {
-	float : right;
-	font-size: smaller;
-}
-#statistic_dialog .dialog-body > div:nth-child(2) {
+#statistic_dialog .dialog-body > div:nth-child(1) {
 	height : 200px;
+	margin-bottom: 20px;
 }  
-#statistic_dialog .dialog-body > div:nth-child(3) {
-	height : calc(100% - 200px);
+#statistic_dialog .dialog-body > div:nth-child(2) {
+	height : 480px;
 }
 #statistic_dialog table {
 	height : 95%;
@@ -65,6 +56,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     border: 1px solid #ccc;
     border-collapse: collapse;
     width : -webkit-fill-available;
+}
+#statistic_dialog table caption {
+	text-align:right;
+	margin-bottom:5px;
+    font-size: smaller;
 }
 #statistic_dialog table td {
 	min-width : 120px;
@@ -103,8 +99,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 #statistic_dialog #basic-statistics-grid tr:not(:first-child) td {
 	vertical-align: middle;
-	text-align: right;	
 	padding-right: 5px;
+	text-align: right;	
+}
+#statistic_dialog #basic-statistics-grid tr:not(:first-child) td.has_btn {
+	text-align: center;	
 }
 
 #statistic_dialog #basic-statistics-grid tr:nth-child(odd) {
@@ -130,6 +129,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     pointer-events: none;			
     z-index:1;
 }
+.chart_tooltip.heatmap {	
+    width: 150px;					
+    height: 50px;					
+}
 .chart_tooltip .tooltip_text {
 	font: 11px sans-serif;
     padding-left: 10px;
@@ -145,6 +148,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* chart-detail */
 #statistic_dialog_detail {
 	width : 1000px;
+	min-height : 400px;
 }
 #statistic_dialog_detail .dialog-tatistics-detail > div {
 	border: 1px solid #ccc;
@@ -161,4 +165,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 #basic-statistics-grid-Detail {
 	padding : 10px;
+}
+rect.fill-default {
+	fill : #688eff;
+}
+rect.fill-default.fill-selected {
+	fill : #ff72a3 !important;
+}
+rect.zoom-panel {
+	fill: #fff;
 }

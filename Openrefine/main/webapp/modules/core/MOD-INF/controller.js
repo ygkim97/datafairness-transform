@@ -153,6 +153,9 @@ function registerCommands() {
   RS.registerCommand(module, "deauthorize", new Packages.com.google.refine.commands.auth.DeAuthorizeCommand());
 
   RS.registerCommand(module, "get-based-statistic", new Packages.com.google.refine.commands.statistic.GetBasedStatisticCommand());
+  RS.registerCommand(module, "get-quantitative-evaluation", new Packages.com.google.refine.commands.statistic.GetQuantitativeEvaluationCommand());
+  RS.registerCommand(module, "get-evaluation-index-test", new Packages.com.google.refine.commands.statistic.GetEvaluationIndexTestCommand());
+  RS.registerCommand(module, "set-evaluation-index-corrected", new Packages.com.google.refine.commands.statistic.SetEvaluationIndexCorrectedCommand());
 }
 
 function registerOperations() {
@@ -361,14 +364,13 @@ function init() {
       "externals/tui/tui-pagination.js",
       "externals/tui/tui-code-snippet.js",
       "externals/tui/raphael-min-2.1.0.js",
-      "externals/tui/tui-chart.min.js",
-      
-      "externals/chart/Chart.min.js",
       
       "externals/chart/d3.min.js",
       "externals/chart/v4.js",
       "externals/chart/d3-array.min.js",
       "externals/chart/stdlib.min.js",
+      
+      "externals/fontawesome/all.js",
 
       "scripts/util/misc.js",
       "scripts/util/url.js",
@@ -385,9 +387,9 @@ function init() {
       "scripts/index.js",
       "scripts/index/create-project-ui.js",
       "scripts/index/open-project-ui.js",
+      "scripts/index/data-quality-ui.js",
       "scripts/index/import-project-ui.js",
       "scripts/index/lang-settings-ui.js",
-      "scripts/index/data-quality-ui.js",
 
       "scripts/index/default-importing-controller/controller.js",
       "scripts/index/default-importing-controller/file-selection-panel.js",
@@ -407,7 +409,9 @@ function init() {
       "scripts/reconciliation/recon-manager.js", // so that reconciliation functions are available to importers
       "scripts/index/edit-metadata-dialog.js",
 
-      "scripts/dialogs/basic-statistics-dialog.js"
+      "scripts/dialogs/basic-statistics-dialog.js",
+      "scripts/dialogs/quantitative-evaluation-dialog.js",
+      "scripts/dialogs/evaluation-index-dialog.js"
     ]
   );
 
@@ -426,7 +430,6 @@ function init() {
 
       "styles/tui-grid.css",
       "styles/tui-pagination.css",
-      "styles/tui-chart.min.css",
       
       "styles/index.less",
       "styles/index/create-project-ui.less",
@@ -434,6 +437,8 @@ function init() {
       "styles/index/import-project-ui.less",
       "styles/index/data-quality-ui.less",
       "styles/index/basic-statistics-dialog.css",
+      "styles/index/quantitative-evaluation-dialog.less",
+      "styles/index/evaluation-index-dialog.css",
 
       "styles/index/default-importing-controller.less",
       "styles/index/default-importing-file-selection-panel.less",

@@ -1,0 +1,216 @@
+<div class="dialog-frame" id="ei_dialog">
+	<div class="dialog-border">
+		<div class="dialog-header" bind="dialogHeader">
+			<div id="graph-title"></div>
+		</div>
+	</div>
+	<div class="dialog-body" bind="dialogBody">
+		<div class="body-header">
+			<div class="navi">
+				<div class="navi-item active" bind="navi_item1"></div>
+				<div class="navi-arrows">
+					<i class="fas fa-long-arrow-alt-right fa-3x"></i>
+				</div>
+				<div class="navi-item" bind="navi_item2"></div>
+				<div class="navi-arrows">
+					<i class="fas fa-long-arrow-alt-right fa-3x"></i>
+				</div>
+				<div class="navi-item" bind="navi_item3"></div>
+				<div class="navi-arrows">
+					<i class="fas fa-long-arrow-alt-right fa-3x"></i>
+				</div>
+				<div class="navi-item" bind="navi_item4"></div>
+				
+			</div>
+			<div class="btn-wrap">
+				<button id="ei_prev" bind="ei_prev" style="display:none;"></button>
+				<button id="ei_next" bind="ei_next"></button>
+			</div>
+		</div>
+		<div class="body_wrap">
+			<div>
+				<!-- 1st card -->
+				<div id="ei_card1" class="ei-card" bind="ei_card1">card1</div>
+				<!-- // 1st card -->
+				
+				<!-- 2nd card -->
+				<div id="ei_card2" class="ei-card" bind="ei_card2">
+					<div class="ei-left">
+						<div class="ei-items ">
+							<span bind="column_name"></span>
+						</div>
+						<div class="ei-items ">
+							<span bind="evaluation_index">Evaluation Index</span>
+						</div>
+						<div class="ei-items ">
+							<span bind="test_column">Test Column</span>
+						</div>
+						<div class="ei-items ">
+							<span bind="corrected_column">corrected Column</span>
+						</div>
+					</div>
+					<div class="ei-right">
+						<div class="ei-items ">
+							<div class="ei-box-item ei-box-shadow">
+								<span name="column_name_value"></span>
+							</div>
+						</div>
+						<div class="ei-items ">
+							<div class="ei-box-item ei-box-shadow">
+								<span name="index_name"></span>
+							</div>
+							<span class="desc" bind="index_name_desc">
+							</span>
+						</div>
+						<div class="ei-items ">
+							<select id="testIndex" class="ei-box-shadow"></select>
+							<span class="desc" bind="testIndex_desc"></span>
+						</div>
+						<div class="ei-items ">
+							<select id="correctedIndex" class="ei-box-shadow"></select>
+							<span class="desc" bind="correctedIndex_desc"></span>
+						</div>
+					</div>
+				</div>
+				<!-- // 2nd card -->
+				
+				<!-- 3rd card -->
+				<div id="ei_card3" class="ei-card" bind="ei_card3">
+					<div class="ei-left">
+						<div class="ei-items ">
+							<span bind="setting_title"></span>
+						</div>
+						<div class="ei-items ">
+							<span bind="quality_score"></span>
+						</div>
+					</div>
+					<div class="ei-right">
+						<div class="ei-items ">
+							<div class="ei-box-span ei-box-shadow">
+								<span name="column_name_value"></span>
+							</div>
+							<div class="ei-box-span ei-box-shadow">
+								<span name="index_name"></span>
+							</div>
+							<div class="ei-box-span ei-box-shadow">
+								<span name="test_column"></span>
+							</div>
+<!-- 							<div class="ei-box-span ei-box-shadow">
+								<span name="corrected_column"></span>
+							</div> -->
+						</div>
+						<div class="ei-items chart-row">
+							<div class="ei-left">
+								<div class="count-row">
+									<span bind="ei_total_per"></span>
+								</div>
+								<div class="count-row">
+									<div>
+										<span bind="ei_total_title"></span>
+										<span bind="ei_total_value"></span>
+									</div>
+									<div>
+										<span bind="ei_right_title"></span>
+										<span bind="ei_right_value"></span>
+									</div>
+									<div>
+										<span bind="ei_wrong_title"></span>
+										<span bind="ei_wrong_value"></span>
+									</div>
+								</div>
+							</div>
+							<div class="ei-right">
+								<div id="card3_pie_chart" class="pie-chart-wrap"></div>
+								<div id="card3_pie_chart_legend"></div>
+							</div>
+						</div>
+						<div class="ei-items grid-row">
+							<div bind="card3_grid"></div>
+							<div bind="card3_notice_wrap" class="grid-notice" >
+								<span bind="grid_notice"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- // 3rd card -->
+				
+				<!-- 4th card -->
+				<div id="ei_card4" class="ei-card" bind="ei_card4">
+					<div class="ei-left">
+						<div class="ei-items ">
+							<span bind="editing_title"></span>
+						</div>
+						<div class="ei-items ">
+							<span bind="editing_score"></span>
+						</div>
+					</div>
+					<div class="ei-right">
+						<div class="ei-items ">
+							<div class="ei-box-span ei-box-shadow">
+								<span name="column_name_value"></span>
+							</div>
+							<div class="ei-box-span ei-box-shadow">
+								<span name="index_name"></span>
+							</div>
+							<div class="ei-box-span ei-box-shadow">
+								<span name="test_column"></span>
+							</div>
+							<div class="ei-box-span ei-box-shadow">
+								<span name="corrected_column"></span>
+							</div>
+						</div>
+						<div class="ei-items chart-row">
+							<div class="ei-left">
+								<div class="count-row">
+									<span bind="ei_editing_total_per"></span>
+								</div>
+								<div class="count-row">
+									<div>
+										<span bind="ei_editing_total_title"></span>
+										<span bind="ei_editing_total_value"></span>
+									</div>
+									<div>
+										<span bind="ei_editing_count_title"></span>
+										<span bind="ei_editing_count_value"></span>
+									</div>
+									<div>
+										<span bind="ei_editing_after_title"></span>
+										<span bind="ei_editing_after_value"></span>
+									</div>
+								</div>
+							</div>
+							<div class="ei-right">
+								<div id="card4_pie_chart" class="pie-chart-wrap"></div>
+								<div id="card4_pie_chart_legend"></div>
+							</div>
+						</div>
+						<div class="export-row">
+							<fieldset>
+								<legend class="new-connection-legend pure-input-1-2" bind="export_iris_Legend"></legend>
+								<div class="pure-control-group">
+									<label id="IndexColumnNameLabel" for="indexColumnName" bind="index_columnName_label"></label>
+									<input bind="indexColumnName" id="indexColumnName" type="text" placeholder="Enter Index Column Name" value="ID" class="pure-input-1-3" required="">
+								</div>
+								<div class="pure-control-group">
+									<label id="dateColumnNameLabel" for="dateColumnName" bind="date_columnName_label"></label>
+									<input bind="dateColumnName" id="dateColumnName" type="text" placeholder="Enter Date Column Name." value="TIME" class="pure-input-1-3" required="">
+								</div>
+								<div class="pure-control-group">
+									<label id="tableNameLabel" for="tableName" bind="tableName_label"></label>
+									<input bind="tableName" id="tableName" type="text" placeholder="Enter Iris Table Name." value="IRIS_TABLE_NAME" class="pure-input-1-3" required="">
+								</div>
+								<div class="pure-control-group btn-row">
+									<button bind="save_iris"></button>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+				<!-- // 4th card -->
+			</div>
+		</div>
+	</div>
+	<div class="dialog-footer" bind="dialogFooter">
+		<button class="button" bind="closeButton"></button>
+	</div>
+</div>
