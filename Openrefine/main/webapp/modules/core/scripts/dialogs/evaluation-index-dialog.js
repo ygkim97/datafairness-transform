@@ -9,6 +9,7 @@ var OBJ = {
 		setting : {
 			columnId : null,
 			columnName : null,
+			columnType : null,
 			indexId : null,
 			indexName : null,
 			testIndex : null,
@@ -252,6 +253,8 @@ function addSELECT(self, list, selectId, descText, _class) {
  * set SETTING Card.
  */
 EIDialogUI.prototype._setCard2 = function() {
+	OBJ.columns = [];
+	
 	// set setting page
 	const indexProperty = getEvaluationIndexById();
 	const settingProperty = indexProperty.setting;
@@ -262,7 +265,7 @@ EIDialogUI.prototype._setCard2 = function() {
 	this._elmts.column_name.text($.i18n('core-index-data-ei/left-title-column-name'));
 	this._elmts.evaluation_index.text($.i18n('core-index-data-ei/left-title-evaluation-index'));
 	this._elmts.test_column.text($.i18n('core-index-data-ei/left-title-test-column'));
-//	this._elmts.corrected_column.text($.i18n('core-index-data-ei/left-title-corrected-column'));
+	this._elmts.corrected_column.text($.i18n('core-index-data-ei/left-title-corrected-column'));
 	
 	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
@@ -454,10 +457,9 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		})
 		.on('mouseout', function(){
 			$(this)[0].classList.remove('ei-selected')
-			
 		})		 
 		.on('click', function (d){
-			self._setCard3Row(d.data);
+			self._setCard3Row(d.data.name);
 		})
 		.append("title")
 		.text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);	
@@ -470,6 +472,25 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		.attr('class', 'real-path')
 		.attr("fill", d => color(d.data.name))
 		.attr("d", arc)
+		.on('mouseover', function (d){
+			const _this = $(this)
+			const _parent = _this.parent();
+			
+			const children = _parent.children();
+			_parent.children().remove();
+			children.each((i, c)=>{
+				if(c.id ==_this[0].id) {
+					_parent.append(c);
+				} else {
+					_parent.prepend(c);
+				}
+			})
+			
+			$(this)[0].classList.add('ei-selected')
+		})
+		.on('mouseout', function(){
+			$(this)[0].classList.remove('ei-selected')
+		})		 
 		.append("title")
 		.text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);	
 	}
@@ -527,18 +548,51 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 				 const name = $(this).attr('data-name');
 				 const value = $(this).attr('data-value');
 				 
-				 self._setCard3Row({name : name, value : value});
+				 self._setCard3Row(name);
 			 });
 		 }
 	 })
 }
-EIDialogUI.prototype._setCard3Row = function(d) {
-	var blankPosition = 2;
+EIDialogUI.prototype._getGridBody = function(type) {
+	var valueType = null;
+	var blankPosition = null;
+	var reverse = null;
+	var valueType = null;
 	
-	if (d.name == 'NULL') {
-		blankPosition = -1 
+	if (OBJ.setting.columnType == 'int' || OBJ.setting.columnType == 'double') {
+		valueType = 'number';
+		reverse = true;
+		if (type == 'NULL') {
+			blankPosition = 2;
+		} else {
+			blankPosition = -1;
+		}
+	} else {
+		valueType = 'string';
+		blankPosition = -1;
+		if (type == 'NULL') {
+			reverse = true;
+		} else {
+			reverse = false;
+		}
 	}
-	this._getCard3GridData(blankPosition);
+	
+	var sorting = {
+		"criteria":
+			[{
+				"column":OBJ.setting.columnName,
+				"valueType": valueType,
+				"reverse":reverse,
+				"blankPosition":blankPosition,
+				"errorPosition":1,
+				"caseSensitive":false
+			}]
+	}
+	const engin = {"facets":[],"mode":"record-based"};
+	return {
+		engine: JSON.stringify(engin),
+		sorting: JSON.stringify(sorting) 
+	};
 }
 EIDialogUI.prototype._getTestData = function() {
 	const warningDialog1 = DialogSystem.showBusy();
@@ -556,60 +610,54 @@ EIDialogUI.prototype._getTestData = function() {
 		success : function(data) {
 			warningDialog1();
 			response = data.testResultObj;
+			OBJ.setting.columnType = data.columnType;
 		}
 	})
 	return response;
 }
-EIDialogUI.prototype._getCard3GridData = function(blankPosition) {
-	var sorting = {
-			"criteria":
-				[{
-					"column":OBJ.setting.columnName,
-					"valueType":"string",
-					"reverse":false,
-					"blankPosition":blankPosition,
-					"errorPosition":1,
-					"caseSensitive":false
-				}]
-	}
-	const engin = {"facets":[],"mode":"record-based"};
-	var body = {
-		engine: JSON.stringify(engin),
-		sorting: JSON.stringify(sorting) 
-	};
+EIDialogUI.prototype._setCard3Row = function(type) {
+	const body = this._getGridBody(type);
+	
 	const _self = this
 	
+	function getRowsApi() {
+		$.post(
+				"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: 50 }),
+				body,
+				function(data) {
+					_self._createSelectRowGrid(data.rows);
+				},
+				"json"
+		);
+	}
 	// get models
 	$.getJSON("command/core/get-project-metadata?" + $.param({ project: UI_CHART_INFO.selectedPId }), null,
 		function(data) {
 			if (data.status == "error") {
 				alert(data.message);
 			} else {
-				$.getJSON(
-					"command/core/get-models?" + $.param({ project: UI_CHART_INFO.selectedPId }), null,
-					function(data) {
-						if (data.columnModel.columns.length > 5) {
-							if (Number(OBJ.setting.columnId) -2 < 0) {
-								OBJ.columns = data.columnModel.columns.slice(0, 5);
-							} else if (OBJ.setting.columnId + 3 > data.columnModel.columns.length ) {
-								OBJ.columns = data.columnModel.columns.slice(data.columnModel.columns.length-5, data.columnModel.columns.length);
-							} else {
-								OBJ.columns = data.columnModel.columns.slice(OBJ.setting.columnId-2, OBJ.setting.columnId+3);
-							}
-						} else {
-							OBJ.columns = data.columnModel.columns;
-						}
-						$.post(
-								"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: 50 }),
-								body,
-								function(data) {
-									_self._createSelectRowGrid(data.rows);
-								},
-								"json"
-						);
-					},
-					'json'
-				);
+				if (OBJ.columns.length == 0) {
+					$.getJSON(
+							"command/core/get-models?" + $.param({ project: UI_CHART_INFO.selectedPId }), null,
+							function(data) {
+								if (data.columnModel.columns.length > 5) {
+									if (Number(OBJ.setting.columnId) -2 < 0) {
+										OBJ.columns = data.columnModel.columns.slice(0, 5);
+									} else if (OBJ.setting.columnId + 3 > data.columnModel.columns.length ) {
+										OBJ.columns = data.columnModel.columns.slice(data.columnModel.columns.length-5, data.columnModel.columns.length);
+									} else {
+										OBJ.columns = data.columnModel.columns.slice(OBJ.setting.columnId-2, OBJ.setting.columnId+3);
+									}
+								} else {
+									OBJ.columns = data.columnModel.columns;
+								}
+								getRowsApi();
+							},
+							'json'
+					);
+				} else {
+					getRowsApi();
+				}
 			}
 		},
 	'json'
@@ -641,19 +689,6 @@ EIDialogUI.prototype._createSelectRowGrid = function(data) {
 			template += d.cells[c.cellIndex] == null ? '' : d.cells[c.cellIndex].v;
 			template += '</td>';
 		})
-//		d.cells.forEach((c, i)=>{
-//			if (c !== null) {
-//				if (OBJ.columns[cI] == undefined) {
-//					return;
-//				} 
-//				if (OBJ.columns[cI].cellIndex == i) {
-//					template += '<td>';
-//					template += c.v;
-//					template += '</td>';
-//					cI++;
-//				}
-//			}
-//		})
 		template += '</tr>';
 	})
 	

@@ -785,7 +785,7 @@
 	"core-index-data-ei/left-title-column-name": "Dataset(Column Name)",    
 	"core-index-data-ei/left-title-evaluation-index": "Evaluation Index",
 	"core-index-data-ei/left-title-test-column": "Test Column",
-	"core-index-data-ei/left-title-edit-column": "Edit Column",
+	"core-index-data-ei/left-title-corrected-column": "Edit Column",
 	"core-index-data-ei/left-title-setting": "Evaluate Info",
 	"core-index-data-ei/left-title-quality-score": "Quality Index",
 	"core-index-data-ei/quality-total-cnt": "Total Count",

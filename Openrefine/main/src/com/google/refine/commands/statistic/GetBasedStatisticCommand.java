@@ -60,10 +60,6 @@ public class GetBasedStatisticCommand extends Command {
 
 	private static String DOT_STRING = "%.5f";
 	
-	private static final String _STRING = "string";
-	private static final String _INT = "int";
-	private static final String _DOUBLE = "double";
-	
 	private static Map<String, String> rowNames = null;
 	private static List<String> rowNameList = null;
 	
@@ -175,21 +171,21 @@ public class GetBasedStatisticCommand extends Command {
 				List<Object> chartRow = it.next();
 				
 				columnName = projectModel.getColumnByCellIndex(Integer.valueOf(selectedColumns[i])).getName();
-				String columnType = getColumnType(chartRow);
+				String columnType = DataQualityUtils.getColumnType(chartRow);
 
 				Iterator<Object> chartRowIt = chartRow.iterator();
 
-				if (columnType.equals(_INT) || columnType.equals(_DOUBLE)) {
+				if (columnType.equals(DataQualityUtils._INT) || columnType.equals(DataQualityUtils._DOUBLE)) {
 					stats = new SummaryStatistics();
 
 					chartRowIt = chartRow.iterator();
 					missingCnt = 0;
 					while (chartRowIt.hasNext()) {
 						try {
-							if (columnType.equals(_INT)) {
+							if (columnType.equals(DataQualityUtils._INT)) {
 								int rowVal = Integer.parseInt(chartRowIt.next().toString());
 								stats.addValue(rowVal);
-							} else if (columnType.equals(_DOUBLE)) {
+							} else if (columnType.equals(DataQualityUtils._DOUBLE)) {
 								double rowVal = Double.parseDouble(chartRowIt.next().toString());
 								stats.addValue(rowVal);
 							}
@@ -238,9 +234,9 @@ public class GetBasedStatisticCommand extends Command {
 				Map<Object, Long> freq = chartRow.stream()
 						.filter(el -> el != null && !el.toString().trim().isEmpty())
 						.collect(Collectors.groupingBy((e) -> {
-							if (columnType.equals(_STRING)) {
+							if (columnType.equals(DataQualityUtils._STRING)) {
 								return e;
-							} else if (columnType.equals(_INT)) {
+							} else if (columnType.equals(DataQualityUtils._INT)) {
 								return e;
 							} else {
 								return Math.round(Double.parseDouble(e.toString()));
@@ -297,30 +293,6 @@ public class GetBasedStatisticCommand extends Command {
 			return splited[0];
 		} else {
 			return stringValue;
-		}
-	}
-
-	private String getColumnType(List<Object> list) {
-		try {
-			// max값을 구한다.
-			// Int로 떨어지면 INT
-			list.stream()
-				.filter(el -> el != null && !el.toString().trim().isEmpty())
-				.mapToInt((Object v) -> Integer.parseInt(v.toString()))
-				.max()
-				.getAsInt();
-			return _INT;
-		} catch (Exception e1) {
-			try {
-				list.stream()
-					.filter(el -> el != null && !el.toString().trim().isEmpty())
-					.mapToDouble((Object v) -> Double.parseDouble(v.toString()))
-					.max()
-					.getAsDouble();
-				return _DOUBLE;
-			} catch (Exception e2) {
-				return _STRING;
-			}
 		}
 	}
 }
