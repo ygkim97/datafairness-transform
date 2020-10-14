@@ -244,7 +244,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	}
 	
 	// btn click 이벤트
-	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
+	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {		
 		// focus out
 		$(e.target).blur();
 		
@@ -255,6 +255,10 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		_self.columnModel = null;
 		
 		// reset
+		// grid pagination reset
+		PAGE_INFO.PAGE_VAL= 1;
+		PAGE_INFO.START = 0;
+		
 		_self._elmts.project_table.empty();
 		
 		if (_self._hasOwnProperty(_self, 'check_all')) {
