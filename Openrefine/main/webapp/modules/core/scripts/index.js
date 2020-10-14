@@ -37,17 +37,33 @@ var Refine = {
   actionAreas: []
 };
 
-// Requests a CSRF token and calls the supplied callback
-// with the token
+//Requests a CSRF token and calls the supplied callback
+//with the token
 Refine.wrapCSRF = function(onCSRF) {
-   $.get(
-      "command/core/get-csrf-token",
-      {},
-      function(response) {
-         onCSRF(response['token']);
-      },
-      "json"
-   );
+$.get(
+   "command/core/get-csrf-token",
+   {},
+   function(response) {
+      onCSRF(response['token']);
+   },
+   "json"
+);
+};
+
+//Requests a CSRF token and calls the supplied callback
+//with async false
+//with the token
+Refine.wrapCSRFAsync = function(onCSRF) {
+	var resp = null;
+	$.ajax({
+	   url : "command/core/get-csrf-token",
+	   data : {},
+	   success : function(response) {
+		   resp = onCSRF(response['token']); 
+	   },
+	   async : false
+	});
+	return resp;
 };
 
 // Performs a POST request where an additional CSRF token

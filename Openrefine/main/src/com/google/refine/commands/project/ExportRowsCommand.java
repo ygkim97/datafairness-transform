@@ -188,7 +188,7 @@ public class ExportRowsCommand extends Command {
                 // TODO: Should this use ServletException instead of respondException?
                 respondException(response, new RuntimeException("Unknown exporter type"));
             }
-            ProjectManager.singleton.removeMemory(Long.parseLong(projectID));
+//            ProjectManager.singleton.removeMemory(Long.parseLong(projectID));
 
         } catch (Exception e) {
             // Use generic error handling rather than our JSON handling

@@ -99,7 +99,7 @@ public class SetEvaluationIndexCorrectedCommand extends Command {
 				throw new Exception();
 			}
 
-//			index.corrected(correctedIndex, request, response);
+			index.corrected(correctedIndex, request, response);
 			
 			Map<String, Object> result = new HashMap<String, Object>();
 			// add params

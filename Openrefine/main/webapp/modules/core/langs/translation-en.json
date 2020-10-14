@@ -782,16 +782,34 @@
     "core-index-dialog-ei/navi4": "Editing",
     "core-index-data/evaluation-index-title": "Quality Assessment",
     
-	"core-index-data-ei/left-title-column-name": "Column Name",    
+	"core-index-data-ei/left-title-column-name": "Dataset(Column Name)",    
 	"core-index-data-ei/left-title-evaluation-index": "Evaluation Index",
 	"core-index-data-ei/left-title-test-column": "Test Column",
 	"core-index-data-ei/left-title-edit-column": "Edit Column",
 	"core-index-data-ei/left-title-setting": "Evaluate Info",
 	"core-index-data-ei/left-title-quality-score": "Quality Index",
-	"core-index-data-ei/left-title-quality-total-cnt": "Total Count",
-	"core-index-data-ei/left-title-quality-right-cnt": "Suitable Count",
-	"core-index-data-ei/left-title-quality-wrong-cnt": "unSuitable Count",
-	"core-index-data-ei/left-title-": "",
+	"core-index-data-ei/quality-total-cnt": "Total Count",
+	"core-index-data-ei/quality-right-cnt": "Passed Count",
+	"core-index-data-ei/quality-wrong-cnt": "Failed Count",
+	"core-index-data-ei/left-title-editing": "Quality Correction",
+	"core-index-data-ei/left-title-editing-score": "Correction Score",
+	"core-index-data-ei/editing-count-cnt": "Corrected Count",
+	"core-index-data-ei/editing-after-cnt": "After Corrected",
+	"core-buttons/save-iris": "Save",
+	"core-index-data-ei/saved-project-iris": "Project Saved Successfully to IRIS.",
+	
+	"core-index-data-ei/export-title": "Set Properties",
+	"core-index-data-ei/export-iris-index-column-name": "Iris Index Column Name",
+	"core-index-data-ei/export-iris-date-column-name": "Iris Date Column Name",
+	"core-index-data-ei/export-iris-table-name": "Iris Table Name",
+	
+	"core-index-data-ei/export-already-exist-table-name": "is already registered Table Name. Please retry register as new name.",
+	"core-index-data-ei/export-invalid_time_column": "is Invalid Time Column. Please check again.",
+	"core-index-data-ei/export-invalid_index_colum": "is Invalid Column Name. Please check again",
+	
+	"core-index-data-ei/not-available-btn": "This Index not available right now.",
+	"core-index-data-ei/grid-notice": "Click the pie chart, show up project's rows.",
+
     "" : ""
 }
 

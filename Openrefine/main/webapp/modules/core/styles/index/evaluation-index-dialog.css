@@ -58,15 +58,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ei_dialog table td.qe-border-none {
 	border-top : transparent;
 }
-#ei_dialog td {
+#ei_dialog table td {
     border: 1px solid #ccc;
 	border-collapse:collapse;
+}
+#ei_dialog table.card1-table td {
 	height : 190px;
 }
-#ei_dialog tr:nth-child(3n) {
+#ei_dialog table.card3-table td {
+	height: 20px;
+    padding: 1px 5px;
+}
+#ei_dialog table.card3-table thead {
+	background: aliceblue;
+}
+#ei_dialog table.card1-table tr:nth-child(3n) {
 	border-bottom: double #ccc;
 }
-#ei_dialog tr:nth-child(3n) td {
+#ei_dialog table.card1-table tr:nth-child(3n) td {
 	height : 30px;
 }
 #ei_dialog .dialog-body {
@@ -98,17 +107,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	width : 80%;
 	display: flex;
 	height : 100%;
+	padding-left: 10px;
 }
 #ei_dialog .body-header .navi .navi-item {
 	width: 150px;
     border: 1px solid #ccc;
-    padding: 8px;
-    margin: 3px 3px;
-    font-size: 1.5em;
+	padding: 3px 8px;
+    margin: 8px 3px;
+    font-size: 1.4em;
     text-align: center;
 }
 #ei_dialog .body-header .navi .navi-item.active {
-    border: 3px dotted royalblue;;
+    border: 1px solid #89a7ff;
     background: #e8f2ff;
 	font-weight : 550;
 }
@@ -138,19 +148,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	pointer-events: none;
 }
 #ei_dialog td.evaluation_index.active {
-	border : 2px solid #ccc
+	background: #a7d8ff54;
+}
+#ei_dialog td.evaluation_index.active .id {
+	background: #a9d9ff9c;
 }
 #ei_dialog td.evaluation_index .id {
 	height: 30px;
-	padding: 10px;
-	font-size: x-large;
-	text-align: center;
-	border-bottom : 1px solid #ccc;
+    padding: 10px;
+    font-size: 1.6em;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
     background: #e4f3ff54;
 }
 #ei_dialog td.evaluation_index .desc {
-	font-size: medium;
-	padding: 10px;
+    font-size: 1.1em;
+    padding: 15px;
+    color: #525252;
 }
 #ei_dialog td.evaluation_index .radio {
 	margin-right: 10px;
@@ -194,7 +208,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 .ei-card .ei-items select {
 	width : 200px;
-    height: 25px;
+    height: 30px;
+    margin-top: -5px;
 }
 .ei-card .ei-right .ei-items span.desc {
 	font-size: small;
@@ -203,6 +218,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 .ei-card .ei-right .ei-items span.desc svg {
 	margin-right : 3px;
+	color: #ff0000ad;
+	width: 10px;
 }
 .ei-card .ei-right .ei-items span.seperator {
 	margin : 0px 20px;
@@ -223,8 +240,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	text-align: center;
 	height : 70px;
 	font-size: xx-large;
-	background: #e4e4e4;
-    border: double #a7a7a7;
+    background: #e4e4e49e;
+    border: double #a7a7a7c7;
 	margin: 0 35px;
 	margin-bottom: 5px;
 }
@@ -255,9 +272,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     float: right;
 }
 .pie-chart-wrap {
-	padding : 12px 55px;
+	padding : 0px 55px 5px 55px;
 }
-
+.pie-chart-wrap svg:nth-child(2) {
+	margin-left : 10px;
+}
+.pie-chart-legend text {
+	font-size : 15px;
+}
+	
 .ei-card .grid-row {
 	width: 700px;
     height: 185px;
@@ -278,5 +301,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 path.ei-selected {
     stroke: black !important;
-    stroke-width: 3px !important;
+    stroke-width: 0.6px !important;
+    cursor: pointer;
+}
+.ei-card .export-row fieldset > div {
+	margin: 10px 0px;
+}
+.ei-card .export-row label {
+    cursor: default;
+    display: inline-block;
+    width: 200px;
+}
+.ei-card .export-row input {
+	width: 300px;
+}
+
+.ei-card .btn-row {
+	text-align: right;
+}
+.clickable-text {
+	cursor: pointer;
+}
+
+.ei-box-item {
+    width: fit-content;
+    padding: 5px 15px;
+    float: left;
+    margin: -6px 0px;
+}
+.grid-notice {
+	padding: 5px;
+    font-size: 0.9em;
 }
