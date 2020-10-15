@@ -760,7 +760,7 @@
     "core-index-data/select": "Select",
     "core-index-data/max": "Max",
     "core-index-data/cnt": "",
-    "core-index-data/evaluation-index" : "Evaluation Index",
+    "core-index-data/evaluation-index" : "Evaluate",
     "core-index-data/basic-data-statistics": "Data statistics",
     "core-index-data/select-all": "Select All",
     "core-index-dialog/title": "Simply Data Statistical Analysis Dialog",
@@ -805,10 +805,12 @@
 	
 	"core-index-data-ei/export-already-exist-table-name": "is already registered Table Name. Please retry register as new name.",
 	"core-index-data-ei/export-invalid_time_column": "is Invalid Time Column. Please check again.",
-	"core-index-data-ei/export-invalid_index_colum": "is Invalid Column Name. Please check again",
+	"core-index-data-ei/export-invalid_index_column": "is Invalid Column Name. Please check again",
 	
 	"core-index-data-ei/not-available-btn": "This Index not available right now.",
 	"core-index-data-ei/grid-notice": "Click the pie chart, show up project's rows.",
+		
+	"core-index-data-ei/confirm-execute": "Execute Command. Contiune? \n( Input \"y\" or \"yes\" )",
 
     "" : ""
 }

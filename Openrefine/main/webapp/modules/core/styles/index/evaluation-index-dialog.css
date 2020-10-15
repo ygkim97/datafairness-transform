@@ -210,6 +210,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	width : 200px;
     height: 30px;
     margin-top: -5px;
+	padding-left: 10px;
 }
 .ei-card .ei-right .ei-items span.desc {
 	font-size: small;
@@ -332,4 +333,10 @@ path.ei-selected {
 .grid-notice {
 	padding: 5px;
     font-size: 0.9em;
+}
+select.iris-properties {
+	width: 310px;
+    height: 25px;
+    border: #ccc 1px solid;
+    border-top: #888 1px solid;
 }
