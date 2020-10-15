@@ -39,6 +39,10 @@ import com.google.refine.model.Row;
 abstract public class DataQualityUtils {
     final static protected Logger logger = LoggerFactory.getLogger("command");
 
+    public static final String _STRING = "string";
+	public static final String _INT = "int";
+	public static final String _DOUBLE = "double";
+	
     static public List<List<Object>> createChartRows(Project project, List<String> columnNames, String[] selectedColumns) {
 		List<List<Object>> chartRows = new ArrayList<List<Object>>();
 		Iterator<Row> it = project.rows.iterator();
@@ -64,5 +68,29 @@ abstract public class DataQualityUtils {
 		}
 
 		return chartRows;
+	}
+    
+	static public String getColumnType(List<Object> list) {
+		try {
+			// max값을 구한다.
+			// Int로 떨어지면 INT
+			list.stream()
+				.filter(el -> el != null && !el.toString().trim().isEmpty())
+				.mapToInt((Object v) -> Integer.parseInt(v.toString()))
+				.max()
+				.getAsInt();
+			return _INT;
+		} catch (Exception e1) {
+			try {
+				list.stream()
+					.filter(el -> el != null && !el.toString().trim().isEmpty())
+					.mapToDouble((Object v) -> Double.parseDouble(v.toString()))
+					.max()
+					.getAsDouble();
+				return _DOUBLE;
+			} catch (Exception e2) {
+				return _STRING;
+			}
+		}
 	}
 }

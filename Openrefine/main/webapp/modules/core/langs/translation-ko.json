@@ -99,7 +99,7 @@
     "core-index-dialog/noty-detail-chart": "차트 클릭시, 상세 화면이 표시됩니다.",
     "core-index-dialog-qe/quantitative_evaluation": "정량평가",
     "core-index-dialog-qe/title": "차트 타입 선택",
-    "core-index-data/evaluation-index" : "평가 지표",
+    "core-index-data/evaluation-index" : "평가",
     "core-index-data/view-detail": "상세보기",
     "core-index-data/view": "보기",
     "core-index-dialog-ei/title": "품질 평가 지표",
@@ -115,7 +115,7 @@
 	"core-index-data-ei/left-title-column-name": "데이터 셋(컬럼명)",    
 	"core-index-data-ei/left-title-evaluation-index": "품질 지표",
 	"core-index-data-ei/left-title-test-column": "시험 항목",
-	"core-index-data-ei/left-title-edit-column": "품질 보정",
+	"core-index-data-ei/left-title-corrected-column": "품질 보정",
 	"core-index-data-ei/left-title-setting": "평가 설정",
 	"core-index-data-ei/left-title-quality-score": "품질 지수",
 	"core-index-data-ei/quality-total-cnt": "전체 건수",
@@ -135,9 +135,11 @@
 	
 	"core-index-data-ei/export-already-exist-table-name": "는 이미 등록된 테이블 명입니다. 다른 테이블 명으로 등록해 주세요.",
 	"core-index-data-ei/export-invalid_time_column": "는 유효하지 않는 날짜 컬럼입니다. 확인 후 다시 입력해 주세요.",
-	"core-index-data-ei/export-invalid_index_colum": "는 유효하지 않는 컬럼 명 입니다. 확인 후 다시 입력해 주세요.",
+	"core-index-data-ei/export-invalid_index_column": "는 유효하지 않는 컬럼 명 입니다. 확인 후 다시 입력해 주세요.",
 	
 	"core-index-data-ei/not-available-btn": "선택한 지표는 현재 사용 할 수 없습니다.",
 	"core-index-data-ei/grid-notice": "Pie 차트를 클릭하면, 여기에 프로젝트 행 목록이 표시됩니다.",
+	
+	"core-index-data-ei/confirm-execute": "실행합니다. 계속 하시겠습니까? \n( 실행시  \"y\" 나  \"yes\" 입력 )",
     "": ""
 }

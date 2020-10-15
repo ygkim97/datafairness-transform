@@ -9,6 +9,7 @@ var OBJ = {
 		setting : {
 			columnId : null,
 			columnName : null,
+			columnType : null,
 			indexId : null,
 			indexName : null,
 			testIndex : null,
@@ -47,6 +48,9 @@ EIDialogUI.prototype._createDialog = function() {
 	
 	this._elmts.ei_prev.text($.i18n('core-index-dialog-ei/next-prev-btn-'+2));
 	this._elmts.ei_next.text($.i18n('core-index-dialog-ei/next-prev-btn-'+1));
+	
+	// reset
+	OBJ.columns = [];
 	
 	$('#ei_dialog #graph-title').append(title);
 	
@@ -103,6 +107,17 @@ EIDialogUI.prototype._setNavigators = function() {
 			$div2.toggle('slide', {direction: 'left'}, 'slow');
 		    $div3.toggle('slide', {direction: 'right'}, 'slow');
 		} else if (nextDiv == 4) {
+			const answer = window.prompt('['+OBJ.setting.correctedIndexName+'] ' + $.i18n('core-index-data-ei/confirm-execute'));
+			
+			// No input, click cancel 
+			if (answer == null || answer =='' || answer == undefined) {
+				return;
+			}
+			// input something, but is not 'y' or 'yes'
+			if (!(answer.trim().toLowerCase() == 'yes' || answer.trim().toLowerCase() == 'y')) {
+				return;
+			}
+			
 			this._setCorrectedData();
 			this._setCard4();
 			
@@ -190,14 +205,9 @@ EIDialogUI.prototype._setCard1 = function() {
 		const el = $(e.target);
 		
 		if (el[0].tagName.toLowerCase() == 'td' ) {
-//			if (el.attr('data-available') == 'false') {
-//				alert($.i18n('core-index-data-ei/not-available-btn'));
-//				e.preventDefault();
-//			} else {
-				$('.evaluation_index').removeClass('active');		
-				$(e.target).addClass('active');
-				$(e.target).find('input').click();
-//			}
+			$('.evaluation_index').removeClass('active');		
+			$(e.target).addClass('active');
+			$(e.target).find('input').click();
 		}
 	})
 }
@@ -262,7 +272,7 @@ EIDialogUI.prototype._setCard2 = function() {
 	this._elmts.column_name.text($.i18n('core-index-data-ei/left-title-column-name'));
 	this._elmts.evaluation_index.text($.i18n('core-index-data-ei/left-title-evaluation-index'));
 	this._elmts.test_column.text($.i18n('core-index-data-ei/left-title-test-column'));
-//	this._elmts.corrected_column.text($.i18n('core-index-data-ei/left-title-corrected-column'));
+	this._elmts.corrected_column.text($.i18n('core-index-data-ei/left-title-corrected-column'));
 	
 	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
@@ -291,6 +301,8 @@ EIDialogUI.prototype._saveCard2Data = function() {
  * set Evaluation Index Card.
  */
 EIDialogUI.prototype._setCard3 = function() {
+	this._getModelInfo();
+	
 	// reset grid div
 	this._elmts.card3_grid.empty();
 	this._elmts.card3_notice_wrap.show();
@@ -349,6 +361,17 @@ EIDialogUI.prototype._setCard4 = function() {
 	this._elmts.index_columnName_label.text($.i18n('core-index-data-ei/export-iris-index-column-name') + ':');
 	this._elmts.date_columnName_label.text($.i18n('core-index-data-ei/export-iris-date-column-name') + ':');
 	this._elmts.tableName_label.text($.i18n('core-index-data-ei/export-iris-table-name') + ':');
+	
+	// set Iris properties (select)
+	var newColumns = [];
+	OBJ.columns.forEach((c) => {
+		newColumns.push({id:c.cellIndex, text:c.name});
+	})
+	addSELECT(this, newColumns, 'indexColumnName');
+	addSELECT(this, newColumns, 'dateColumnName');
+	// Update Class info
+	$('select#indexColumnName').addClass('pure-input-1-3');
+	$('select#dateColumnName').addClass('pure-input-1-3');
 	
 	// get data
 	const columnData = this._getTestData();
@@ -454,10 +477,9 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		})
 		.on('mouseout', function(){
 			$(this)[0].classList.remove('ei-selected')
-			
 		})		 
 		.on('click', function (d){
-			self._setCard3Row(d.data);
+			self._getCard3Row(d.data.name);
 		})
 		.append("title")
 		.text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);	
@@ -470,6 +492,25 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		.attr('class', 'real-path')
 		.attr("fill", d => color(d.data.name))
 		.attr("d", arc)
+		.on('mouseover', function (d){
+			const _this = $(this)
+			const _parent = _this.parent();
+			
+			const children = _parent.children();
+			_parent.children().remove();
+			children.each((i, c)=>{
+				if(c.id ==_this[0].id) {
+					_parent.append(c);
+				} else {
+					_parent.prepend(c);
+				}
+			})
+			
+			$(this)[0].classList.add('ei-selected')
+		})
+		.on('mouseout', function(){
+			$(this)[0].classList.remove('ei-selected')
+		})		 
 		.append("title")
 		.text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);	
 	}
@@ -525,20 +566,42 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 			 .attr('class', 'clickable-text')
 			 .on('click', function (d){
 				 const name = $(this).attr('data-name');
-				 const value = $(this).attr('data-value');
+//				 const value = $(this).attr('data-value');
 				 
-				 self._setCard3Row({name : name, value : value});
+				 self._getCard3Row(name)
 			 });
 		 }
 	 })
 }
-EIDialogUI.prototype._setCard3Row = function(d) {
-	var blankPosition = 2;
+EIDialogUI.prototype._getGridBody = function(type) {
+	var selectBlank = false;
+	var selection = [];
 	
-	if (d.name == 'NULL') {
-		blankPosition = -1 
+	if (type == 'NULL') {
+		selectBlank = true;
+		selection =[{"v":{"v":true,"l":"true"}}];
+	} else {
+		selectBlank = false;
+		selection =[{"v":{"v":false,"l":"false"}}];
 	}
-	this._getCard3GridData(blankPosition);
+	var facet = [{
+			"type":"list",
+			"name":OBJ.setting.columnName,
+			"columnName":OBJ.setting.columnName,
+			"expression":"isBlank(value)",
+			"omitBlank":false,
+			"omitError":false,
+			"selection":selection,
+			"selectBlank":selectBlank,
+			"selectError":false,
+			"invert":false
+	}];
+
+	const engin = {"facets":facet,"mode":"row-based"};
+	return {
+		engine: JSON.stringify(engin),
+		sorting: JSON.stringify({"criteria":[]}) 
+	};
 }
 EIDialogUI.prototype._getTestData = function() {
 	const warningDialog1 = DialogSystem.showBusy();
@@ -556,29 +619,26 @@ EIDialogUI.prototype._getTestData = function() {
 		success : function(data) {
 			warningDialog1();
 			response = data.testResultObj;
+			OBJ.setting.columnType = data.columnType;
 		}
 	})
 	return response;
 }
-EIDialogUI.prototype._getCard3GridData = function(blankPosition) {
-	var sorting = {
-			"criteria":
-				[{
-					"column":OBJ.setting.columnName,
-					"valueType":"string",
-					"reverse":false,
-					"blankPosition":blankPosition,
-					"errorPosition":1,
-					"caseSensitive":false
-				}]
-	}
-	const engin = {"facets":[],"mode":"record-based"};
-	var body = {
-		engine: JSON.stringify(engin),
-		sorting: JSON.stringify(sorting) 
-	};
+EIDialogUI.prototype._getCard3Row = function(type) {
 	const _self = this
+	const body = this._getGridBody(type);
 	
+	$.post(
+			"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: 50 }),
+			body,
+			function(data) {
+				_self._createSelectRowGrid(data.rows);
+			},
+			"json"
+	);
+}
+EIDialogUI.prototype._getModelInfo = function(type) {
+	const _self = this
 	// get models
 	$.getJSON("command/core/get-project-metadata?" + $.param({ project: UI_CHART_INFO.selectedPId }), null,
 		function(data) {
@@ -586,29 +646,11 @@ EIDialogUI.prototype._getCard3GridData = function(blankPosition) {
 				alert(data.message);
 			} else {
 				$.getJSON(
-					"command/core/get-models?" + $.param({ project: UI_CHART_INFO.selectedPId }), null,
-					function(data) {
-						if (data.columnModel.columns.length > 5) {
-							if (Number(OBJ.setting.columnId) -2 < 0) {
-								OBJ.columns = data.columnModel.columns.slice(0, 5);
-							} else if (OBJ.setting.columnId + 3 > data.columnModel.columns.length ) {
-								OBJ.columns = data.columnModel.columns.slice(data.columnModel.columns.length-5, data.columnModel.columns.length);
-							} else {
-								OBJ.columns = data.columnModel.columns.slice(OBJ.setting.columnId-2, OBJ.setting.columnId+3);
-							}
-						} else {
+						"command/core/get-models?" + $.param({ project: UI_CHART_INFO.selectedPId }), null,
+						function(data) {
 							OBJ.columns = data.columnModel.columns;
-						}
-						$.post(
-								"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: 50 }),
-								body,
-								function(data) {
-									_self._createSelectRowGrid(data.rows);
-								},
-								"json"
-						);
-					},
-					'json'
+						},
+						'json'
 				);
 			}
 		},
@@ -616,14 +658,41 @@ EIDialogUI.prototype._getCard3GridData = function(blankPosition) {
 	);
 }
 
+EIDialogUI.prototype._getSlicedColumns = function() {
+	if (OBJ.columns.length > 5) {
+		if (Number(OBJ.setting.columnId) -2 < 0) {
+			return OBJ.columns.slice(0, 5);
+		} else if (OBJ.setting.columnId + 3 > OBJ.columns.length ) {
+			return OBJ.columns.slice(OBJ.columns.length-5, OBJ.columns.length);
+		} else {
+			return OBJ.columns.slice(OBJ.setting.columnId-2, OBJ.setting.columnId+3);
+		}
+	} else {
+		return OBJ.columns;
+	}
+}
 EIDialogUI.prototype._createSelectRowGrid = function(data) {
+	this._elmts.card3_notice_wrap.hide();
+	const rowGrid = this._elmts.card3_grid.empty();
+	
 	var template = '';
+	
+	if (data.length == 0) {
+		template += '<div>';
+		template += '표시할 데이터가 없습니다.';
+		template += '</div>';
+			
+		rowGrid.append(template);
+		return;
+	}
+	
+	const columns = this._getSlicedColumns();
 	template += '<table class="card3-table">';
 	
 	// table header
 	template += '<thead>';
 	template += '<tr>';
-	OBJ.columns.forEach((c)=>{
+	columns.forEach((c)=>{
 		template += '<th>';
 		template += c.name;
 		template += '</th>';
@@ -636,32 +705,17 @@ EIDialogUI.prototype._createSelectRowGrid = function(data) {
 	data.forEach((d)=>{
 		template += '<tr>';
 		
-		OBJ.columns.forEach((c)=>{
+		columns.forEach((c)=>{
 			template += '<td>';
 			template += d.cells[c.cellIndex] == null ? '' : d.cells[c.cellIndex].v;
 			template += '</td>';
 		})
-//		d.cells.forEach((c, i)=>{
-//			if (c !== null) {
-//				if (OBJ.columns[cI] == undefined) {
-//					return;
-//				} 
-//				if (OBJ.columns[cI].cellIndex == i) {
-//					template += '<td>';
-//					template += c.v;
-//					template += '</td>';
-//					cI++;
-//				}
-//			}
-//		})
 		template += '</tr>';
 	})
 	
 	template += '</tbody>';
 	template += '</table>';
 	
-	this._elmts.card3_notice_wrap.hide();
-	const rowGrid = this._elmts.card3_grid.empty();
 	rowGrid.append(template);
 }
 EIDialogUI.prototype._setCorrectedData = function() {
@@ -691,8 +745,8 @@ EIDialogUI.prototype._setCorrectedData = function() {
     });
 }
 EIDialogUI.prototype._setSaveToIris = function() {
-	const irisKey = this._elmts.indexColumnName.val();
-	const irisDateKey = this._elmts.dateColumnName.val();
+	const irisKey = this._elmts.indexColumnName.find('option:selected').text();
+	const irisDateKey = this._elmts.dateColumnName.find('option:selected').text();
 	const tableName = this._elmts.tableName.val()
 	
 	// value check
@@ -759,7 +813,7 @@ function getDescPropertyByIndex() {
 function getEvaluationIndex() {
 	return {
 		"desc" : {
-			"indexId" : "측정하고자 하는 품질 지표를 선택합니다.",
+			"indexId" : "측정하고자 하는 품질지표 입니다.",
 			"testIndex" : "시험 항목을 선택합니다.",
 			"correctedIndex" : "데이터 품질 보정 알고리즘을 선택합니다.",
 		},
@@ -780,12 +834,18 @@ function getEvaluationIndex() {
 					{
 						"id": "ACCURACY_RECORD",
 						"text": "기록의 완전성"
+					},{
+						"id": "ACCURACY_RECORD2",
+						"text": "임시 시험항목 값 2"
 					}
 				],
 				"quality_correction_items": [
 					{
 						"id": "REMOVE_NULL",
 						"text": "NULL 데이터 삭제"
+					},{
+						"id": "CHANGE_NULL",
+						"text": "임시 품질 보정 값 2"
 					}
 				]
 			}
