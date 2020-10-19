@@ -99,17 +99,19 @@ public class SetEvaluationIndexCorrectedCommand extends Command {
 				throw new Exception();
 			}
 
-			index.corrected(correctedIndex, request, response);
+			index.setCorrectedData(correctedIndex, request, response);
 			
-			Map<String, Object> result = new HashMap<String, Object>();
 			// add params
-			result.put("success", true);
-
+//			Map<String, Object> result = new HashMap<String, Object>();
+//			result.put("success", true);
+			
+			String content = "{ \"code\" : \"ok\" }";
+			
 			response.setCharacterEncoding("UTF-8");
 			response.setHeader("Content-Type", "application/json");
 
 			writer = response.getWriter();
-			ParsingUtilities.defaultWriter.writeValue(writer, result);
+			ParsingUtilities.defaultWriter.writeValue(writer, content);
 
 			// metadata refresh for row mode and record mode
 			if (project.getMetadata() != null) {

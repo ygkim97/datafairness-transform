@@ -411,7 +411,8 @@ function init() {
 
       "scripts/dialogs/basic-statistics-dialog.js",
       "scripts/dialogs/quantitative-evaluation-dialog.js",
-      "scripts/dialogs/evaluation-index-dialog.js"
+      "scripts/dialogs/evaluation-index-dialog.js",
+      "scripts/dialogs/evaluation-index-properties.js",
     ]
   );
 

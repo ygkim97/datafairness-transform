@@ -101,7 +101,7 @@ public class GetEvaluationIndexTestCommand extends Command {
 
 			Map<String, Object> result = new HashMap<String, Object>();
 			// add params
-			result.put("testResultObj", index.test(testIndex));
+			result.put("testResultObj", index.getTestData(testIndex));
 			result.put("columnType", DataQualityUtils.getColumnType(chartRow));
 
 			response.setCharacterEncoding("UTF-8");
