@@ -424,7 +424,9 @@ EIDialogUI.prototype._setCard4 = function() {
 	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
 	$('span[name="test_column"]').text(OBJ.setting.testIndexName);
-	$('span[name="corrected_column"]').text(OBJ.setting.correctedIndexName + '(' + getExtraPropertyVal() +  ')');
+	var propertyVal = getExtraPropertyVal();
+	
+	$('span[name="corrected_column"]').text(OBJ.setting.correctedIndexName + (propertyVal == undefined ? '' : '(' + propertyVal + ')'));
 	
 	this._elmts.export_iris_Legend.text($.i18n('core-index-data-ei/export-title'));
 	this._elmts.index_columnName_label.text($.i18n('core-index-data-ei/export-iris-index-column-name') + ':');
