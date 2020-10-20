@@ -129,9 +129,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	text-align: center;
 }
 #ei_dialog .body-header .btn-wrap {
-	float : right;
-	height : 100%;
-    padding: 10px 5px;
+    float: right;
+    padding: 15px 5px;
 }
 #ei_dialog .body-header button {
 	margin : 0px 5px;;
@@ -208,7 +207,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .ei-card .ei-items select {
-	width : 200px;
+	width : 300px;
     height: 30px;
     margin-top: -5px;
 	padding-left: 10px;
