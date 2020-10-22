@@ -13,8 +13,8 @@ var OBJ = {
 			indexId : null,
 			indexName : null,
 			testIndex : null,
-			correctedIndex : null,
 			testIndexName : null,
+			correctedIndex : null,
 			correctedIndexName : null,
 			wrongCount : 0,
 			totalCount_before : 0,
@@ -280,40 +280,81 @@ EIDialogUI.prototype._setCard2 = function() {
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
 	this._elmts.index_name_desc.html('<i class="fas fa-asterisk"></i>' + descProperty.indexId);
 	
-	// set settting
-	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
-	addSELECT(this, settingProperty.test_items[0].correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+	const defaultTestItem = settingProperty.test_items[0];
 	
-	// add Event for correction select box 
+	// set values default 
+	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
+	OBJ.setting.testIndex = defaultTestItem.id;
+	OBJ.setting.testIndexName = defaultTestItem.text;
+	
+	addSELECT(this, defaultTestItem.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+	if (defaultTestItem.correctedOptions == undefined) {
+		$('select#correctedIndex').hide();
+	}	
+	
+
+	/**
+	 * 시험항목 선택 이벤트
+	 * 품질보정 항목을 새로 셋팅하고 선택 이벤트를 발생시킨다.
+	 */
 	const self = this;
 	$('select#testIndex').change(function(e) {
 		const obj = settingProperty["test_items"].find((ti)=> {
 			return ti.id == $(this).val()
 		})
+		OBJ.setting.testIndex = obj.id;
+		OBJ.setting.testIndexName = obj.text;
+			
 		addSELECT(self, obj.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+		if (obj.correctedOptions == undefined) {
+			$('select#correctedIndex').hide();
+			OBJ.setting.correctedIndex = null;
+			OBJ.setting.correctedIndexName = null;
+		} else {
+			$('select#correctedIndex').show();
+			OBJ.setting.correctedIndex = obj.id;
+			OBJ.setting.correctedIndexName = obj.text;
+		}
+		
+		$('select#correctedIndex').change();
 	});
+	$('select#testIndex').change();
 	
-	// add select Event for add property
+	/**
+	 * 품질보정 선택 이벤트
+	 * 추가된 값 property obj가 있으면 (text/select/radio) 등등을 화면에 표시한다. 
+	 */
 	const _self = this
 	$('select#correctedIndex').change(function(e) {
-		const property = _self._getIndexProperty(OBJ.setting.indexId)
+		const property = _self._getIndexProperty(OBJ.setting.indexId);
 		const subDiv = $('div#corrected_select_sub');
 		subDiv.empty();
 		OBJ.setting.propertyType = null;
 		
-		if (property.setting.hasOwnProperty('sub_correction_items')
-				&& property.setting.sub_correction_items.hasOwnProperty($(this).val())) {
-			// if has sub items, show sub div and add html tags.
+		const testItem = findValueById(property.setting.test_items, OBJ.setting.testIndex);
+		var propertyObj = null;
+		
+		if (testItem.hasOwnProperty('correctedOptions')) {
+			propertyObj = findValueById(testItem.correctedOptions, $(this).val()).property;
+		}
+		
+		if (propertyObj!== null && propertyObj!== undefined) {
 			subDiv.show();
 			subDiv.addClass('no_bottom_line');
 			
-			const subProperty = property.setting.sub_correction_items[$(this).val()];
-			subDiv.append(getTemplateInput(subProperty));
+			subDiv.append(getTemplateInput(propertyObj));
 		} else {
 			// hide sub div
 			subDiv.hide();
 			subDiv.removeClass('no_bottom_line');
 		}
+	})
+	$('select#correctedIndex').change();
+}
+
+function findValueById(arr, id) {
+	return arr.find((o)=>{
+		return o.id == id;
 	})
 }
 
