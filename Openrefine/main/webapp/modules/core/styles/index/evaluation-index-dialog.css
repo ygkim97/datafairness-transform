@@ -66,6 +66,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	height : 190px;
 }
 #ei_dialog table.card3-table td {
+	font-size: 12px;
 	height: 20px;
     padding: 1px 5px;
 }
@@ -128,9 +129,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	text-align: center;
 }
 #ei_dialog .body-header .btn-wrap {
-	float : right;
-	height : 100%;
-    padding: 10px 5px;
+    float: right;
+    padding: 15px 5px;
 }
 #ei_dialog .body-header button {
 	margin : 0px 5px;;
@@ -207,7 +207,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 .ei-card .ei-items select {
-	width : 200px;
+	width : 300px;
     height: 30px;
     margin-top: -5px;
 	padding-left: 10px;
@@ -339,4 +339,26 @@ select.iris-properties {
     height: 25px;
     border: #ccc 1px solid;
     border-top: #888 1px solid;
+}
+#corrected_select_sub {
+    margin-top: -10px;
+}
+#corrected_select_sub fieldset {
+	margin: 10px;
+	border: 1px solid #ccc;
+	padding: 10px 10px 10px 20px;
+}
+#corrected_select_sub label {
+	padding-right: 15px;
+    display: inline-block; 
+}
+#corrected_select_sub div.sub-radio {
+	display : inline;
+}
+#corrected_select_sub div.sub-radio label {
+	pointer-events: auto;
+	margin : 3px 10px;
+}
+.no_bottom_line {
+	border-bottom : none !important;
 }

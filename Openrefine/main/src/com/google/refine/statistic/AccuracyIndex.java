@@ -11,19 +11,33 @@ import javax.servlet.http.HttpServletResponse;
 public class AccuracyIndex implements DataQualityIndex {
 
 	private List<Object> chartRow = null;
-
-	public AccuracyIndex(List<Object> chartRow) {
+	private List<Object> getChartRow() {
+		return chartRow;
+	}
+	private void setChartRow(List<Object> chartRow) {
 		this.chartRow = chartRow;
+	}
+	private enum TestEnum {
+		SYNTAX_CORRECTNESS,
+		SEMEANTIC_ACCURACY,
+		DATASET_INACCURACY,
+		RANGE_ACCURACY
+	}
+	private enum CorrectedEnum {
+	}
+	
+	public AccuracyIndex(List<Object> chartRow) {
+		this.setChartRow(chartRow);
 	}
 
 	@Override
-	public Map<String, Object> test(String testIndex) {
+	public Map<String, Object> getTestData(String testIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void corrected(String editIndex, HttpServletRequest request, HttpServletResponse response)
+	public void setCorrectedData(String editIndex, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		

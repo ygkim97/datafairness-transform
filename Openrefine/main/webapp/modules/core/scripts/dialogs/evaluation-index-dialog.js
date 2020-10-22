@@ -17,7 +17,8 @@ var OBJ = {
 			testIndexName : null,
 			correctedIndexName : null,
 			wrongCount : 0,
-			totalCount_before : 0
+			totalCount_before : 0,
+			propertyType : null
 		}
 }
 
@@ -167,7 +168,7 @@ EIDialogUI.prototype._setNavigators = function() {
 	});
 }
 EIDialogUI.prototype._setCard1 = function() {
-	var labelList = getEvaluationIndex().properties;
+	var labelList = getEvaluationIndexProperties().properties;
 	
 	var lineMax = 4;
 	
@@ -263,7 +264,7 @@ function addSELECT(self, list, selectId, descText, _class) {
  */
 EIDialogUI.prototype._setCard2 = function() {
 	// set setting page
-	const indexProperty = getEvaluationIndexById();
+	const indexProperty = getEvaluationIndexPropertiesById();
 	const settingProperty = indexProperty.setting;
 	const descProperty = getDescPropertyByIndex();
 	
@@ -281,6 +282,74 @@ EIDialogUI.prototype._setCard2 = function() {
 	// set settting
 	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
 	addSELECT(this, settingProperty.quality_correction_items, 'correctedIndex', descProperty.correctedIndex);
+	
+	// add select Event for add property
+	const _self = this
+	$('select#correctedIndex').change(function(e) {
+		const property = _self._getIndexProperty(OBJ.setting.indexId)
+		const subDiv = $('div#corrected_select_sub');
+		subDiv.empty();
+		OBJ.setting.propertyType = null;
+		
+		if (property.setting.hasOwnProperty('sub_correction_items')
+				&& property.setting.sub_correction_items.hasOwnProperty($(this).val())) {
+			// if has sub items, show sub div and add html tags.
+			subDiv.show();
+			subDiv.addClass('no_bottom_line');
+			
+			const subProperty = property.setting.sub_correction_items[$(this).val()];
+			subDiv.append(getTemplateInput(subProperty));
+		} else {
+			// hide sub div
+			subDiv.hide();
+			subDiv.removeClass('no_bottom_line');
+		}
+	})
+}
+
+function getTemplateInput(param) {
+	OBJ.setting.propertyType = param.type;
+	
+	const className ="sub_properties";
+	
+	var template = '';
+	template += '<fieldset class="ei-box-shadow">';
+	template += '<legend class="new-connection-legend pure-input-1-2">'+$.i18n('core-index-data-ei/corrected-fieldset-title')+'</legend>'
+	template += '<div class="pure-control-group">';
+	template += '<label for="'+param.id+'">';
+	template += param.text + ' : ';
+	template += '</label>';
+	
+	if (param.type == 'text') {
+		template += '<input type="'+param.type+'" id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" />';
+	} else if (param.type == 'select') {
+		template += '<select id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" >';
+		param.options.forEach((p)=>{
+			template += '<option value="'+p.value+'" text="'+p.text+'">';
+			template += '<span>';
+			template += p.text;
+			template += '</span>';
+			template += '</option>';
+		})
+		template += '<select>';
+	} else if (param.type == 'radio') {
+		template += '<div class="sub-radio">';
+		param.options.forEach((p, pI)=>{
+			template += '<label>';
+			template += '<input type="radio" name="'+param.id+'" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
+			template += p.text;
+			template += '</label>';
+		})
+		template += '</div>';
+	}
+	template += '</div>';
+	template += '</fieldset>';
+	return template;
+}
+EIDialogUI.prototype._getIndexProperty = function(indexId) {
+	return getEvaluationIndexProperties().properties.find((p) => {
+		return p.id == indexId;
+	}) 
 }
 /**
  * save SETTING Card data.
@@ -355,7 +424,9 @@ EIDialogUI.prototype._setCard4 = function() {
 	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
 	$('span[name="test_column"]').text(OBJ.setting.testIndexName);
-	$('span[name="corrected_column"]').text(OBJ.setting.correctedIndexName);
+	var propertyVal = getExtraPropertyVal();
+	
+	$('span[name="corrected_column"]').text(OBJ.setting.correctedIndexName + (propertyVal == undefined ? '' : '(' + propertyVal + ')'));
 	
 	this._elmts.export_iris_Legend.text($.i18n('core-index-data-ei/export-title'));
 	this._elmts.index_columnName_label.text($.i18n('core-index-data-ei/export-iris-index-column-name') + ':');
@@ -565,10 +636,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 			 _text
 			 .attr('class', 'clickable-text')
 			 .on('click', function (d){
-				 const name = $(this).attr('data-name');
-//				 const value = $(this).attr('data-value');
-				 
-				 self._getCard3Row(name)
+				 self._getCard3Row($(this).attr('data-name'))
 			 });
 		 }
 	 })
@@ -732,7 +800,8 @@ EIDialogUI.prototype._setCorrectedData = function() {
     			correctedIndex : OBJ.setting.correctedIndex,
     			operations : 'deleteNull', 
     			columnName : OBJ.setting.columnName,
-	            csrf_token: token
+	            csrf_token: token,
+	            property : getExtraPropertyVal()
     		}),
     		async : false,
     		success : function(data) {
@@ -744,10 +813,17 @@ EIDialogUI.prototype._setCorrectedData = function() {
     	return response;
     });
 }
+function getExtraPropertyVal() {
+	if (OBJ.setting.propertyType == 'radio') {
+		return $('.sub_properties:checked').val();
+	} else {
+		return $('.sub_properties').val();
+	}
+}
 EIDialogUI.prototype._setSaveToIris = function() {
 	const irisKey = this._elmts.indexColumnName.find('option:selected').text();
 	const irisDateKey = this._elmts.dateColumnName.find('option:selected').text();
-	const tableName = this._elmts.tableName.val()
+	const tableName = this._elmts.tableName.val();
 	
 	// value check
 	if (irisKey == '' || irisDateKey == '' || tableName == '') {
@@ -802,89 +878,11 @@ EIDialogUI.prototype._dismiss = function() {
 	DialogSystem.dismissUntil(this._level - 1);
 };
 
-function getEvaluationIndexById() {
-	return getEvaluationIndex().properties.find((e)=>{
+function getEvaluationIndexPropertiesById() {
+	return getEvaluationIndexProperties().properties.find((e)=>{
 		return e.id == OBJ.setting.indexId
 	})
 }
 function getDescPropertyByIndex() {
-	return getEvaluationIndex().desc;
-}
-function getEvaluationIndex() {
-	return {
-		"desc" : {
-			"indexId" : "측정하고자 하는 품질지표 입니다.",
-			"testIndex" : "시험 항목을 선택합니다.",
-			"correctedIndex" : "데이터 품질 보정 알고리즘을 선택합니다.",
-		},
-		"properties": [
-		{
-			"isAvailable" : false,
-			"id": "ACCURACY",
-			"text": "정확성",
-			"desc": "구문 데이터 정확성, 의미 데이터 정확성, 데이터 세트의 부정확성의 위험, 데이터 범위 정확성등을 측정합니다."
-		},
-		{
-			"isAvailable" : true,
-			"id": "COMPLETENESS",
-			"text": "완전성",
-			"desc": "기록 완정성, 데이터 값 완정성 등을 측정합니다.",
-			"setting": {
-				"test_items": [
-					{
-						"id": "ACCURACY_RECORD",
-						"text": "기록의 완전성"
-					},{
-						"id": "ACCURACY_RECORD2",
-						"text": "임시 시험항목 값 2"
-					}
-				],
-				"quality_correction_items": [
-					{
-						"id": "REMOVE_NULL",
-						"text": "NULL 데이터 삭제"
-					},{
-						"id": "CHANGE_NULL",
-						"text": "임시 품질 보정 값 2"
-					}
-				]
-			}
-		},
-		{
-			"isAvailable" : false,
-			"id": "CONSISTENCY",
-			"text": "일관성",
-			"desc": "참조 무결성, 데이터 불일치의 위험, 의미론적 일관성 등을 측정합니다."
-		},
-		{
-			"isAvailable" : false,
-			"id": "PRESENT",
-			"text": "현재성",
-			"desc": "업데이트 주기와 조건에 맞게 업데이트 요청이 있는 정보 아이템의 비율을 측정합니다."
-		},
-		{
-			"isAvailable" : false,
-			"id": "COMPLIANCE",
-			"text": "준수성",
-			"desc": "표준, 협약 또는 규정에 부합하는 데이터 아이템의 비율을 측정합니다."
-		},
-		{
-			"isAvailable" : false,
-			"id": "PRECISION",
-			"text": "정밀성",
-			"desc": "명세서의 정밀도를 만족하는 데이터 값의 비율을 측정합니다."
-		},
-		{
-			"isAvailable" : false,
-			"id": "TRACEABILITY",
-			"text": "추적성",
-			"desc": "요청된 접근 추적성 값이 존재하는 데이터 값의 비율을 측정합니다."
-		},
-		{
-			"isAvailable" : false,
-			"id": "UNDERSTANDING",
-			"text": "이해성",
-			"desc": "이해 가능한 기호로 표시되는데이터  값의 비율을 측정합니다."
-		}
-	]}
+	return getEvaluationIndexProperties().desc;
 }
