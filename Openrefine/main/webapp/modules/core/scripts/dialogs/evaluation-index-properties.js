@@ -43,33 +43,50 @@ function getEvaluationIndexProperties() {
 					test_items: [
 						{
 							id: "ACCURACY_RECORD",
-							text: "기록의 완전성"
+							text: "기록의 완전성",
+							correctedOptions : [{
+								id: "REMOVE_NULL",
+								text: "NULL 데이터 삭제"
+							},
+							{
+								id: "REPLACE_NULL",
+								text: "NULL 데이터 변경"
+							},
+							{
+								id: "SELECT_TEST",
+								text: "셀렉트 테스트"
+							},
+							{
+								id: "RADIO_TEST",
+								text: "라디오 테스트"
+							}]
+						},{
+							id: "ACCURACY_RECORD2",
+							text: "기록의 완전성2",
+							correctedOptions : [{
+								id: "REMOVE_NULL2",
+								text: "NULL 데이터 삭제2"
+							},
+							{
+								id: "REPLACE_NULL2",
+								text: "NULL 데이터 변경2"
+							},
+							{
+								id: "SELECT_TEST2",
+								text: "셀렉트 테스트2"
+							},
+							{
+								id: "RADIO_TEST2",
+								text: "라디오 테스트2"
+							}]
 						}
-					],
-					quality_correction_items: [
-						{
-							id: "REMOVE_NULL",
-							text: "NULL 데이터 삭제"
-						}/*,
-						{
-							id: "REPLACE_NULL",
-							text: "NULL 데이터 변경"
-						},
-						{
-							id: "SELECT_TEST",
-							text: "셀렉트 테스트"
-						},
-						{
-							id: "RADIO_TEST",
-							text: "라디오 테스트"
-						}*/
 					],
 					sub_correction_items : {
 						"REPLACE_NULL" : {
 							"type" : "text",
 							text : "변경 할 값",
 							id : "null_replaced"
-						}, 
+						}/*, 
 						"SELECT_TEST" : {
 							type : "select",
 							text : "셀렉트 테스트",
@@ -99,7 +116,7 @@ function getEvaluationIndexProperties() {
 								value : 'radioId3',
 								text : '라디오옵션3'
 							}]
-						}
+						}*/
 					}
 				}
 			},

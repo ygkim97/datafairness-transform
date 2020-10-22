@@ -21,6 +21,8 @@ var OBJ = {
 			propertyType : null
 		}
 }
+// Dialog-card1 Index Table max row count.
+const INDEX_TABLE_MAX_ROW = 4;
 
 function EIDialogUI(index, name) {
 	OBJ.setting.columnId = index;
@@ -170,8 +172,6 @@ EIDialogUI.prototype._setNavigators = function() {
 EIDialogUI.prototype._setCard1 = function() {
 	var labelList = getEvaluationIndexProperties().properties;
 	
-	var lineMax = 4;
-	
 	var template = '';
 	template += '<table class="card1-table">';	
 	template += '<tr>';
@@ -179,7 +179,7 @@ EIDialogUI.prototype._setCard1 = function() {
 	const ei_wrap = this._elmts.ei_card1.empty();
 	
 	labelList.forEach((li, i)=>{
-		if (i == lineMax) {
+		if (i == INDEX_TABLE_MAX_ROW) {
 			template += '<tr>';
 		}
 		
@@ -246,14 +246,15 @@ function addSELECT(self, list, selectId, descText, _class) {
 	var selectTemplate = '';
 	const parent = $('select#'+selectId).empty();
 	
-	list.forEach((l) => {
-		selectTemplate += '<option value="'+l.id+'" text="'+l.text+'">';
-		selectTemplate += '<span>';
-		selectTemplate += l.text;
-		selectTemplate += '</span>';
-		selectTemplate += '</option>';
-	})
-	
+	if (list != undefined) {
+		list.forEach((l) => {
+			selectTemplate += '<option value="'+l.id+'" text="'+l.text+'">';
+			selectTemplate += '<span>';
+			selectTemplate += l.text;
+			selectTemplate += '</span>';
+			selectTemplate += '</option>';
+		})
+	}
 	parent.append(selectTemplate);
 	if (descText != undefined) {
 		self._elmts[selectId + '_desc'].html('<i class="fas fa-asterisk"></i>' + descText);
@@ -281,7 +282,16 @@ EIDialogUI.prototype._setCard2 = function() {
 	
 	// set settting
 	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
-	addSELECT(this, settingProperty.quality_correction_items, 'correctedIndex', descProperty.correctedIndex);
+	addSELECT(this, settingProperty.test_items[0].correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+	
+	// add Event for correction select box 
+	const self = this;
+	$('select#testIndex').change(function(e) {
+		const obj = settingProperty["test_items"].find((ti)=> {
+			return ti.id == $(this).val()
+		})
+		addSELECT(self, obj.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+	});
 	
 	// add select Event for add property
 	const _self = this
