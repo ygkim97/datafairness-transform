@@ -66,7 +66,7 @@ import edu.mit.simile.butterfly.ButterflyModule;
 public class RefineServlet extends Butterfly {
 //    static private String ASSIGNED_VERSION = "3.4-beta2";
 //	static private String ASSIGNED_VERSION = "3.4-custom-SNAPSHOT";
-	static private String ASSIGNED_VERSION = "IRIS-Refine-v0.1";
+	static private String ASSIGNED_VERSION = "IRIS-Refine-v1.0";
     
     static public String VERSION = "";
     static public String REVISION = "";
