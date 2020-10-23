@@ -371,7 +371,7 @@ function getTemplateInput(param) {
 	template += param.text + ' : ';
 	template += '</label>';
 	
-	if (param.type == 'text') {
+	if (param.type == 'text' || param.type == 'number') {
 		template += '<input type="'+param.type+'" id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" />';
 	} else if (param.type == 'select') {
 		template += '<select id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" >';
@@ -388,6 +388,15 @@ function getTemplateInput(param) {
 		param.options.forEach((p, pI)=>{
 			template += '<label>';
 			template += '<input type="radio" name="'+param.id+'" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
+			template += p.text;
+			template += '</label>';
+		})
+		template += '</div>';
+	} else if (param.type == 'checkbox') {
+		template += '<div class="sub-checkbox">';
+		param.options.forEach((p, pI)=>{
+			template += '<label>';
+			template += '<input type="checkbox" name="'+param.id+ '_' + pI + '" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
 			template += p.text;
 			template += '</label>';
 		})
@@ -867,6 +876,12 @@ EIDialogUI.prototype._setCorrectedData = function() {
 function getExtraPropertyVal() {
 	if (OBJ.setting.propertyType == 'radio') {
 		return $('.sub_properties:checked').val();
+	} if (OBJ.setting.propertyType == 'checkbox') {
+		var values = [];
+		$('.sub_properties:checked').each((i, e)=>{
+			values.push($(e).val());
+		});
+		return values.join(',');
 	} else {
 		return $('.sub_properties').val();
 	}

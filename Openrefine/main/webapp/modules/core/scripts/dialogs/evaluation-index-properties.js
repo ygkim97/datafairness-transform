@@ -33,80 +33,100 @@ function getEvaluationIndexProperties() {
 					quality_correction_items: [],
 					sub_correction_items : {}
 				}
-			},
-			{
-				isAvailable: true,
-				id: "COMPLETENESS",
-				text: "완전성",
-				desc: "기록 완정성, 데이터 값 완정성 등을 측정합니다.",
-				setting: {
-					test_items: [
-					{
-						id: "ACCURACY_RECORD",
-						text: "기록의 완전성",
-						correctedOptions : [{
-							id: "REMOVE_NULL",
-							text: "NULL 데이터 삭제"
-						}]
-					}
-//					, {
-//						id : "TEST_1",
-//						text : "시험항목1-보정항목 없음"
-//					}, {
-//						id : "TEST_2",
-//						text : "시험항목2",
-//						correctedOptions : [{
-//							id: "CORR_1",
-//							text: "품질보정1",
-//							property : {
-//								"type" : "text",
-//								text : "옵션1",
-//								id : "null_replaced"
-//							}
-//						},{
-//							id: "CORR_4",
-//							text: "품질보정4",
-//							property : {
-//								type : "radio",
-//								text : "라디오 테스트",
-//								id : "radio_id",
-//								options : [{
-//									value : 'radioId1',
-//									text : '라디오옵션1'
-//								},{
-//									value : 'radioId2',
-//									text : '라디오옵션2'
-//								},{
-//									value : 'radioId3',
-//									text : '라디오옵션3'
-//								}]
-//							}
-//						}]
-//					}, {
-//						id : "TEST_3",
-//						text : "시험항목3",
-//						correctedOptions : [{
-//							id: "CORR_2",
-//							text: "품질보정2",
-//							property : {
-//								type : "select",
-//								text : "셀렉트 테스트",
-//								id : "select_test",
-//								options : [{
-//									value : 'selectId1',
-//									text : '셀렉트옵션1'
-//								},{
-//									value : 'selectId2',
-//									text : '셀렉트옵션2'
-//								},{
-//									value : 'selectId3',
-//									text : '셀렉트옵션3'
-//								}]
-//							}
-//						}]
-//					}
-					],
-				}
+			},{
+			    isAvailable: true,
+			    id: "COMPLETENESS",
+			    text: "완전성",
+			    desc: "기록 완정성, 데이터 값 완정성 등을 측정합니다.",
+			    setting : {
+			        test_items : [
+			            {
+			                id: "ACCURACY_RECORD",
+			                text: "기록의 완전성",
+			                correctedOptions: [
+			                    {
+			                        id: "REMOVE_NULL",
+			                        text: "NULL 데이터 삭제"
+			                    }
+			                ]
+			            }, {
+			                id: "TEST",
+			                text: "테스트옵션들",
+			                correctedOptions : [{
+			                    id: "text",
+			                    text: "텍스트박스",
+			                    property : {
+			                        type : "text",
+			                        text : "문자",
+			                        id : "char_id"
+			                    }
+			                }, {
+		                        id: "number",
+		                        text: "숫자박스",
+		                        property : {
+		                            type : "number",
+		                            text : "숫자",
+		                            id : "num_id"
+		                        }                        
+		                    }, {
+		                        id: "RADIO",
+		                        text: "라디오버튼",
+		                        property : {
+		                            type : "radio",
+		                            text : "라디오",
+		                            id : "radio_id",
+		                            options : [{
+		                                value : 'radioId1',
+		                                text : '라디오옵션1'
+		                            },{
+		                                value : 'radioId2',
+		                                text : '라디오옵션2'
+		                            },{
+		                                value : 'radioId3',
+		                                text : '라디오옵션3'
+		                            }]
+		                        }
+		                    }, {
+		                        id: "CHECK",
+		                        text: "체크버튼",
+		                        property : {
+		                        	// checkbox는 값을 ',' 로 전달하도록 구현되어 있기 때문에 option value에 ','를 사용하면 안됨.
+		                            type : "checkbox",
+		                            text : "체크박스",
+		                            id : "check_id",
+		                            options : [{
+		                                value : 'checkId1',
+		                                text : '체크박스옵션1'
+		                            },{
+		                                value : 'checkId2',
+		                                text : '체크박스옵션2'
+		                            },{
+		                                value : 'checkId3',
+		                                text : '체크박스옵션3'
+		                            }]
+		                        }
+		                    }, {
+		                        id: "SELECT",
+		                        text: "셀렉트박스",
+		                        property : {
+		                            type : "select",
+		                            text : "셀렉트",
+		                            id : "select_id",
+		                            options : [{
+		                                value : 'selectId1',
+		                                text : '셀렉트옵션1'
+		                            },{
+		                                value : 'selectId2',
+		                                text : '셀렉트옵션2'
+		                            },{
+		                                value : 'selectId3',
+		                                text : '셀렉트옵션3'
+		                            }]
+		                        }
+		                    }]                
+			            }
+			        ]
+			    }    
 			},
 			{
 				isAvailable: false,
