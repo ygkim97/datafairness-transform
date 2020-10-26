@@ -860,7 +860,7 @@ EIDialogUI.prototype._setSaveToIris = function() {
 	
 	// value check
 	if (irisKey == '' || irisDateKey == '' || tableName == '') {
-		alert('no data')
+		alert($.i18n('core-index-data-ei/iris-no-data'))
 		return;
 	}
 	var options = {
@@ -890,17 +890,20 @@ EIDialogUI.prototype._setSaveToIris = function() {
 			}, error: function(data) {
 				// alread exist table name
 				if (data.statusText.indexOf('already exists') > -1) {
-					alert('[' + tableName + '] ' + $.i18n('core-index-data-ei/export-already-exist-table-name'));
+					alert(getIrisAlertMsg(tableName, 'export-already-exist-table-name'));
 				} else if (data.statusText.indexOf('Invalid Partition Time') > -1) {
-					alert('[' + irisDateKey + '] ' + $.i18n('core-index-data-ei/export-invalid_time_column'));
+					alert(getIrisAlertMsg(tableName, 'export-invalid_time_column'));
 				} else if (data.statusText.indexOf('PARTITIONKEY column') > -1) {
-					alert('[' + irisKey + '] ' + $.i18n('core-index-data-ei/export-invalid_index_column'));
+					alert(getIrisAlertMsg(tableName, 'export-invalid_index_column'));
 				}
 			}, complete : function() {
 				warningDialog1();
 			}
 		});
 	}, 10);
+}
+function getIrisAlertMsg(tableName, msgStr) {
+	return '[ ' + tableName + ' ] ' + $.i18n('core-index-data-ei/' + msgStr);
 }
 
 // when close Dialog 
