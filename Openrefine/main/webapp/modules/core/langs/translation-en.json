@@ -815,6 +815,7 @@
 	"core-index-data-ei/corrected-fieldset-title": "Property Setting",
 	
 	"core-index-data-ei/iris-no-data": "No Data.",
+	"core-index-data-ei/fail-load-result": "Failed load record. Check again Test Index Value.",
     "" : ""
 }
 

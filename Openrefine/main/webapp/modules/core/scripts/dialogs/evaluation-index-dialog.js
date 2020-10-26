@@ -94,7 +94,6 @@ EIDialogUI.prototype._setNavigators = function() {
 			
 			if (checked.parent().parent().parent().attr('data-available') == 'false') {
 				setNaviBtnStatus(false);
-				
 				alert($.i18n('core-index-data-ei/not-available-btn'));
 				return;
 			}
@@ -103,7 +102,6 @@ EIDialogUI.prototype._setNavigators = function() {
 			
 			if (checked.length == 0) {
 				setNaviBtnStatus(false);
-				
 				alert($.i18n('core-index-dialog-ei/no-selected-evaluation-index'));
 				return;
 			}
@@ -115,8 +113,13 @@ EIDialogUI.prototype._setNavigators = function() {
 			p2 = $div2.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 3) {
 			this._saveCard2Data();
-			this._setCard3();
+			const response = this._setCard3();
 			
+			if (response === 'failed') {
+				setNaviBtnStatus(false);
+				alert($.i18n('core-index-data-ei/fail-load-result'))
+				return;
+			}			
 			p1 = $div2.toggle('slide', {direction: 'left'}).promise();
 			p2 = $div3.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 4) {
@@ -125,13 +128,11 @@ EIDialogUI.prototype._setNavigators = function() {
 			// No input, click cancel 
 			if (answer == null || answer =='' || answer == undefined) {
 				setNaviBtnStatus(false);
-				
 				return;
 			}
 			// input something, but is not 'y' or 'yes'
 			if (!(answer.trim().toLowerCase() == 'yes' || answer.trim().toLowerCase() == 'y')) {
 				setNaviBtnStatus(false);
-				
 				return;
 			}
 			
@@ -480,6 +481,11 @@ EIDialogUI.prototype._setCard3 = function() {
 
 	// get data
 	const columnData = this._getTestData();
+	
+	if (columnData == null) {
+		return 'failed';
+	}
+	
 	var per = getPer(columnData.rightCount, columnData.totalCount);
 	
 	// 초기값일때만 값을 저장한다.

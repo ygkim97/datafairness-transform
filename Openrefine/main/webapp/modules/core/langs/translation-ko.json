@@ -145,5 +145,6 @@
 	"core-index-data-ei/corrected-fieldset-title": "속성 설정",
 	
 	"core-index-data-ei/iris-no-data": "입력된 값이 없습니다.",
+	"core-index-data-ei/fail-load-result": "품질 평가 목록 조회에 실패하였습니다. 시험항목 값을 확인 해 주세요.",
     "": ""
 }

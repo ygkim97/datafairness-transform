@@ -7,7 +7,7 @@ function getEvaluationIndexProperties() {
 		},
 		properties: [
 			{
-				isAvailable: true,
+				isAvailable: false,
 				id: "ACCURACY",
 				text: "정확성",
 				desc: "구문 데이터 정확성, 의미 데이터 정확성, 데이터 세트의 부정확성의 위험, 데이터 범위 정확성등을 측정합니다.",
