@@ -779,9 +779,9 @@ EIDialogUI.prototype._createSelectRowGrid = function(data) {
 	var template = '';
 	
 	if (data.length == 0) {
-		template += '<div>';
-		template += '표시할 데이터가 없습니다.';
-		template += '</div>';
+		template += '<span class="grid-notice">';
+		template += $.i18n('core-index-data-ei/grid-notice-no-record');
+		template += '</span>';
 			
 		rowGrid.append(template);
 		return;

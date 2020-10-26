@@ -809,6 +809,7 @@
 	
 	"core-index-data-ei/not-available-btn": "This Index not available right now.",
 	"core-index-data-ei/grid-notice": "Click the pie chart, show up project's rows.",
+	"core-index-data-ei/grid-notice-no-record": "No records.",
 		
 	"core-index-data-ei/confirm-execute": "Execute Command. Contiune? \n( Input \"y\" or \"yes\" )",
 	"core-index-data-ei/corrected-fieldset-title": "Property Setting",
