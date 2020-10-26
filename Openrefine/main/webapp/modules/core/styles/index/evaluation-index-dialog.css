@@ -355,7 +355,10 @@ select.iris-properties {
 #corrected_select_sub div.sub-radio {
 	display : inline;
 }
-#corrected_select_sub div.sub-radio label {
+#corrected_select_sub div.sub-checkbox {
+	display : inline;
+}
+#corrected_select_sub label {
 	pointer-events: auto;
 	margin : 3px 10px;
 }

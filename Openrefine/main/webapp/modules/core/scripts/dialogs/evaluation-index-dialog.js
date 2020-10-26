@@ -13,14 +13,16 @@ var OBJ = {
 			indexId : null,
 			indexName : null,
 			testIndex : null,
-			correctedIndex : null,
 			testIndexName : null,
+			correctedIndex : null,
 			correctedIndexName : null,
 			wrongCount : 0,
 			totalCount_before : 0,
 			propertyType : null
 		}
 }
+// Dialog-card1 Index Table max row count.
+const INDEX_TABLE_MAX_ROW = 4;
 
 function EIDialogUI(index, name) {
 	OBJ.setting.columnId = index;
@@ -74,17 +76,24 @@ EIDialogUI.prototype._setNavigators = function() {
 	const $next = $('#ei_next');
 	const $prev = $('#ei_prev');
 	
+	let p1 = null;
+	let p2 = null;
+	
     var currentDiv = 1;
     
     const naviItems = $('.navi-item');
     
 	$('#ei_next').click((e) => {
+		$(this).blur();
+		var resp = setNaviBtnStatus(true);
+		
 		nextDiv = currentDiv + 1;
 		if (nextDiv == 2) {
 			// go to next
 			const checked = $('.evaluation_index input[type="radio"]:checked');
 			
 			if (checked.parent().parent().parent().attr('data-available') == 'false') {
+				setNaviBtnStatus(false);
 				alert($.i18n('core-index-data-ei/not-available-btn'));
 				return;
 			}
@@ -92,6 +101,7 @@ EIDialogUI.prototype._setNavigators = function() {
 			OBJ.setting.indexId = checked.attr('data-id');
 			
 			if (checked.length == 0) {
+				setNaviBtnStatus(false);
 				alert($.i18n('core-index-dialog-ei/no-selected-evaluation-index'));
 				return;
 			}
@@ -99,33 +109,46 @@ EIDialogUI.prototype._setNavigators = function() {
 		if (nextDiv == 2) {
 			this._setCard2();
 			
-			$div1.toggle('slide', {direction: 'left'}, 'slow');
-			$div2.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div1.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div2.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 3) {
 			this._saveCard2Data();
-			this._setCard3();
+			const response = this._setCard3();
 			
-			$div2.toggle('slide', {direction: 'left'}, 'slow');
-		    $div3.toggle('slide', {direction: 'right'}, 'slow');
+			if (response === 'failed') {
+				setNaviBtnStatus(false);
+				alert($.i18n('core-index-data-ei/fail-load-result'))
+				return;
+			}			
+			p1 = $div2.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div3.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 4) {
 			const answer = window.prompt('['+OBJ.setting.correctedIndexName+'] ' + $.i18n('core-index-data-ei/confirm-execute'));
 			
 			// No input, click cancel 
 			if (answer == null || answer =='' || answer == undefined) {
+				setNaviBtnStatus(false);
 				return;
 			}
 			// input something, but is not 'y' or 'yes'
 			if (!(answer.trim().toLowerCase() == 'yes' || answer.trim().toLowerCase() == 'y')) {
+				setNaviBtnStatus(false);
 				return;
 			}
 			
 			this._setCorrectedData();
 			this._setCard4();
 			
-			$div3.toggle('slide', {direction: 'left'}, 'slow');
-		    $div4.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div3.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div4.toggle('slide', {direction: 'right'}).promise();
 		}
+		
 		currentDiv = nextDiv;
+		
+		// when finished page slide, set btn acitve.
+		$.when(p1, p2).then(_=>{
+			setNaviBtnStatus(false);
+		})
 		
 		// set navi-item active class 
 		naviItems.removeClass('active');
@@ -139,20 +162,29 @@ EIDialogUI.prototype._setNavigators = function() {
 			$next.show();
 		}
 	});
+    
 	$('#ei_prev').click((e) => {
+		$(this).blur();
+		var resp = setNaviBtnStatus(true);
+		
 		nextDiv = currentDiv - 1;
 
 		if (nextDiv == 3) {
-			$div3.toggle('slide', {direction: 'left'}, 'slow');
-			$div4.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div3.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div4.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 2) { 
-		    $div2.toggle('slide', {direction: 'left'}, 'slow');
-		    $div3.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div2.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div3.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 1) { 
-			$div1.toggle('slide', {direction: 'left'}, 'slow');
-			$div2.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div1.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div2.toggle('slide', {direction: 'right'}).promise();
 		}
 		currentDiv = nextDiv;
+		
+		// when finished page slide, set btn acitve.
+		$.when(p1, p2).then(_=>{
+			setNaviBtnStatus(false);
+		})
 		
 		// set navi-item active class
 		naviItems.removeClass('active');
@@ -167,10 +199,12 @@ EIDialogUI.prototype._setNavigators = function() {
 		}
 	});
 }
+function setNaviBtnStatus(bool) {
+	$('#ei_prev').attr('disabled',bool);
+	$('#ei_next').attr('disabled',bool);	
+}
 EIDialogUI.prototype._setCard1 = function() {
 	var labelList = getEvaluationIndexProperties().properties;
-	
-	var lineMax = 4;
 	
 	var template = '';
 	template += '<table class="card1-table">';	
@@ -179,7 +213,7 @@ EIDialogUI.prototype._setCard1 = function() {
 	const ei_wrap = this._elmts.ei_card1.empty();
 	
 	labelList.forEach((li, i)=>{
-		if (i == lineMax) {
+		if (i == INDEX_TABLE_MAX_ROW) {
 			template += '<tr>';
 		}
 		
@@ -246,14 +280,15 @@ function addSELECT(self, list, selectId, descText, _class) {
 	var selectTemplate = '';
 	const parent = $('select#'+selectId).empty();
 	
-	list.forEach((l) => {
-		selectTemplate += '<option value="'+l.id+'" text="'+l.text+'">';
-		selectTemplate += '<span>';
-		selectTemplate += l.text;
-		selectTemplate += '</span>';
-		selectTemplate += '</option>';
-	})
-	
+	if (list != undefined) {
+		list.forEach((l) => {
+			selectTemplate += '<option value="'+l.id+'" text="'+l.text+'">';
+			selectTemplate += '<span>';
+			selectTemplate += l.text;
+			selectTemplate += '</span>';
+			selectTemplate += '</option>';
+		})
+	}
 	parent.append(selectTemplate);
 	if (descText != undefined) {
 		self._elmts[selectId + '_desc'].html('<i class="fas fa-asterisk"></i>' + descText);
@@ -279,31 +314,81 @@ EIDialogUI.prototype._setCard2 = function() {
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
 	this._elmts.index_name_desc.html('<i class="fas fa-asterisk"></i>' + descProperty.indexId);
 	
-	// set settting
-	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
-	addSELECT(this, settingProperty.quality_correction_items, 'correctedIndex', descProperty.correctedIndex);
+	const defaultTestItem = settingProperty.test_items[0];
 	
-	// add select Event for add property
+	// set values default 
+	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
+	OBJ.setting.testIndex = defaultTestItem.id;
+	OBJ.setting.testIndexName = defaultTestItem.text;
+	
+	addSELECT(this, defaultTestItem.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+	if (defaultTestItem.correctedOptions == undefined) {
+		$('select#correctedIndex').hide();
+	}	
+	
+
+	/**
+	 * 시험항목 선택 이벤트
+	 * 품질보정 항목을 새로 셋팅하고 선택 이벤트를 발생시킨다.
+	 */
+	const self = this;
+	$('select#testIndex').change(function(e) {
+		const obj = settingProperty["test_items"].find((ti)=> {
+			return ti.id == $(this).val()
+		})
+		OBJ.setting.testIndex = obj.id;
+		OBJ.setting.testIndexName = obj.text;
+			
+		addSELECT(self, obj.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
+		if (obj.correctedOptions == undefined) {
+			$('select#correctedIndex').hide();
+			OBJ.setting.correctedIndex = null;
+			OBJ.setting.correctedIndexName = null;
+		} else {
+			$('select#correctedIndex').show();
+			OBJ.setting.correctedIndex = obj.id;
+			OBJ.setting.correctedIndexName = obj.text;
+		}
+		
+		$('select#correctedIndex').change();
+	});
+	$('select#testIndex').change();
+	
+	/**
+	 * 품질보정 선택 이벤트
+	 * 추가된 값 property obj가 있으면 (text/select/radio) 등등을 화면에 표시한다. 
+	 */
 	const _self = this
 	$('select#correctedIndex').change(function(e) {
-		const property = _self._getIndexProperty(OBJ.setting.indexId)
+		const property = _self._getIndexProperty(OBJ.setting.indexId);
 		const subDiv = $('div#corrected_select_sub');
 		subDiv.empty();
 		OBJ.setting.propertyType = null;
 		
-		if (property.setting.hasOwnProperty('sub_correction_items')
-				&& property.setting.sub_correction_items.hasOwnProperty($(this).val())) {
-			// if has sub items, show sub div and add html tags.
+		const testItem = findValueById(property.setting.test_items, OBJ.setting.testIndex);
+		var propertyObj = null;
+		
+		if (testItem.hasOwnProperty('correctedOptions')) {
+			propertyObj = findValueById(testItem.correctedOptions, $(this).val()).property;
+		}
+		
+		if (propertyObj!== null && propertyObj!== undefined) {
 			subDiv.show();
 			subDiv.addClass('no_bottom_line');
 			
-			const subProperty = property.setting.sub_correction_items[$(this).val()];
-			subDiv.append(getTemplateInput(subProperty));
+			subDiv.append(getTemplateInput(propertyObj));
 		} else {
 			// hide sub div
 			subDiv.hide();
 			subDiv.removeClass('no_bottom_line');
 		}
+	})
+	$('select#correctedIndex').change();
+}
+
+function findValueById(arr, id) {
+	return arr.find((o)=>{
+		return o.id == id;
 	})
 }
 
@@ -320,7 +405,7 @@ function getTemplateInput(param) {
 	template += param.text + ' : ';
 	template += '</label>';
 	
-	if (param.type == 'text') {
+	if (param.type == 'text' || param.type == 'number') {
 		template += '<input type="'+param.type+'" id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" />';
 	} else if (param.type == 'select') {
 		template += '<select id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" >';
@@ -337,6 +422,15 @@ function getTemplateInput(param) {
 		param.options.forEach((p, pI)=>{
 			template += '<label>';
 			template += '<input type="radio" name="'+param.id+'" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
+			template += p.text;
+			template += '</label>';
+		})
+		template += '</div>';
+	} else if (param.type == 'checkbox') {
+		template += '<div class="sub-checkbox">';
+		param.options.forEach((p, pI)=>{
+			template += '<label>';
+			template += '<input type="checkbox" name="'+param.id+ '_' + pI + '" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
 			template += p.text;
 			template += '</label>';
 		})
@@ -387,6 +481,11 @@ EIDialogUI.prototype._setCard3 = function() {
 
 	// get data
 	const columnData = this._getTestData();
+	
+	if (columnData == null) {
+		return 'failed';
+	}
+	
 	var per = getPer(columnData.rightCount, columnData.totalCount);
 	
 	// 초기값일때만 값을 저장한다.
@@ -746,9 +845,9 @@ EIDialogUI.prototype._createSelectRowGrid = function(data) {
 	var template = '';
 	
 	if (data.length == 0) {
-		template += '<div>';
-		template += '표시할 데이터가 없습니다.';
-		template += '</div>';
+		template += '<span class="grid-notice">';
+		template += $.i18n('core-index-data-ei/grid-notice-no-record');
+		template += '</span>';
 			
 		rowGrid.append(template);
 		return;
@@ -816,6 +915,12 @@ EIDialogUI.prototype._setCorrectedData = function() {
 function getExtraPropertyVal() {
 	if (OBJ.setting.propertyType == 'radio') {
 		return $('.sub_properties:checked').val();
+	} if (OBJ.setting.propertyType == 'checkbox') {
+		var values = [];
+		$('.sub_properties:checked').each((i, e)=>{
+			values.push($(e).val());
+		});
+		return values.join(',');
 	} else {
 		return $('.sub_properties').val();
 	}
@@ -827,7 +932,7 @@ EIDialogUI.prototype._setSaveToIris = function() {
 	
 	// value check
 	if (irisKey == '' || irisDateKey == '' || tableName == '') {
-		alert('no data')
+		alert($.i18n('core-index-data-ei/iris-no-data'))
 		return;
 	}
 	var options = {
@@ -857,17 +962,20 @@ EIDialogUI.prototype._setSaveToIris = function() {
 			}, error: function(data) {
 				// alread exist table name
 				if (data.statusText.indexOf('already exists') > -1) {
-					alert('[' + tableName + '] ' + $.i18n('core-index-data-ei/export-already-exist-table-name'));
+					alert(getIrisAlertMsg(tableName, 'export-already-exist-table-name'));
 				} else if (data.statusText.indexOf('Invalid Partition Time') > -1) {
-					alert('[' + irisDateKey + '] ' + $.i18n('core-index-data-ei/export-invalid_time_column'));
+					alert(getIrisAlertMsg(tableName, 'export-invalid_time_column'));
 				} else if (data.statusText.indexOf('PARTITIONKEY column') > -1) {
-					alert('[' + irisKey + '] ' + $.i18n('core-index-data-ei/export-invalid_index_column'));
+					alert(getIrisAlertMsg(tableName, 'export-invalid_index_column'));
 				}
 			}, complete : function() {
 				warningDialog1();
 			}
 		});
 	}, 10);
+}
+function getIrisAlertMsg(tableName, msgStr) {
+	return '[ ' + tableName + ' ] ' + $.i18n('core-index-data-ei/' + msgStr);
 }
 
 // when close Dialog 
