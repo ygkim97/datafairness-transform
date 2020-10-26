@@ -74,17 +74,25 @@ EIDialogUI.prototype._setNavigators = function() {
 	const $next = $('#ei_next');
 	const $prev = $('#ei_prev');
 	
+	let p1 = null;
+	let p2 = null;
+	
     var currentDiv = 1;
     
     const naviItems = $('.navi-item');
     
 	$('#ei_next').click((e) => {
+		$(this).blur();
+		var resp = setNaviBtnStatus(true);
+		
 		nextDiv = currentDiv + 1;
 		if (nextDiv == 2) {
 			// go to next
 			const checked = $('.evaluation_index input[type="radio"]:checked');
 			
 			if (checked.parent().parent().parent().attr('data-available') == 'false') {
+				setNaviBtnStatus(false);
+				
 				alert($.i18n('core-index-data-ei/not-available-btn'));
 				return;
 			}
@@ -92,6 +100,8 @@ EIDialogUI.prototype._setNavigators = function() {
 			OBJ.setting.indexId = checked.attr('data-id');
 			
 			if (checked.length == 0) {
+				setNaviBtnStatus(false);
+				
 				alert($.i18n('core-index-dialog-ei/no-selected-evaluation-index'));
 				return;
 			}
@@ -99,33 +109,43 @@ EIDialogUI.prototype._setNavigators = function() {
 		if (nextDiv == 2) {
 			this._setCard2();
 			
-			$div1.toggle('slide', {direction: 'left'}, 'slow');
-			$div2.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div1.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div2.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 3) {
 			this._saveCard2Data();
 			this._setCard3();
 			
-			$div2.toggle('slide', {direction: 'left'}, 'slow');
-		    $div3.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div2.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div3.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 4) {
 			const answer = window.prompt('['+OBJ.setting.correctedIndexName+'] ' + $.i18n('core-index-data-ei/confirm-execute'));
 			
 			// No input, click cancel 
 			if (answer == null || answer =='' || answer == undefined) {
+				setNaviBtnStatus(false);
+				
 				return;
 			}
 			// input something, but is not 'y' or 'yes'
 			if (!(answer.trim().toLowerCase() == 'yes' || answer.trim().toLowerCase() == 'y')) {
+				setNaviBtnStatus(false);
+				
 				return;
 			}
 			
 			this._setCorrectedData();
 			this._setCard4();
 			
-			$div3.toggle('slide', {direction: 'left'}, 'slow');
-		    $div4.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div3.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div4.toggle('slide', {direction: 'right'}).promise();
 		}
+		
 		currentDiv = nextDiv;
+		
+		// when finished page slide, set btn acitve.
+		$.when(p1, p2).then(_=>{
+			setNaviBtnStatus(false);
+		})
 		
 		// set navi-item active class 
 		naviItems.removeClass('active');
@@ -139,20 +159,29 @@ EIDialogUI.prototype._setNavigators = function() {
 			$next.show();
 		}
 	});
+    
 	$('#ei_prev').click((e) => {
+		$(this).blur();
+		var resp = setNaviBtnStatus(true);
+		
 		nextDiv = currentDiv - 1;
 
 		if (nextDiv == 3) {
-			$div3.toggle('slide', {direction: 'left'}, 'slow');
-			$div4.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div3.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div4.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 2) { 
-		    $div2.toggle('slide', {direction: 'left'}, 'slow');
-		    $div3.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div2.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div3.toggle('slide', {direction: 'right'}).promise();
 		} else if (nextDiv == 1) { 
-			$div1.toggle('slide', {direction: 'left'}, 'slow');
-			$div2.toggle('slide', {direction: 'right'}, 'slow');
+			p1 = $div1.toggle('slide', {direction: 'left'}).promise();
+			p2 = $div2.toggle('slide', {direction: 'right'}).promise();
 		}
 		currentDiv = nextDiv;
+		
+		// when finished page slide, set btn acitve.
+		$.when(p1, p2).then(_=>{
+			setNaviBtnStatus(false);
+		})
 		
 		// set navi-item active class
 		naviItems.removeClass('active');
@@ -166,6 +195,10 @@ EIDialogUI.prototype._setNavigators = function() {
 			$prev.show();
 		}
 	});
+}
+function setNaviBtnStatus(bool) {
+	$('#ei_prev').attr('disabled',bool);
+	$('#ei_next').attr('disabled',bool);	
 }
 EIDialogUI.prototype._setCard1 = function() {
 	var labelList = getEvaluationIndexProperties().properties;
