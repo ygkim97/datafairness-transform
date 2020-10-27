@@ -49,9 +49,6 @@ EIDialogUI.prototype._createDialog = function() {
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog-ei/title'));
 	
-//	this._elmts.ei_prev.text($.i18n('core-index-dialog-ei/next-prev-btn-'+2));
-//	this._elmts.ei_next.text($.i18n('core-index-dialog-ei/next-prev-btn-'+1));
-	
 	// reset
 	OBJ.columns = [];
 	
