@@ -15,7 +15,18 @@ function getEvaluationIndexProperties() {
 					test_items: [
 						{
 							id: "SYNTAX_CORRECTNESS",
-							text: "구문 데이터 정확성"
+							text: "구문 데이터 정확성",
+							// 시험항목 목록
+							correctedOptions : [{
+			                    id: "구문데이터선택",
+			                    text: "입력항목",
+			                    // 품질보정
+			                    property : {
+			                        type : "text",
+			                        text : "문자",
+			                        id : "syntax_correctness_text"
+			                    }
+			                }]
 						},
 						{
 							id: "SEMEANTIC_ACCURACY",
@@ -92,7 +103,9 @@ function getEvaluationIndexProperties() {
 		                        property : {
 		                        	// checkbox는 값을 ',' 로 전달하도록 구현되어 있기 때문에 option value에 ','를 사용하면 안됨.
 		                            type : "checkbox",
-		                            text : "체크박스",
+		                            text : "체크박스"
+		                            	
+		                            	,
 		                            id : "check_id",
 		                            options : [{
 		                                value : 'checkId1',

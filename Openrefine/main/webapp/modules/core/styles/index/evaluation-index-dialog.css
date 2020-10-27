@@ -128,6 +128,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	padding : 5px;
 	text-align: center;
 }
+#ei_dialog .body-header .navi .navi-arrows svg path {
+	fill: white;
+    stroke: #b7b7b7;
+    stroke-width: 10px;
+}
+#ei_dialog .body-header .navi .navi-arrows.active svg path {
+	fill: black;
+	animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 #ei_dialog .body-header .btn-wrap {
     float: right;
     padding: 15px 5px;
@@ -346,7 +361,7 @@ select.iris-properties {
 #corrected_select_sub fieldset {
 	margin: 10px;
 	border: 1px solid #ccc;
-	padding: 10px 10px 10px 20px;
+	padding: 20px;
 }
 #corrected_select_sub label {
 	padding-right: 15px;
