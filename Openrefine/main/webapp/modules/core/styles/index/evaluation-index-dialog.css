@@ -143,6 +143,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   }
 }
 
+#ei_dialog .body-header .divider {
+	float: left;
+}
+#ei_dialog .body-header .divider div {
+	position: absolute;
+	width: 65px;
+	height: 30px;
+	border-right: 1px double #cccccc;
+	margin-top: 10px;
+}
 #ei_dialog .body-header .btn-wrap {
     float: right;
     padding: 15px 5px;
@@ -391,8 +401,16 @@ select.iris-properties {
 	border-radius: 10px;
 	width: 40px;
 }
+.body-header .btn-wrap button.btn-hide {
+	background-color : #bbbbbb;
+    cursor: default;
+}
 
 /* Darker background on mouse-over */
 .body-header .btn-wrap button:hover {
 	background-color: RoyalBlue;
+}
+/* Darker background on mouse-over */
+.body-header .btn-wrap button.btn-hide:hover {
+	background-color: #bbbbbb;
 }

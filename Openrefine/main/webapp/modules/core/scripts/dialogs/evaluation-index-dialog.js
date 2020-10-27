@@ -153,29 +153,32 @@ EIDialogUI.prototype._setNavigators = function() {
 		
 		// when finished page slide, set btn acitve.
 		$.when(p1, p2).then(_=>{
-			setNaviBtnStatus(false);
+			// set navi-item active class 
+			naviItems.removeClass('active');
+			$('.navi-arrows').removeClass('active');
+			
+			const naviItem = $(naviItems[currentDiv-1]);
+			naviItem.addClass('active');
+			$(naviItem[0].nextElementSibling).addClass('active');
+			
+			// set prev, next btn 
+			$prev.attr('disabled', false);
+			$prev.removeClass('btn-hide');
+			
+			if (currentDiv == 4) {
+				$next.attr('disabled', true);
+				$next.addClass('btn-hide');
+			} else {
+				$next.attr('disabled', false);
+				$next.removeClass('btn-hide');
+			}
 		})
 		
-		// set navi-item active class 
-		naviItems.removeClass('active');
-		$('.navi-arrows').removeClass('active');
-		
-		const naviItem = $(naviItems[currentDiv-1]);
-		naviItem.addClass('active');
-		$(naviItem[0].nextElementSibling).addClass('active');
-		
-		// set prev, next btn 
-		$prev.show();
-		if (currentDiv == 4) {
-			$next.hide();
-		} else {
-			$next.show();
-		}
 	});
     
 	$('#ei_prev').click((e) => {
 		$(this).blur();
-		var resp = setNaviBtnStatus(true);
+		setNaviBtnStatus(true);
 		
 		nextDiv = currentDiv - 1;
 
@@ -193,24 +196,27 @@ EIDialogUI.prototype._setNavigators = function() {
 		
 		// when finished page slide, set btn acitve.
 		$.when(p1, p2).then(_=>{
-			setNaviBtnStatus(false);
+			// set navi-item active class
+			naviItems.removeClass('active');
+			$('.navi-arrows').removeClass('active');
+			
+			const naviItem = $(naviItems[currentDiv-1]);
+			naviItem.addClass('active');
+			$(naviItem[0].nextElementSibling).addClass('active');
+			
+			// set prev, next btn 
+			$next.attr('disabled', false);
+			$next.removeClass('btn-hide');
+			
+			if (currentDiv == 1) {
+				$prev.attr('disabled', true);
+				$prev.addClass('btn-hide');
+			} else {
+				$prev.attr('disabled', false);
+				$prev.removeClass('btn-hide');
+			}
 		})
 		
-		// set navi-item active class
-		naviItems.removeClass('active');
-		$('.navi-arrows').removeClass('active');
-		
-		const naviItem = $(naviItems[currentDiv-1]);
-		naviItem.addClass('active');
-		$(naviItem[0].nextElementSibling).addClass('active');
-
-		// set prev, next btn 
-		$next.show();
-		if (currentDiv == 1) {
-			$prev.hide();
-		} else {
-			$prev.show();
-		}
 	});
 }
 
