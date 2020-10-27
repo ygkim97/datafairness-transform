@@ -41,12 +41,12 @@ public class CompeletenessIndex implements DataQualityIndex {
 	@Override
 	public Map<String, Object> getTestData(String testIndex) {
 		if (testIndex.equals(TestEnum.ACCURACY_RECORD.name())) {
-			return getAccuracy_record();
+			return getAccuracyRecord();
 		}
 		return null;
 	}
 
-	private Map<String, Object> getAccuracy_record() {
+	private Map<String, Object> getAccuracyRecord() {
 		// 기록의 완전성
 		// null 이 포함되어있는지 여부를 체크한다.
 		Map<String, Object> result = new HashMap<String, Object>();

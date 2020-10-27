@@ -9,5 +9,5 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface DataQualityIndex {
 	public Map<String, Object> getTestData(String testIndex);
-	public void setCorrectedData(String editIndex, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+	public void setCorrectedData(String correctedIndex, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }
