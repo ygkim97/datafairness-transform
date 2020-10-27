@@ -148,7 +148,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: 15px 5px;
 }
 #ei_dialog .body-header button {
-	margin : 0px 5px;;
+	margin : -8px 2px;
 	
 }
 #ei_dialog .body_wrap {
@@ -379,4 +379,20 @@ select.iris-properties {
 }
 .no_bottom_line {
 	border-bottom : none !important;
+}
+
+.body-header .btn-wrap button {
+	background-color: cornflowerblue;
+	border: none;
+	color: white;
+	padding: 10px 10px;
+	font-size: 14px;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 40px;
+}
+
+/* Darker background on mouse-over */
+.body-header .btn-wrap button:hover {
+	background-color: RoyalBlue;
 }
