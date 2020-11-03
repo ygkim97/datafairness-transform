@@ -7,7 +7,7 @@ function getEvaluationIndexProperties() {
 		},
 		properties: [
 			{
-				isAvailable: false,
+				isAvailable: true,
 				id: "ACCURACY",
 				text: "정확성",
 				desc: "구문 데이터 정확성, 의미 데이터 정확성, 데이터 세트의 부정확성의 위험, 데이터 범위 정확성등을 측정합니다.",
@@ -16,16 +16,25 @@ function getEvaluationIndexProperties() {
 						{
 							id: "SYNTAX_CORRECTNESS",
 							text: "구문 데이터 정확성",
+							desc : "구문데이터 정확성 설명을 여기에 적습니다. <br>구문데이터 정확성은 어쩌고 저쩌고, 선택할수 있는 보정 값은 숫자, 날짜 2가지로 제한됩니다.",
 							// 시험항목 목록
 							correctedOptions : [{
-			                    id: "구문데이터선택",
-			                    text: "입력항목",
-			                    // 품질보정
-			                    property : {
-			                        type : "text",
-			                        text : "문자",
-			                        id : "syntax_correctness_text"
-			                    }
+			                    id: "syntax_number",
+			                    text: "타입 변경",
+		                        property : {
+		                            type : "select",
+		                            text : "날짜",
+		                            id : "select_id",
+		                            options : [{
+		                                value : 'YYYY-MM-DD',
+		                                text : 'YYYY-MM-DD'
+		                            }]
+		                        },
+		                        chartLabels : {
+		                        	rText : 'DATE',
+		                        	wText : 'NOT DATE',
+		                        	wText : 'ERROR'
+		                        }
 			                }]
 						},
 						{
@@ -40,9 +49,7 @@ function getEvaluationIndexProperties() {
 							id: "RANGE_ACCURACY",
 							text: "데이터 범위 정확성"
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},{
 			    isAvailable: true,
@@ -57,7 +64,11 @@ function getEvaluationIndexProperties() {
 			                correctedOptions: [
 			                    {
 			                        id: "REMOVE_NULL",
-			                        text: "NULL 데이터 삭제"
+			                        text: "NULL 데이터 삭제",
+			                        chartLavels : {
+			                        	rText : 'NOT NULL',
+			                        	wText : 'NULL'
+			                        }
 			                    }
 			                ]
 			            }, {
@@ -168,9 +179,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -184,9 +193,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -200,9 +207,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -216,9 +221,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -232,9 +235,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			}
 		]

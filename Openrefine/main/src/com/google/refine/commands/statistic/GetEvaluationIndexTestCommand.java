@@ -90,6 +90,8 @@ public class GetEvaluationIndexTestCommand extends Command {
 			String[] selectedColumns = request.getParameter("columnId").split(",");
 			String indexId = request.getParameter("indexId");
 			String testIndex = request.getParameter("testIndex");
+			String property = request.getParameter("property");
+			System.out.println(property);
 			
 			List<Object> chartRow = DataQualityUtils.createChartRows(project, columnNames, selectedColumns).get(0);
 			
@@ -101,7 +103,7 @@ public class GetEvaluationIndexTestCommand extends Command {
 
 			Map<String, Object> result = new HashMap<String, Object>();
 			// add params
-			result.put("testResultObj", index.getTestData(testIndex));
+			result.put("testResultObj", index.getTestData(testIndex, property));
 			result.put("columnType", DataQualityUtils.getColumnType(chartRow));
 
 			response.setCharacterEncoding("UTF-8");

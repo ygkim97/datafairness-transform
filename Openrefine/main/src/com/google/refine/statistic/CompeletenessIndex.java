@@ -39,7 +39,7 @@ public class CompeletenessIndex implements DataQualityIndex {
 	 * get Rows filtered testIndex
 	 */
 	@Override
-	public Map<String, Object> getTestData(String testIndex) {
+	public Map<String, Object> getTestData(String testIndex, String property) {
 		if (testIndex.equals(TestEnum.ACCURACY_RECORD.name())) {
 			return getAccuracyRecord();
 		}
@@ -64,11 +64,9 @@ public class CompeletenessIndex implements DataQualityIndex {
 				rCnt++;
 			}
 		}
+		// 만약, Count 값들이 없으면 주석처리 해야한다.
 		result.put("rightCount", rCnt);
 		result.put("wrongCount", wCnt);
-		result.put("wText", "NULL");
-		result.put("rText", "NOT NULL");
-		
 		return result;
 	}
 

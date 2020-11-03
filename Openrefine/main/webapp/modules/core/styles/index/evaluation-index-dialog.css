@@ -414,3 +414,26 @@ select.iris-properties {
 .body-header .btn-wrap button.btn-hide:hover {
 	background-color: #bbbbbb;
 }
+
+.ei-exlaamation-mark {
+	margin-left: 10px;
+	display: inline;
+}
+.ei-exlaamation-mark path {
+	fill: #ff0000ad;
+}
+.ei-exlaamation-mark .ei-tooltip {
+	display : none;
+    position: absolute;
+    max-width: 250px;
+    height: auto;
+    border: 1px solid #ff9393;
+    background: white;
+    box-shadow: 2px 2px 3px 0px #a5a5a5;
+    margin-left : 10px;
+}
+.ei-exlaamation-mark:hover .ei-tooltip {
+	display : inline;
+	padding : 10px;
+    font-size: 13px;
+}

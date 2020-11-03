@@ -8,6 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public interface DataQualityIndex {
-	public Map<String, Object> getTestData(String testIndex);
+	public Map<String, Object> getTestData(String testIndex, String property);
 	public void setCorrectedData(String correctedIndex, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }

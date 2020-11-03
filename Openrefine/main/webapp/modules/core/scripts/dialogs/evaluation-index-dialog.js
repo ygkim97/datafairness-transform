@@ -18,7 +18,8 @@ var OBJ = {
 			correctedIndexName : null,
 			wrongCount : 0,
 			totalCount_before : 0,
-			propertyType : null
+			propertyType : null,
+			chartLavels : {}
 		}
 }
 // Dialog-card1 Index Table max row count.
@@ -343,13 +344,12 @@ EIDialogUI.prototype._setCard2 = function() {
 	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
 	OBJ.setting.testIndex = defaultTestItem.id;
 	OBJ.setting.testIndexName = defaultTestItem.text;
-	
+
 	addSELECT(this, defaultTestItem.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
 	if (defaultTestItem.correctedOptions == undefined) {
 		$('select#correctedIndex').hide();
 	}	
 	
-
 	/**
 	 * 시험항목 선택 이벤트
 	 * 품질보정 항목을 새로 셋팅하고 선택 이벤트를 발생시킨다.
@@ -372,6 +372,7 @@ EIDialogUI.prototype._setCard2 = function() {
 			OBJ.setting.correctedIndex = obj.id;
 			OBJ.setting.correctedIndexName = obj.text;
 		}
+		setDescription(obj.desc, 'testExlamation');
 		
 		$('select#correctedIndex').change();
 	});
@@ -389,10 +390,14 @@ EIDialogUI.prototype._setCard2 = function() {
 		OBJ.setting.propertyType = null;
 		
 		const testItem = findValueById(property.setting.test_items, OBJ.setting.testIndex);
-		var propertyObj = null;
+		var correctedObj = null;
 		
 		if (testItem.hasOwnProperty('correctedOptions')) {
-			propertyObj = findValueById(testItem.correctedOptions, $(this).val()).property;
+			correctedObj = findValueById(testItem.correctedOptions, $(this).val());
+		}
+		var propertyObj = null;
+		if (correctedObj != null) {
+			propertyObj = correctedObj.property;
 		}
 		
 		if (propertyObj!== null && propertyObj!== undefined) {
@@ -400,13 +405,27 @@ EIDialogUI.prototype._setCard2 = function() {
 			subDiv.addClass('no_bottom_line');
 			
 			subDiv.append(getTemplateInput(propertyObj));
+			
+			setDescription(correctedObj.desc, 'correctedExlamation');
 		} else {
 			// hide sub div
 			subDiv.hide();
 			subDiv.removeClass('no_bottom_line');
+			
+			setDescription(null, 'correctedExlamation');
 		}
 	})
 	$('select#correctedIndex').change();
+}
+
+function setDescription(descVal, descId) {
+	if (descVal == null || descVal == undefined) {
+		$('#'+descId).hide();
+	} else {
+		$('#'+descId).show();
+		$('#'+descId+' .ei-tooltip').html(descVal);
+	}
+//	$('#correctedExlamation .ei-tooltip').html(defaultTestItem.correctedOption[0].desc);
 }
 
 function findValueById(arr, id) {
@@ -525,10 +544,13 @@ EIDialogUI.prototype._setCard3 = function() {
 		this._elmts.ei_right_value.text(columnData.rightCount.numberWithCommas());
 		this._elmts.ei_wrong_value.text(columnData.wrongCount.numberWithCommas());
 		
+		
+		
+		
 		const data = [
 			{name : columnData.rText, value : per},
 			{name : columnData.wText, value : Number((100-per).toFixed(2))}
-			]
+		]
 		
 		// ei-right에 chart를 그린다.
 		this._createPieChart('card3_pie_chart', data);
@@ -804,7 +826,8 @@ EIDialogUI.prototype._getTestData = function() {
 		data : {
 			columnId : OBJ.setting.columnId,
 			indexId : OBJ.setting.indexId,
-			testIndex : OBJ.setting.testIndex
+			testIndex : OBJ.setting.testIndex,
+			property : getExtraPropertyVal()
 		},
 		async : false,
 		success : function(data) {
