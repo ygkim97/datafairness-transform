@@ -48,10 +48,8 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.refine.expr.EvalError;
 import com.google.refine.expr.util.CalendarParser;
 import com.google.refine.expr.util.CalendarParserException;
-import com.google.refine.grel.ControlFunctionRegistry;
 import com.google.refine.grel.Function;
 import com.google.refine.util.ParsingUtilities;
 
@@ -66,7 +64,8 @@ public class ToDate implements Function {
         
         //Check there is at least one argument
         if (args.length == 0) {
-            return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+            //return new EvalError(ControlFunctionRegistry.getFunctionName(this) + " expects at least one argument");
+        	return "Unable to convert to a date";
         } else {
             Object arg0 = args[0];
             //check the first argument is something that can be parsed as a date
@@ -78,7 +77,8 @@ public class ToDate implements Function {
                 o1 = (String) arg0;
             } else {
                 // ignore cell values that aren't Date, Calendar, Long or String 
-                return new EvalError("Unable to parse as date");
+                //return new EvalError("Unable to parse as date");
+            	return "Unable to convert to a date";
             }
         }
         
@@ -90,7 +90,8 @@ public class ToDate implements Function {
             } else if (args[1] instanceof String) {
                 formats.add(StringUtils.trim((String) args[1]));
             } else {
-                return new EvalError("Invalid argument");
+                //return new EvalError("Invalid argument");
+            	return "Unable to convert to a date";
             }
             for(int i=2;i<args.length;i++) {
                 if (!(args[i] instanceof String)) {
@@ -109,7 +110,8 @@ public class ToDate implements Function {
         if(date != null) {
             return date;
         }
-        return new EvalError("Unable to convert to a date");
+        return "Unable to convert to a date";
+        //return new EvalError("Unable to convert to a date");
     }
     
     private OffsetDateTime parse(String o1, Boolean month_first, List<String> formats) {
