@@ -128,12 +128,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	padding : 5px;
 	text-align: center;
 }
+#ei_dialog .body-header .navi .navi-arrows svg path {
+	fill: white;
+    stroke: #b7b7b7;
+    stroke-width: 10px;
+}
+#ei_dialog .body-header .navi .navi-arrows.active svg path {
+	fill: black;
+	animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+#ei_dialog .body-header .divider {
+	float: left;
+}
+#ei_dialog .body-header .divider div {
+	position: absolute;
+	width: 65px;
+	height: 30px;
+	border-right: 1px double #cccccc;
+	margin-top: 10px;
+}
 #ei_dialog .body-header .btn-wrap {
     float: right;
     padding: 15px 5px;
 }
 #ei_dialog .body-header button {
-	margin : 0px 5px;;
+	margin : -8px 2px;
 	
 }
 #ei_dialog .body_wrap {
@@ -346,7 +371,7 @@ select.iris-properties {
 #corrected_select_sub fieldset {
 	margin: 10px;
 	border: 1px solid #ccc;
-	padding: 10px 10px 10px 20px;
+	padding: 20px;
 }
 #corrected_select_sub label {
 	padding-right: 15px;
@@ -364,4 +389,28 @@ select.iris-properties {
 }
 .no_bottom_line {
 	border-bottom : none !important;
+}
+
+.body-header .btn-wrap button {
+	background-color: cornflowerblue;
+	border: none;
+	color: white;
+	padding: 10px 10px;
+	font-size: 14px;
+	cursor: pointer;
+	border-radius: 10px;
+	width: 40px;
+}
+.body-header .btn-wrap button.btn-hide {
+	background-color : #bbbbbb;
+    cursor: default;
+}
+
+/* Darker background on mouse-over */
+.body-header .btn-wrap button:hover {
+	background-color: RoyalBlue;
+}
+/* Darker background on mouse-over */
+.body-header .btn-wrap button.btn-hide:hover {
+	background-color: #bbbbbb;
 }

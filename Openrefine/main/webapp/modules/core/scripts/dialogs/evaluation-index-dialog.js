@@ -49,9 +49,6 @@ EIDialogUI.prototype._createDialog = function() {
 	// title setting
 	var title = $('<h5>').text($.i18n('core-index-dialog-ei/title'));
 	
-	this._elmts.ei_prev.text($.i18n('core-index-dialog-ei/next-prev-btn-'+2));
-	this._elmts.ei_next.text($.i18n('core-index-dialog-ei/next-prev-btn-'+1));
-	
 	// reset
 	OBJ.columns = [];
 	
@@ -61,52 +58,61 @@ EIDialogUI.prototype._createDialog = function() {
 	this._setCard1();
 }
 EIDialogUI.prototype._setNavigators = function() {
-	// set navigator divs
+	// set navigator divs text
 	this._elmts.navi_item1.html($.i18n('core-index-dialog-ei/navi1'));
 	this._elmts.navi_item2.html($.i18n('core-index-dialog-ei/navi2'));
 	this._elmts.navi_item3.html($.i18n('core-index-dialog-ei/navi3'));
 	this._elmts.navi_item4.html($.i18n('core-index-dialog-ei/navi4'));
 	
-	// set btns
+	// cards
 	const $div1 = $('#ei_card1');
 	const $div2 = $('#ei_card2');
 	const $div3 = $('#ei_card3');
 	const $div4 = $('#ei_card4');
 	
+	// btns
 	const $next = $('#ei_next');
 	const $prev = $('#ei_prev');
 	
+	// slider variable
 	let p1 = null;
 	let p2 = null;
 	
     var currentDiv = 1;
     
     const naviItems = $('.navi-item');
-    
+
+    // when next btn click,
 	$('#ei_next').click((e) => {
+		// prevent dbl click
 		$(this).blur();
+		
+		// set next/prev btn disable
 		var resp = setNaviBtnStatus(true);
 		
 		nextDiv = currentDiv + 1;
+		
+		// when go to page2
 		if (nextDiv == 2) {
 			// go to next
 			const checked = $('.evaluation_index input[type="radio"]:checked');
-			
+
+			// checked Item, not available
 			if (checked.parent().parent().parent().attr('data-available') == 'false') {
 				setNaviBtnStatus(false);
 				alert($.i18n('core-index-data-ei/not-available-btn'));
 				return;
 			}
 			
-			OBJ.setting.indexId = checked.attr('data-id');
-			
+			// no checked 'Evaluation Index' view alert.
 			if (checked.length == 0) {
 				setNaviBtnStatus(false);
 				alert($.i18n('core-index-dialog-ei/no-selected-evaluation-index'));
 				return;
 			}
-		}
-		if (nextDiv == 2) {
+			
+			OBJ.setting.indexId = checked.attr('data-id');
+			
 			this._setCard2();
 			
 			p1 = $div1.toggle('slide', {direction: 'left'}).promise();
@@ -147,25 +153,32 @@ EIDialogUI.prototype._setNavigators = function() {
 		
 		// when finished page slide, set btn acitve.
 		$.when(p1, p2).then(_=>{
-			setNaviBtnStatus(false);
+			// set navi-item active class 
+			naviItems.removeClass('active');
+			$('.navi-arrows').removeClass('active');
+			
+			const naviItem = $(naviItems[currentDiv-1]);
+			naviItem.addClass('active');
+			$(naviItem[0].nextElementSibling).addClass('active');
+			
+			// set prev, next btn 
+			$prev.attr('disabled', false);
+			$prev.removeClass('btn-hide');
+			
+			if (currentDiv == 4) {
+				$next.attr('disabled', true);
+				$next.addClass('btn-hide');
+			} else {
+				$next.attr('disabled', false);
+				$next.removeClass('btn-hide');
+			}
 		})
 		
-		// set navi-item active class 
-		naviItems.removeClass('active');
-		$(naviItems[currentDiv-1]).addClass('active');
-		
-		// set prev, next btn 
-		$prev.show();
-		if (currentDiv == 4) {
-			$next.hide();
-		} else {
-			$next.show();
-		}
 	});
     
 	$('#ei_prev').click((e) => {
 		$(this).blur();
-		var resp = setNaviBtnStatus(true);
+		setNaviBtnStatus(true);
 		
 		nextDiv = currentDiv - 1;
 
@@ -183,26 +196,36 @@ EIDialogUI.prototype._setNavigators = function() {
 		
 		// when finished page slide, set btn acitve.
 		$.when(p1, p2).then(_=>{
-			setNaviBtnStatus(false);
+			// set navi-item active class
+			naviItems.removeClass('active');
+			$('.navi-arrows').removeClass('active');
+			
+			const naviItem = $(naviItems[currentDiv-1]);
+			naviItem.addClass('active');
+			$(naviItem[0].nextElementSibling).addClass('active');
+			
+			// set prev, next btn 
+			$next.attr('disabled', false);
+			$next.removeClass('btn-hide');
+			
+			if (currentDiv == 1) {
+				$prev.attr('disabled', true);
+				$prev.addClass('btn-hide');
+			} else {
+				$prev.attr('disabled', false);
+				$prev.removeClass('btn-hide');
+			}
 		})
 		
-		// set navi-item active class
-		naviItems.removeClass('active');
-		$(naviItems[currentDiv-1]).addClass('active');
-
-		// set prev, next btn 
-		$next.show();
-		if (currentDiv == 1) {
-			$prev.hide();
-		} else {
-			$prev.show();
-		}
 	});
 }
+
+// btn setting
 function setNaviBtnStatus(bool) {
 	$('#ei_prev').attr('disabled',bool);
 	$('#ei_next').attr('disabled',bool);	
 }
+
 EIDialogUI.prototype._setCard1 = function() {
 	var labelList = getEvaluationIndexProperties().properties;
 	
@@ -479,38 +502,39 @@ EIDialogUI.prototype._setCard3 = function() {
 	$('span[name="index_name"]').text(OBJ.setting.indexName);
 	$('span[name="test_column"]').text(OBJ.setting.testIndexName);
 
-	// get data
-	const columnData = this._getTestData();
-	
-	if (columnData == null) {
+	// 예외처리
+	try {
+		// get data
+		const columnData = this._getTestData();
+		
+		var per = getPer(columnData.rightCount, columnData.totalCount);
+		
+		// 초기값일때만 값을 저장한다.
+		// 만약 페이지 이동으로 다시 card3에 진입한 경우, 값을 저장하지 않는다. (고유값으로 유지 필요)
+		if (OBJ.setting.wrongCount == 0) {
+			OBJ.setting.wrongCount = columnData.wrongCount;
+			OBJ.setting.totalCount_before = columnData.totalCount;
+		}
+		
+		this._elmts.ei_total_per.text(per + '%');
+		this._elmts.ei_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
+		this._elmts.ei_right_title.text($.i18n('core-index-data-ei/quality-right-cnt'))
+		this._elmts.ei_wrong_title.text($.i18n('core-index-data-ei/quality-wrong-cnt'))
+		
+		this._elmts.ei_total_value.text(columnData.totalCount.numberWithCommas());
+		this._elmts.ei_right_value.text(columnData.rightCount.numberWithCommas());
+		this._elmts.ei_wrong_value.text(columnData.wrongCount.numberWithCommas());
+		
+		const data = [
+			{name : columnData.rText, value : per},
+			{name : columnData.wText, value : Number((100-per).toFixed(2))}
+			]
+		
+		// ei-right에 chart를 그린다.
+		this._createPieChart('card3_pie_chart', data);
+	} catch {
 		return 'failed';
 	}
-	
-	var per = getPer(columnData.rightCount, columnData.totalCount);
-	
-	// 초기값일때만 값을 저장한다.
-	// 만약 페이지 이동으로 다시 card3에 진입한 경우, 값을 저장하지 않는다. (고유값으로 유지 필요)
-	if (OBJ.setting.wrongCount == 0) {
-		OBJ.setting.wrongCount = columnData.wrongCount;
-		OBJ.setting.totalCount_before = columnData.totalCount;
-	}
-	
-	this._elmts.ei_total_per.text(per + '%');
-	this._elmts.ei_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
-	this._elmts.ei_right_title.text($.i18n('core-index-data-ei/quality-right-cnt'))
-	this._elmts.ei_wrong_title.text($.i18n('core-index-data-ei/quality-wrong-cnt'))
-	
-	this._elmts.ei_total_value.text(columnData.totalCount.numberWithCommas());
-	this._elmts.ei_right_value.text(columnData.rightCount.numberWithCommas());
-	this._elmts.ei_wrong_value.text(columnData.wrongCount.numberWithCommas());
-	
-	const data = [
-		{name : columnData.rText, value : per},
-		{name : columnData.wText, value : Number((100-per).toFixed(2))}
-	]
-	
-	// ei-right에 chart를 그린다.
-	this._createPieChart('card3_pie_chart', data);
 }
 /**
  * set correcteding Card.
