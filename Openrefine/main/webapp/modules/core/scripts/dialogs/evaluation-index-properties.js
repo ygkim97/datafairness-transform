@@ -19,7 +19,7 @@ function getEvaluationIndexProperties() {
 							desc : "구문데이터 정확성 설명을 여기에 적습니다. <br>구문데이터 정확성은 어쩌고 저쩌고, 선택할수 있는 보정 값은 숫자, 날짜 2가지로 제한됩니다.",
 							// 시험항목 목록
 							correctedOptions : [{
-			                    id: "syntax_date",
+			                    id: "SET_DATE_FORMAT",
 			                    text: "타입 변경",
 		                        property : {
 		                            type : "select",
@@ -31,9 +31,14 @@ function getEvaluationIndexProperties() {
 		                            }]
 		                        },
 		                        chartLabels : {
-		                        	rText : 'DATE',
-		                        	wText : 'NOT DATE',
-		                        	eText : 'ERROR'
+		                        	rText : {
+		                        		text : 'passed',
+		                        		color : 'blue'
+		                        	},
+		                        	wText : {
+		                        		text : 'non-passed',
+		                        		color : 'red'
+		                        	}
 		                        }
 			                }]
 						},
@@ -66,8 +71,14 @@ function getEvaluationIndexProperties() {
 			                        id: "REMOVE_NULL",
 			                        text: "NULL 데이터 삭제",
 			                        chartLabels : {
-			                        	rText : 'NOT NULL',
-			                        	wText : 'NULL'
+			                        	rText : {
+			                        		text : 'NOT NULL',
+			                        		color : 'blue'
+			                        	},
+			                        	wText : {
+			                        		text : 'NULL',
+			                        		color : 'red'
+			                        	}
 			                        }
 			                    }
 			                ]

@@ -25,7 +25,10 @@ var OBJ = {
 // Dialog-card1 Index Table max row count.
 const INDEX_TABLE_MAX_ROW = 4;
 
-function EIDialogUI(index, name) {
+// call API ("get-rows") need limit.
+const MAX_RECORD_COUNT = 100000000;
+
+function EIDialogUI(index, name, projectRowsRefresh) {
 	OBJ.setting.columnId = index;
 	OBJ.setting.columnName = name;
 	this._createDialog();
@@ -177,6 +180,8 @@ EIDialogUI.prototype._setNavigators = function() {
 			if (currentDiv == 4) {
 				$next.attr('disabled', true);
 				$next.addClass('btn-hide');
+				$prev.attr('disabled', true);
+				$prev.addClass('btn-hide');
 			} else {
 				$next.attr('disabled', false);
 				$next.removeClass('btn-hide');
@@ -293,10 +298,6 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	    .innerRadius(innerRadius)
 	    .outerRadius(outerRadius);
 
-	const color = d3.scaleOrdinal()
-	.domain(data.map(d => d.name))
-	.range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());
-	
 	const arcs = pie(data);
 	const arcLabel = ()=>{
 		const radius = Math.min(w, h) / 2 * 0.8;
@@ -313,7 +314,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		.join("path")
 		.attr('id', (d, i)=> 'path_id_'+i)
 		.attr('class', 'real-path')
-		.attr("fill", d => color(d.data.name))
+		.attr("fill", d => d.data.color)
 		.attr("d", arc)
 		.on('mouseover', function (d){
 			const _this = $(this)
@@ -335,7 +336,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 			$(this)[0].classList.remove('ei-selected')
 		})		 
 		.on('click', function (d){
-			self._getCard3Row(d.data.name);
+			self._getCard3Row(d.data.name, 50, true);
 		})
 		.append("title")
 		.text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);	
@@ -346,7 +347,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		.join("path")
 		.attr('id', (d, i)=> 'path_id_'+i)
 		.attr('class', 'real-path')
-		.attr("fill", d => color(d.data.name))
+		.attr("fill", d => d.data.color)
 		.attr("d", arc)
 		.on('mouseover', function (d){
 			const _this = $(this)
@@ -373,7 +374,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	
 	 // create chart legend
 	 const legendW = 360;
-	 const legendH = 20;
+	 const legendH = 30;
 	      
 	 var svg2 = d3.select('#'+parentId+'_legend')
 	 .append('svg')
@@ -392,19 +393,20 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	 
 	 data.forEach((d, i)=> {
 		 if (i%2 == 0) {
-			 // 1번째
-			cx = 10;
-			cy = (10*i)+(10*(i+1));
+			 // i+1
+			 cx = 10;
 		 } else {
-			 // 2번째
+			 // i
 			 cx = dH;
 		 }
-		 
+		 cy = parseInt(i/2) * 30;
+		 cy = cy + 10;
+
 		 circleG.append("circle")
 		 .attr("cx", cx)
 		 .attr("cy", cy)
 		 .attr("r", 6)
-		 .style("fill", color(d.name))
+		 .style("fill", d.color)
 		 .attr("data-name",d.name)
 		 .attr("data-value",d.value)	 
 		 
@@ -429,19 +431,36 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 EIDialogUI.prototype._getGridBody = function(type) {
 	var selectBlank = false;
 	var selection = [];
+	var expression = null;
 	
-	if (type == 'NULL') {
-		selectBlank = true;
-		selection =[{"v":{"v":true,"l":"true"}}];
-	} else {
-		selectBlank = false;
-		selection =[{"v":{"v":false,"l":"false"}}];
+	if (OBJ.setting.indexId == 'ACCURACY') {
+		expression = 'if(value.toDate("'+getExtraPropertyVal()+'")=="Unable to convert to a date", "WRONG FORMAT", "DATE")'
+			
+		if (type == 'passed') {
+			// 날짜
+			selection = [{"v":{"v":"DATE","l":"DATE"}}];
+			
+		} else {
+			// 날짜인데 포멧이 안맞음
+			selection = [{"v":{"v":"WRONG FORMAT","l":"WRONG FORMAT"}}];
+		}
+			
+	} else if (OBJ.setting.indexId == 'COMPLETENESS') {
+		expression = "isBlank(value)";
+		if (type == 'NULL') {
+			selectBlank = true;
+			selection =[{"v":{"v":true,"l":"true"}}];
+		} else {
+			selectBlank = false;
+			selection =[{"v":{"v":false,"l":"false"}}];
+		}
 	}
+	
 	var facet = [{
 			"type":"list",
 			"name":OBJ.setting.columnName,
 			"columnName":OBJ.setting.columnName,
-			"expression":"isBlank(value)",
+			"expression": expression,
 			"omitBlank":false,
 			"omitError":false,
 			"selection":selection,
@@ -478,18 +497,24 @@ EIDialogUI.prototype._getTestData = function() {
 	})
 	return response;
 }
-EIDialogUI.prototype._getCard3Row = function(type) {
+EIDialogUI.prototype._getCard3Row = function(type, limit, createGrid) {
 	const _self = this
 	const body = this._getGridBody(type);
+	var response = null;
 	
-	$.post(
-			"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: 50 }),
-			body,
-			function(data) {
+	$.ajax({
+		type : 'POST',
+		url : "command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: limit }),
+		data : body,
+		async : false,
+		success : function(data) {
+			response = data;
+			if (createGrid) {
 				_self._createSelectRowGrid(data.rows);
-			},
-			"json"
-	);
+			}
+		}
+	});
+	return response;
 }
 EIDialogUI.prototype._getModelInfo = function(type) {
 	const _self = this
@@ -584,7 +609,7 @@ EIDialogUI.prototype._setCorrectedData = function() {
     			columnId : OBJ.setting.columnId,
     			indexId : OBJ.setting.indexId,
     			correctedIndex : OBJ.setting.correctedIndex,
-    			operations : 'deleteNull', 
+//    			operations : 'deleteNull', 
     			columnName : OBJ.setting.columnName,
 	            csrf_token: token,
 	            property : getExtraPropertyVal()
@@ -612,58 +637,6 @@ function getExtraPropertyVal() {
 		return $('.sub_properties').val();
 	}
 }
-EIDialogUI.prototype._setSaveToIris = function() {
-	const irisKey = this._elmts.indexColumnName.find('option:selected').text();
-	const irisDateKey = this._elmts.dateColumnName.find('option:selected').text();
-	const tableName = this._elmts.tableName.val();
-	
-	// value check
-	if (irisKey == '' || irisDateKey == '' || tableName == '') {
-		alert($.i18n('core-index-data-ei/iris-no-data'))
-		return;
-	}
-	var options = {
-			iris  : true,
-			irisKey : irisKey,	// INDEX COLUMN
-			irisDateKey : irisDateKey,	// 
-			tableName : tableName,
-			columns : ''
-	};
-	
-	const _self = this;
-	const warningDialog1 = DialogSystem.showBusy();
-	
-	setTimeout(()=>{
-		$.ajax({
-			type : 'POST',
-			url : "command/core/export-rows?" + $.param({
-				'options' : JSON.stringify(options),
-				'encoding' :"UTF-8",
-				'format' : "sql",
-				'preview' : false,
-				'project' : UI_CHART_INFO.selectedPId
-			}),
-			async : false,
-			success : function(data) {
-				alert($.i18n('core-index-data-ei/saved-project-iris'));
-			}, error: function(data) {
-				// alread exist table name
-				if (data.statusText.indexOf('already exists') > -1) {
-					alert(getIrisAlertMsg(tableName, 'export-already-exist-table-name'));
-				} else if (data.statusText.indexOf('Invalid Partition Time') > -1) {
-					alert(getIrisAlertMsg(tableName, 'export-invalid_time_column'));
-				} else if (data.statusText.indexOf('PARTITIONKEY column') > -1) {
-					alert(getIrisAlertMsg(tableName, 'export-invalid_index_column'));
-				}
-			}, complete : function() {
-				warningDialog1();
-			}
-		});
-	}, 10);
-}
-function getIrisAlertMsg(tableName, msgStr) {
-	return '[ ' + tableName + ' ] ' + $.i18n('core-index-data-ei/' + msgStr);
-}
 
 // when close Dialog 
 EIDialogUI.prototype._dismiss = function() {
@@ -671,6 +644,7 @@ EIDialogUI.prototype._dismiss = function() {
 	_EIDialogUI = null;
 	
 	DialogSystem.dismissUntil(this._level - 1);
+	_refreshRows();
 };
 
 function getEvaluationIndexPropertiesById() {

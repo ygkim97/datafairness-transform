@@ -30,28 +30,30 @@ EIDialogUI.prototype._setCard4 = function() {
 	$('select#dateColumnName').addClass('pure-input-1-3');
 	
 	// get data
-	const columnData = this._getTestData();
-	
 	const chartLabels = OBJ.setting.correctedObj.chartLabels;
-	const tCount = columnData.totalCount;
-	var rPer = getPer(columnData.rightCount, tCount); 
+	const response = this._getCard3Row(chartLabels.rText.text, MAX_RECORD_COUNT, false);
+
+	var data = [];
+	
+	const tCount = response.total;
+	const rightCount = response.filtered;
+	const wrongCount = response.total - response.filtered;
+	
+	var rPer = getPer(rightCount, tCount); 
 	
 	// 무조건 r과 w count는 있다고 가정한다.
-	data.push({name : chartLabels.rText, value : rPer})
-	data.push({name : chartLabels.wText, value : getPer(columnData.wrongCount, tCount)})
-	
-	if (columnData.hasOwnProperty('errorCount')) {
-		data.push({name : chartLabels.eText, value : getPer(columnData.errorCount, tCount)})
-	}
+	data.push({name : chartLabels.rText.text, value : rPer, color : chartLabels.rText.color})
+	data.push({name : chartLabels.wText.text, value : getPer(wrongCount, tCount), color : chartLabels.wText.color})
+
+	var per = getPer(rightCount, tCount);
 	
 	this._elmts.ei_editing_total_per.text(per + '%');
-	this._elmts.ei_editing_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
-	this._elmts.ei_editing_count_title.text($.i18n('core-index-data-ei/editing-count-cnt'))
-	this._elmts.ei_editing_after_title.text($.i18n('core-index-data-ei/editing-after-cnt'))
-	
 	this._elmts.ei_editing_total_value.text(OBJ.setting.totalCount_before.numberWithCommas());
-	this._elmts.ei_editing_count_value.text(OBJ.setting.wrongCount.numberWithCommas());
-	this._elmts.ei_editing_after_value.text(columnData.totalCount.numberWithCommas());
+	this._elmts.ei_editing_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
+	this._elmts.ei_editing_count_value.text((OBJ.setting.wrongCount - wrongCount).numberWithCommas());
+	this._elmts.ei_editing_count_title.text($.i18n('core-index-data-ei/editing-count-cnt'))
+	this._elmts.ei_editing_after_value.text(tCount.numberWithCommas());
+	this._elmts.ei_editing_after_title.text($.i18n('core-index-data-ei/editing-after-cnt'))
 	
 	// ei-right에 chart를 그린다.
 	this._createPieChart('card4_pie_chart', data);
@@ -61,4 +63,59 @@ EIDialogUI.prototype._setCard4 = function() {
 	this._elmts.save_iris.click(function() {
 		_self._setSaveToIris();
 	});
+}
+
+EIDialogUI.prototype._setSaveToIris = function() {
+	const irisKey = this._elmts.indexColumnName.find('option:selected').text();
+	const irisDateKey = this._elmts.dateColumnName.find('option:selected').text();
+	const tableName = this._elmts.tableName.val();
+	
+	// value check
+	if (irisKey == '' || irisDateKey == '' || tableName == '') {
+		alert($.i18n('core-index-data-ei/iris-no-data'))
+		return;
+	}
+	var options = {
+			iris  : true,
+			irisKey : irisKey,	// INDEX COLUMN
+			irisDateKey : irisDateKey,	// 
+			tableName : tableName,
+			columns : ''
+	};
+	
+	const _self = this;
+	const warningDialog1 = DialogSystem.showBusy();
+	
+	setTimeout(()=>{
+		$.ajax({
+			type : 'POST',
+			url : "command/core/export-rows?" + $.param({
+				'options' : JSON.stringify(options),
+				'encoding' :"UTF-8",
+				'format' : "sql",
+				'preview' : false,
+				'project' : UI_CHART_INFO.selectedPId
+			}),
+			async : false,
+			success : function(data) {
+				alert($.i18n('core-index-data-ei/saved-project-iris'));
+				_self._dismiss();
+				_refreshRows();
+			}, error: function(data) {
+				// alread exist table name
+				if (data.statusText.indexOf('already exists') > -1) {
+					alert(getIrisAlertMsg(tableName, 'export-already-exist-table-name'));
+				} else if (data.statusText.indexOf('Invalid Partition Time') > -1) {
+					alert(getIrisAlertMsg(tableName, 'export-invalid_time_column'));
+				} else if (data.statusText.indexOf('PARTITIONKEY column') > -1) {
+					alert(getIrisAlertMsg(tableName, 'export-invalid_index_column'));
+				}
+			}, complete : function() {
+				warningDialog1();
+			}
+		});
+	}, 10);
+}
+function getIrisAlertMsg(tableName, msgStr) {
+	return '[ ' + tableName + ' ] ' + $.i18n('core-index-data-ei/' + msgStr);
 }

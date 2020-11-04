@@ -154,7 +154,6 @@ function registerCommands() {
 
   RS.registerCommand(module, "get-based-statistic", new Packages.com.google.refine.commands.statistic.GetBasedStatisticCommand());
   RS.registerCommand(module, "get-quantitative-evaluation", new Packages.com.google.refine.commands.statistic.GetQuantitativeEvaluationCommand());
-  RS.registerCommand(module, "get-evaluation-index-test", new Packages.com.google.refine.commands.statistic.GetEvaluationIndexTestCommand());
   RS.registerCommand(module, "set-evaluation-index-corrected", new Packages.com.google.refine.commands.statistic.SetEvaluationIndexCorrectedCommand());
 }
 

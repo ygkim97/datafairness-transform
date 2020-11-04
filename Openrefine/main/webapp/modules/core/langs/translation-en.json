@@ -791,6 +791,8 @@
 	"core-index-data-ei/quality-total-cnt": "Total Count",
 	"core-index-data-ei/quality-right-cnt": "Passed Count",
 	"core-index-data-ei/quality-wrong-cnt": "Failed Count",
+	"core-index-data-ei/quality-error-include": "Include Errors",
+	
 	"core-index-data-ei/left-title-editing": "Quality Correction",
 	"core-index-data-ei/left-title-editing-score": "Correction Score",
 	"core-index-data-ei/editing-count-cnt": "Corrected Count",

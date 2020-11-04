@@ -20,40 +20,34 @@ EIDialogUI.prototype._setCard3 = function() {
 	// 예외처리
 	try {
 		// get data
-		const columnData = this._getTestData();
+		const chartLabels = OBJ.setting.correctedObj.chartLabels;
+		const response = this._getCard3Row(chartLabels.rText.text, MAX_RECORD_COUNT, false);
 		
 		var data = [];
 		
-		const chartLabels = OBJ.setting.correctedObj.chartLabels;
-		const tCount = columnData.totalCount;
-		var rPer = getPer(columnData.rightCount, tCount); 
+		const tCount = response.total;
+		const rightCount = response.filtered;
+		const wrongCount = response.total - response.filtered; 
+		
+		var rPer = getPer(rightCount, tCount); 
 		
 		// 무조건 r과 w count는 있다고 가정한다.
-		data.push({name : chartLabels.rText, value : rPer})
-		data.push({name : chartLabels.wText, value : getPer(columnData.wrongCount, tCount)})
+		data.push({name : chartLabels.rText.text, value : rPer, color : chartLabels.rText.color})
+		data.push({name : chartLabels.wText.text, value : getPer(wrongCount, tCount), color : chartLabels.wText.color})
+
+		var per = getPer(rightCount, tCount);
 		
-		if (columnData.hasOwnProperty('errorCount')) {
-			data.push({name : chartLabels.eText, value : getPer(columnData.errorCount, tCount)})
-		}
-		
-		var per = getPer(columnData.rightCount, columnData.totalCount);
-		
-		// 초기값일때만 값을 저장한다.
-		// 만약 페이지 이동으로 다시 card3에 진입한 경우, 값을 저장하지 않는다. (고유값으로 유지 필요)
-		if (OBJ.setting.wrongCount == 0) {
-			OBJ.setting.wrongCount = columnData.wrongCount;
-			OBJ.setting.totalCount_before = columnData.totalCount;
-		}
+		OBJ.setting.wrongCount = wrongCount;
+		OBJ.setting.totalCount_before = tCount;
 		
 		this._elmts.ei_total_per.text(rPer + '%');
-		this._elmts.ei_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
-		this._elmts.ei_right_title.text($.i18n('core-index-data-ei/quality-right-cnt'))
-		this._elmts.ei_wrong_title.text($.i18n('core-index-data-ei/quality-wrong-cnt'))
-		
-		this._elmts.ei_total_value.text(columnData.totalCount.numberWithCommas());
-		this._elmts.ei_right_value.text(columnData.rightCount.numberWithCommas());
-		this._elmts.ei_wrong_value.text(columnData.wrongCount.numberWithCommas());
-		
+		this._elmts.ei_total_value.text(tCount.numberWithCommas());
+		this._elmts.ei_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'));
+		this._elmts.ei_right_value.text(rightCount.numberWithCommas());
+		this._elmts.ei_right_title.text($.i18n('core-index-data-ei/quality-right-cnt'));
+		this._elmts.ei_wrong_value.text(wrongCount.numberWithCommas());
+		this._elmts.ei_wrong_title.text($.i18n('core-index-data-ei/quality-wrong-cnt'));
+				
 		// ei-right에 chart를 그린다.
 		this._createPieChart('card3_pie_chart', data);
 	} catch {
