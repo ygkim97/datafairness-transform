@@ -52,7 +52,7 @@ EIDialogUI.prototype._setCard2 = function() {
 			OBJ.setting.correctedIndex = obj.id;
 			OBJ.setting.correctedIndexName = obj.text;
 		}
-		setDescription(obj.desc, 'testExlamation');
+		setDescription(obj.desc, 'testHelpMark');
 		
 		$('select#correctedIndex').change();
 	});
@@ -88,13 +88,15 @@ EIDialogUI.prototype._setCard2 = function() {
 			
 			subDiv.append(getTemplateInput(propertyObj));
 			
-			setDescription(correctedObj.desc, 'correctedExlamation');
+			setDescription(correctedObj.desc, 'correctedHelpMark');
+			setDescription(propertyObj.desc, 'propertyHelpMark')
 		} else {
 			// hide sub div
 			subDiv.hide();
 			subDiv.removeClass('no_bottom_line');
 			
-			setDescription(null, 'correctedExlamation');
+			setDescription(null, 'correctedHelpMark');
+			setDescription(null, 'propertyHelpMark')
 		}
 	})
 	$('select#correctedIndex').change();
@@ -136,7 +138,7 @@ function setDescription(descVal, descId) {
 		$('#'+descId).show();
 		$('#'+descId+' .ei-tooltip').html(descVal);
 	}
-//	$('#correctedExlamation .ei-tooltip').html(defaultTestItem.correctedOption[0].desc);
+//	$('#correctedHelpMark .ei-tooltip').html(defaultTestItem.correctedOption[0].desc);
 }
 
 function getTemplateInput(param) {
@@ -183,6 +185,11 @@ function getTemplateInput(param) {
 		})
 		template += '</div>';
 	}
+
+	template += '<div id="propertyHelpMark" class="ei-exlaamation-mark">';
+	template += '<i class="fas far fa-question-circle"></i>';
+	template += '<div class="ei-tooltip"></div>';
+	template += '</div>';
 	template += '</div>';
 	template += '</fieldset>';
 	return template;

@@ -16,15 +16,17 @@ function getEvaluationIndexProperties() {
 						{
 							id: "SYNTAX_CORRECTNESS",
 							text: "구문 데이터 정확성",
-							desc : "구문데이터 정확성 설명을 여기에 적습니다. <br>구문데이터 정확성은 어쩌고 저쩌고, 선택할수 있는 보정 값은 숫자, 날짜 2가지로 제한됩니다.",
+							desc : "선택한 컬럼의 데이터의 정확성을 체크합니다.",
 							// 시험항목 목록
 							correctedOptions : [{
 			                    id: "SET_DATE_FORMAT",
 			                    text: "타입 변경",
+			                    desc : "선택한 컬럼의 값을 정해진 속성에 맞춰 보정합니다.",
 		                        property : {
 		                            type : "select",
 		                            text : "날짜",
 		                            id : "date_format",
+		                            desc : "ex) 2020-03-01",
 		                            options : [{
 		                                value : 'yyyy-MM-dd',
 		                                text : 'yyyy-MM-dd'
