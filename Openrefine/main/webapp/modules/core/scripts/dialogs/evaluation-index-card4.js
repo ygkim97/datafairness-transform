@@ -45,14 +45,13 @@ EIDialogUI.prototype._setCard4 = function() {
 	data.push({name : chartLabels.rText.text, value : rPer, color : chartLabels.rText.color})
 	data.push({name : chartLabels.wText.text, value : getPer(wrongCount, tCount), color : chartLabels.wText.color})
 
-	var per = getPer(rightCount, tCount);
-	
-	this._elmts.ei_editing_total_per.text(per + '%');
+	this._elmts.ei_editing_total_per.text(rPer + '%');
 	this._elmts.ei_editing_total_value.text(OBJ.setting.totalCount_before.numberWithCommas());
 	this._elmts.ei_editing_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
-	this._elmts.ei_editing_count_value.text((OBJ.setting.wrongCount - wrongCount).numberWithCommas());
+	var correctedCnt = (OBJ.setting.wrongCount - wrongCount);
+	this._elmts.ei_editing_count_value.text(correctedCnt.numberWithCommas());
 	this._elmts.ei_editing_count_title.text($.i18n('core-index-data-ei/editing-count-cnt'))
-	this._elmts.ei_editing_after_value.text(tCount.numberWithCommas());
+	this._elmts.ei_editing_after_value.text((tCount + correctedCnt).numberWithCommas());
 	this._elmts.ei_editing_after_title.text($.i18n('core-index-data-ei/editing-after-cnt'))
 	
 	// ei-right에 chart를 그린다.
