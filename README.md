@@ -80,7 +80,7 @@
 
 (No.2020-0-00512, 데이터 품질 평가기반 데이터 고도화 및 데이터셋 보정 기술 개발)
 
-This work was supported by Institute of Information & communications Technology Planning & Evaluation(IITP) grant funded by the Korea government(MSIT)
+This work was supported by Institute of Information & communications Technology Planning & Evaluation(IITP) grant funded by the Korea government (MSIT)
 
 (No.2020-0-00512, Data Refinment and Improvement through Data Quality Evaluation)
 
