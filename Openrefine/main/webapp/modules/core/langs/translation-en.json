@@ -745,8 +745,6 @@
     "core-buttons/transpose": "Transpose",
     "core-buttons/apply-to-all": "Apply to All Identical Cells",
     "core-dialogs/iris": "Insert IRIS",
-    "core-dialogs/iris-key": "IRIS Partition Key:",
-    "core-dialogs/iris-date-key": "IRIS Partition Date:",
     
     "core-index-data/data-profiling-asses": "Data Profiling",	
     "core-index-data/project-label": "Project List",
