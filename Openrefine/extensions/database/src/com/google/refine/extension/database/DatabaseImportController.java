@@ -399,6 +399,14 @@ public class DatabaseImportController implements ImportingController {
         DatabaseService databaseService = DatabaseService.get(dbQueryInfo.getDbConfig().getDatabaseType());
         String querySource = getQuerySource(dbQueryInfo);
         
+        /**
+         * customizing
+         * by soraJang
+         * 2021-09-02
+         * when use IRIS-DB, is saved SQL to metadata.
+         */
+        metadata.setQuery(dbQueryInfo.getQuery());
+        
         List<DatabaseColumn> columns = databaseService.getColumns(dbQueryInfo.getDbConfig(), dbQueryInfo.getQuery());       
         
         setProgress(job, querySource, -1);
