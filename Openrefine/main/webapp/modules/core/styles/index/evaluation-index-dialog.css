@@ -202,7 +202,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .ei-card .ei-left {
 	border: 1px solid #ccc;
     float: left;
-    /* width: 150px; */
     width : 15%;
     height: 100%;
     margin-right: 10px;
@@ -213,7 +212,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     border: 1px solid #ccc;
     height: 100%;
     float: right;
-	/* width: 700px; */
 	width : 79%;
     padding: 10px;
     display: table;
@@ -257,9 +255,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .ei-card .chart-row .ei-left {
 	float : left;
 	width : 40%;
+	height: 280px;
 }
 .ei-card .chart-row .ei-right {
 	width : 52%;
+	height: 280px;
 }
 
 .ei-card .chart-row .count-row:nth-child(1) {
@@ -298,7 +298,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     float: right;
 }
 .pie-chart-wrap {
-	padding : 0px 55px 5px 55px;
+	padding : 0px 54px 0px 54px;
+}
+.pie-chart-wrap svg:nth-child(1) {
+	margin-left : 10px;
+	margin-top : -15px;
 }
 .pie-chart-wrap svg:nth-child(2) {
 	margin-left : 10px;
@@ -413,4 +417,27 @@ select.iris-properties {
 /* Darker background on mouse-over */
 .body-header .btn-wrap button.btn-hide:hover {
 	background-color: #bbbbbb;
+}
+
+.ei-exlaamation-mark {
+	margin-left: 10px;
+	display: inline;
+}
+.ei-exlaamation-mark path {
+	fill: steelblue;
+}
+.ei-exlaamation-mark .ei-tooltip {
+	display : none;
+    position: absolute;
+    max-width: 250px;
+    height: auto;
+    border: 1px solid #ff9393;
+    background: white;
+    box-shadow: 2px 2px 3px 0px #a5a5a5;
+    margin-left : 10px;
+}
+.ei-exlaamation-mark:hover .ei-tooltip {
+	display : inline;
+	padding : 10px;
+    font-size: 13px;
 }

@@ -104,6 +104,8 @@ public class ProjectMetadata {
     private String homepage = "";
     @JsonProperty("image")
     private String image = "";
+    @JsonProperty("query")
+    private String query = "";
 
     // import options is an array for 1-n data sources
     @JsonProperty("importOptionMetadata")
@@ -373,4 +375,13 @@ public class ProjectMetadata {
             logger.error(ExceptionUtils.getFullStackTrace(e));
         }
     }
+    
+    @JsonIgnore
+	public String getQuery() {
+		return query;
+	}
+    @JsonIgnore
+	public void setQuery(String query) {
+		this.query = query;
+	}
 }

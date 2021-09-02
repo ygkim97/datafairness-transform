@@ -7,7 +7,7 @@ function getEvaluationIndexProperties() {
 		},
 		properties: [
 			{
-				isAvailable: false,
+				isAvailable: true,
 				id: "ACCURACY",
 				text: "정확성",
 				desc: "구문 데이터 정확성, 의미 데이터 정확성, 데이터 세트의 부정확성의 위험, 데이터 범위 정확성등을 측정합니다.",
@@ -16,16 +16,32 @@ function getEvaluationIndexProperties() {
 						{
 							id: "SYNTAX_CORRECTNESS",
 							text: "구문 데이터 정확성",
+							desc : "선택한 컬럼의 데이터의 정확성을 체크합니다.",
 							// 시험항목 목록
 							correctedOptions : [{
-			                    id: "구문데이터선택",
-			                    text: "입력항목",
-			                    // 품질보정
-			                    property : {
-			                        type : "text",
-			                        text : "문자",
-			                        id : "syntax_correctness_text"
-			                    }
+			                    id: "SET_DATE_FORMAT",
+			                    text: "타입 변경",
+			                    desc : "선택한 컬럼의 값을 정해진 속성에 맞춰 보정합니다.",
+		                        property : {
+		                            type : "select",
+		                            text : "날짜",
+		                            id : "date_format",
+		                            desc : "ex) 2020-03-01",
+		                            options : [{
+		                                value : 'yyyy-MM-dd',
+		                                text : 'yyyy-MM-dd'
+		                            }]
+		                        },
+		                        chartLabels : {
+		                        	rText : {
+		                        		text : 'passed',
+		                        		color : 'blue'
+		                        	},
+		                        	wText : {
+		                        		text : 'non-passed',
+		                        		color : 'red'
+		                        	}
+		                        }
 			                }]
 						},
 						{
@@ -40,9 +56,7 @@ function getEvaluationIndexProperties() {
 							id: "RANGE_ACCURACY",
 							text: "데이터 범위 정확성"
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},{
 			    isAvailable: true,
@@ -57,7 +71,17 @@ function getEvaluationIndexProperties() {
 			                correctedOptions: [
 			                    {
 			                        id: "REMOVE_NULL",
-			                        text: "NULL 데이터 삭제"
+			                        text: "NULL 데이터 삭제",
+			                        chartLabels : {
+			                        	rText : {
+			                        		text : 'NOT NULL',
+			                        		color : 'blue'
+			                        	},
+			                        	wText : {
+			                        		text : 'NULL',
+			                        		color : 'red'
+			                        	}
+			                        }
 			                    }
 			                ]
 			            }, {
@@ -168,9 +192,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -184,9 +206,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -200,9 +220,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -216,9 +234,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			},
 			{
@@ -232,9 +248,7 @@ function getEvaluationIndexProperties() {
 							id: "",
 							text: ""
 						}
-					],
-					quality_correction_items: [],
-					sub_correction_items : {}
+					]
 				}
 			}
 		]

@@ -121,6 +121,8 @@
 	"core-index-data-ei/quality-total-cnt": "전체 건수",
 	"core-index-data-ei/quality-right-cnt": "적합 건수",
 	"core-index-data-ei/quality-wrong-cnt": "비적합 건수",
+	"core-index-data-ei/quality-error-cnt": "에러 포함",
+	
 	"core-index-data-ei/left-title-editing": "보정 설정",
 	"core-index-data-ei/left-title-editing-score": "품질 지수",
 	"core-index-data-ei/editing-count-cnt": "보정 건수",
