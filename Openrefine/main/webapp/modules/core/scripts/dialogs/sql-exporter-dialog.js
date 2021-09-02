@@ -66,8 +66,6 @@ function SqlExporterDialog(options) {
     this._elmts.includeContentLabel.html($.i18n('core-dialogs/for-include-content-checkbox'));
     this._elmts.includeIfExistDropStatementLabel.html($.i18n('core-dialogs/for-include-if-exist-drop-stmt-checkbox'));
     this._elmts.irisLabel.html($.i18n('core-dialogs/iris'));
-    this._elmts.irisKeyLabel.html($.i18n('core-dialogs/iris-key'));
-    this._elmts.irisDateKeyLabel.html($.i18n('core-dialogs/iris-date-key'));
     
     this._elmts.nullCellValueToEmptyStringLabel.html($.i18n('core-dialogs/for-null-cell-value-to-empty-str-label'));
   
@@ -443,8 +441,6 @@ function SqlExporterDialog(options) {
     options.includeStructure = this._elmts.includeStructureCheckbox[0].checked;
     options.includeDropStatement = this._elmts.includeDropStatementCheckbox[0].checked;
     options.iris= this._elmts.iris[0].checked;
-    options.irisKey= $.trim(this._elmts.irisKeyTextBox.val());
-    options.irisDateKey= $.trim(this._elmts.irisDateKeyTextBox.val());
     options.includeContent = this._elmts.includeContentCheckbox[0].checked;
     options.tableName = $.trim(this._elmts.tableNameTextBox.val().replace(/\W/g, ' ')).replace(/\s+/g, '_');
     options.trimColumnNames = this._elmts.sqlExportTrimAllColumnsCheckbox[0].checked;

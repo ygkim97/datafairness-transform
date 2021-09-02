@@ -153,8 +153,6 @@ public class SqlExporter implements WriterExporter {
                     String user = irisInfo.getProperty("irisUser");
                     String password = irisInfo.getProperty("irisPass");
                     String createQuery = null;
-                    String partitionKey = null;
-                    String partitionDate = null;
 
                     if (includeStructure) {
                         String sqlCreateStr = createBuilder.getCreateSQL(iris);
@@ -163,13 +161,11 @@ public class SqlExporter implements WriterExporter {
                         }
 
                         if (iris == true) {
-                            partitionKey = sqlOptions.get("irisKey").textValue();
-                            partitionDate = sqlOptions.get("irisDateKey").textValue();
                             sqlCreateStr  = sqlCreateStr.trim();
                             int len = sqlCreateStr.length();
                             sqlCreateStr = len > 0 && sqlCreateStr.endsWith(";") ?  sqlCreateStr.substring(0, len - 1) : sqlCreateStr;
 
-                            createQuery = String.format("%s\ndatascope [ LOCAL ]\nramexpire [ 1440  ]\ndiskexpire [ 25920000 ]\npartitionkey [ %s ]\npartitiondate [ %s ]\nPARTITIONRANGE [ 1440 ];", sqlCreateStr, partitionKey, partitionDate);
+                            createQuery = String.format("%s\ndatascope [ GLOBAL ]\nramexpire [ 0 ]\ndiskexpire [ 0 ]\npartitionkey [ None ]\npartitiondate [ None ]\npartitionrange [ 0 ];", sqlCreateStr);
                             logger.debug("{}", createQuery);
                             executeQueryIRIS(url, user, password, createQuery);
                         }
