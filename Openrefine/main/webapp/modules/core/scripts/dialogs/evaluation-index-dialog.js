@@ -18,13 +18,17 @@ var OBJ = {
 			correctedIndexName : null,
 			wrongCount : 0,
 			totalCount_before : 0,
-			propertyType : null
+			propertyType : null,
+			correctedObj : {}
 		}
 }
 // Dialog-card1 Index Table max row count.
 const INDEX_TABLE_MAX_ROW = 4;
 
-function EIDialogUI(index, name) {
+// call API ("get-rows") need limit.
+const MAX_RECORD_COUNT = 100000000;
+
+function EIDialogUI(index, name, projectRowsRefresh) {
 	OBJ.setting.columnId = index;
 	OBJ.setting.columnName = name;
 	this._createDialog();
@@ -111,6 +115,14 @@ EIDialogUI.prototype._setNavigators = function() {
 				return;
 			}
 			
+			const newIndexId = checked.attr('data-id');
+			if (OBJ.setting.indexId !== newIndexId) {
+				OBJ.setting.correctedIndex = null;
+				OBJ.setting.correctedIndexName = null;
+				OBJ.setting.testIndex = null;
+				OBJ.setting.testIndexName = null;
+				OBJ.setting.correctedObj = null;
+			}
 			OBJ.setting.indexId = checked.attr('data-id');
 			
 			this._setCard2();
@@ -168,6 +180,8 @@ EIDialogUI.prototype._setNavigators = function() {
 			if (currentDiv == 4) {
 				$next.attr('disabled', true);
 				$next.addClass('btn-hide');
+				$prev.attr('disabled', true);
+				$prev.addClass('btn-hide');
 			} else {
 				$next.attr('disabled', false);
 				$next.removeClass('btn-hide');
@@ -226,71 +240,6 @@ function setNaviBtnStatus(bool) {
 	$('#ei_next').attr('disabled',bool);	
 }
 
-EIDialogUI.prototype._setCard1 = function() {
-	var labelList = getEvaluationIndexProperties().properties;
-	
-	var template = '';
-	template += '<table class="card1-table">';	
-	template += '<tr>';
-	
-	const ei_wrap = this._elmts.ei_card1.empty();
-	
-	labelList.forEach((li, i)=>{
-		if (i == INDEX_TABLE_MAX_ROW) {
-			template += '<tr>';
-		}
-		
-		template += '<td class="evaluation_index" data-available="'+li.isAvailable+'">';
-		template += '<div>';
-		template += '<div class="id">';
-		template += '<input type="radio" name="ei_radio" class="radio" data-id="'+li.id+'"/>';
-		template += '<label>';
-		template += li.text;
-		template += '</label>';
-		template += '</div>';
-		template += '<div class="desc">';
-		template += li.desc;
-		template += '</div>';
-		template += '</div>';
-		template += '</td>';
-	});
-	template += '</tr>';
-	template += '</table>';
-	
-	ei_wrap.append(template);
-	
-	$('td.evaluation_index').click((e)=>{
-		const el = $(e.target);
-		
-		if (el[0].tagName.toLowerCase() == 'td' ) {
-			$('.evaluation_index').removeClass('active');		
-			$(e.target).addClass('active');
-			$(e.target).find('input').click();
-		}
-	})
-}
-
-/**
- * create DIV Tag
- * @param text : div Text
- * @param descText : desc Text
- * @param _class : if you add special class, use this.
- * @returns
- */
-function createDIV(text, descText, _class) {
-	var divTemplate = '';
-	
-	divTemplate += '<div class="ei-items '+(_class == undefined ? '' : _class)+'">';
-	divTemplate += '<span>' + text + '</span>';
-	
-	if (descText != undefined) {
-		divTemplate += '<span class="desc"><i class="fas fa-asterisk"></i>' + descText + '</span>';
-	}
-	divTemplate += '</div>';
-	
-	return divTemplate;
-}
-
 /**
  * create SELECT BOX Tag
  * @param list : array. option list
@@ -317,289 +266,7 @@ function addSELECT(self, list, selectId, descText, _class) {
 		self._elmts[selectId + '_desc'].html('<i class="fas fa-asterisk"></i>' + descText);
 	}
 }
-/**
- * set SETTING Card.
- */
-EIDialogUI.prototype._setCard2 = function() {
-	// set setting page
-	const indexProperty = getEvaluationIndexPropertiesById();
-	const settingProperty = indexProperty.setting;
-	const descProperty = getDescPropertyByIndex();
-	
-	OBJ.setting.indexName = indexProperty.text;
 
-	this._elmts.column_name.text($.i18n('core-index-data-ei/left-title-column-name'));
-	this._elmts.evaluation_index.text($.i18n('core-index-data-ei/left-title-evaluation-index'));
-	this._elmts.test_column.text($.i18n('core-index-data-ei/left-title-test-column'));
-	this._elmts.corrected_column.text($.i18n('core-index-data-ei/left-title-corrected-column'));
-	
-	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
-	$('span[name="index_name"]').text(OBJ.setting.indexName);
-	this._elmts.index_name_desc.html('<i class="fas fa-asterisk"></i>' + descProperty.indexId);
-	
-	const defaultTestItem = settingProperty.test_items[0];
-	
-	// set values default 
-	addSELECT(this, settingProperty.test_items, 'testIndex', descProperty.testIndex);
-	OBJ.setting.testIndex = defaultTestItem.id;
-	OBJ.setting.testIndexName = defaultTestItem.text;
-	
-	addSELECT(this, defaultTestItem.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
-	if (defaultTestItem.correctedOptions == undefined) {
-		$('select#correctedIndex').hide();
-	}	
-	
-
-	/**
-	 * 시험항목 선택 이벤트
-	 * 품질보정 항목을 새로 셋팅하고 선택 이벤트를 발생시킨다.
-	 */
-	const self = this;
-	$('select#testIndex').change(function(e) {
-		const obj = settingProperty["test_items"].find((ti)=> {
-			return ti.id == $(this).val()
-		})
-		OBJ.setting.testIndex = obj.id;
-		OBJ.setting.testIndexName = obj.text;
-			
-		addSELECT(self, obj.correctedOptions, 'correctedIndex', descProperty.correctedIndex);
-		if (obj.correctedOptions == undefined) {
-			$('select#correctedIndex').hide();
-			OBJ.setting.correctedIndex = null;
-			OBJ.setting.correctedIndexName = null;
-		} else {
-			$('select#correctedIndex').show();
-			OBJ.setting.correctedIndex = obj.id;
-			OBJ.setting.correctedIndexName = obj.text;
-		}
-		
-		$('select#correctedIndex').change();
-	});
-	$('select#testIndex').change();
-	
-	/**
-	 * 품질보정 선택 이벤트
-	 * 추가된 값 property obj가 있으면 (text/select/radio) 등등을 화면에 표시한다. 
-	 */
-	const _self = this
-	$('select#correctedIndex').change(function(e) {
-		const property = _self._getIndexProperty(OBJ.setting.indexId);
-		const subDiv = $('div#corrected_select_sub');
-		subDiv.empty();
-		OBJ.setting.propertyType = null;
-		
-		const testItem = findValueById(property.setting.test_items, OBJ.setting.testIndex);
-		var propertyObj = null;
-		
-		if (testItem.hasOwnProperty('correctedOptions')) {
-			propertyObj = findValueById(testItem.correctedOptions, $(this).val()).property;
-		}
-		
-		if (propertyObj!== null && propertyObj!== undefined) {
-			subDiv.show();
-			subDiv.addClass('no_bottom_line');
-			
-			subDiv.append(getTemplateInput(propertyObj));
-		} else {
-			// hide sub div
-			subDiv.hide();
-			subDiv.removeClass('no_bottom_line');
-		}
-	})
-	$('select#correctedIndex').change();
-}
-
-function findValueById(arr, id) {
-	return arr.find((o)=>{
-		return o.id == id;
-	})
-}
-
-function getTemplateInput(param) {
-	OBJ.setting.propertyType = param.type;
-	
-	const className ="sub_properties";
-	
-	var template = '';
-	template += '<fieldset class="ei-box-shadow">';
-	template += '<legend class="new-connection-legend pure-input-1-2">'+$.i18n('core-index-data-ei/corrected-fieldset-title')+'</legend>'
-	template += '<div class="pure-control-group">';
-	template += '<label for="'+param.id+'">';
-	template += param.text + ' : ';
-	template += '</label>';
-	
-	if (param.type == 'text' || param.type == 'number') {
-		template += '<input type="'+param.type+'" id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" />';
-	} else if (param.type == 'select') {
-		template += '<select id="'+param.id+'" class="'+className+'" data-type="'+param.type+'" >';
-		param.options.forEach((p)=>{
-			template += '<option value="'+p.value+'" text="'+p.text+'">';
-			template += '<span>';
-			template += p.text;
-			template += '</span>';
-			template += '</option>';
-		})
-		template += '<select>';
-	} else if (param.type == 'radio') {
-		template += '<div class="sub-radio">';
-		param.options.forEach((p, pI)=>{
-			template += '<label>';
-			template += '<input type="radio" name="'+param.id+'" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
-			template += p.text;
-			template += '</label>';
-		})
-		template += '</div>';
-	} else if (param.type == 'checkbox') {
-		template += '<div class="sub-checkbox">';
-		param.options.forEach((p, pI)=>{
-			template += '<label>';
-			template += '<input type="checkbox" name="'+param.id+ '_' + pI + '" value="'+p.value+'" class="'+className+'" data-type="'+param.type+'" '+((pI < 1) ? ' checked' : '')+'/>';
-			template += p.text;
-			template += '</label>';
-		})
-		template += '</div>';
-	}
-	template += '</div>';
-	template += '</fieldset>';
-	return template;
-}
-EIDialogUI.prototype._getIndexProperty = function(indexId) {
-	return getEvaluationIndexProperties().properties.find((p) => {
-		return p.id == indexId;
-	}) 
-}
-/**
- * save SETTING Card data.
- */
-EIDialogUI.prototype._saveCard2Data = function() {
-	// save Test Column
-	const testIndex = $('select#testIndex option:selected');
-	OBJ.setting.testIndex = testIndex.val();
-	OBJ.setting.testIndexName = testIndex.text();
-	
-	// save corrected Column
-	const correctedIndex = $('select#correctedIndex option:selected');
-	OBJ.setting.correctedIndex = correctedIndex.val();
-	OBJ.setting.correctedIndexName = correctedIndex.text();
-}
-
-/**
- * set Evaluation Index Card.
- */
-EIDialogUI.prototype._setCard3 = function() {
-	this._getModelInfo();
-	
-	// reset grid div
-	this._elmts.card3_grid.empty();
-	this._elmts.card3_notice_wrap.show();
-	
-	// set setting page
-	this._elmts.setting_title.text($.i18n('core-index-data-ei/left-title-setting'));
-	this._elmts.quality_score.text($.i18n('core-index-data-ei/left-title-quality-score'));
-	this._elmts.grid_notice.text($.i18n('core-index-data-ei/grid-notice'));
-	
-	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
-	$('span[name="index_name"]').text(OBJ.setting.indexName);
-	$('span[name="test_column"]').text(OBJ.setting.testIndexName);
-
-	// 예외처리
-	try {
-		// get data
-		const columnData = this._getTestData();
-		
-		var per = getPer(columnData.rightCount, columnData.totalCount);
-		
-		// 초기값일때만 값을 저장한다.
-		// 만약 페이지 이동으로 다시 card3에 진입한 경우, 값을 저장하지 않는다. (고유값으로 유지 필요)
-		if (OBJ.setting.wrongCount == 0) {
-			OBJ.setting.wrongCount = columnData.wrongCount;
-			OBJ.setting.totalCount_before = columnData.totalCount;
-		}
-		
-		this._elmts.ei_total_per.text(per + '%');
-		this._elmts.ei_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
-		this._elmts.ei_right_title.text($.i18n('core-index-data-ei/quality-right-cnt'))
-		this._elmts.ei_wrong_title.text($.i18n('core-index-data-ei/quality-wrong-cnt'))
-		
-		this._elmts.ei_total_value.text(columnData.totalCount.numberWithCommas());
-		this._elmts.ei_right_value.text(columnData.rightCount.numberWithCommas());
-		this._elmts.ei_wrong_value.text(columnData.wrongCount.numberWithCommas());
-		
-		const data = [
-			{name : columnData.rText, value : per},
-			{name : columnData.wText, value : Number((100-per).toFixed(2))}
-			]
-		
-		// ei-right에 chart를 그린다.
-		this._createPieChart('card3_pie_chart', data);
-	} catch {
-		return 'failed';
-	}
-}
-/**
- * set correcteding Card.
- */
-EIDialogUI.prototype._setCard4 = function() {
-	// set setting page
-	this._elmts.editing_title.text($.i18n('core-index-data-ei/left-title-editing'));
-	this._elmts.editing_score.text($.i18n('core-index-data-ei/left-title-editing-score'));
-
-	$('span[name="column_name_value"]').text(OBJ.setting.columnName);
-	$('span[name="index_name"]').text(OBJ.setting.indexName);
-	$('span[name="test_column"]').text(OBJ.setting.testIndexName);
-	var propertyVal = getExtraPropertyVal();
-	
-	$('span[name="corrected_column"]').text(OBJ.setting.correctedIndexName + (propertyVal == undefined ? '' : '(' + propertyVal + ')'));
-	
-	this._elmts.export_iris_Legend.text($.i18n('core-index-data-ei/export-title'));
-	this._elmts.index_columnName_label.text($.i18n('core-index-data-ei/export-iris-index-column-name') + ':');
-	this._elmts.date_columnName_label.text($.i18n('core-index-data-ei/export-iris-date-column-name') + ':');
-	this._elmts.tableName_label.text($.i18n('core-index-data-ei/export-iris-table-name') + ':');
-	
-	// set Iris properties (select)
-	var newColumns = [];
-	OBJ.columns.forEach((c) => {
-		newColumns.push({id:c.cellIndex, text:c.name});
-	})
-	addSELECT(this, newColumns, 'indexColumnName');
-	addSELECT(this, newColumns, 'dateColumnName');
-	// Update Class info
-	$('select#indexColumnName').addClass('pure-input-1-3');
-	$('select#dateColumnName').addClass('pure-input-1-3');
-	
-	// get data
-	const columnData = this._getTestData();
-	
-	var per = getPer(columnData.rightCount, columnData.totalCount)
-	
-	this._elmts.ei_editing_total_per.text(per + '%');
-	this._elmts.ei_editing_total_title.text($.i18n('core-index-data-ei/quality-total-cnt'))
-	this._elmts.ei_editing_count_title.text($.i18n('core-index-data-ei/editing-count-cnt'))
-	this._elmts.ei_editing_after_title.text($.i18n('core-index-data-ei/editing-after-cnt'))
-	
-	this._elmts.ei_editing_total_value.text(OBJ.setting.totalCount_before.numberWithCommas());
-	this._elmts.ei_editing_count_value.text(OBJ.setting.wrongCount.numberWithCommas());
-	this._elmts.ei_editing_after_value.text(columnData.totalCount.numberWithCommas());
-	
-	const data = [
-		{name : columnData.rText, value : per},
-		{name : columnData.wText, value : Number((100-per).toFixed(2))}
-	]
-
-	// ei-right에 chart를 그린다.
-	this._createPieChart('card4_pie_chart', data);
-	
-	const _self = this;
-	this._elmts.save_iris.text($.i18n('core-buttons/save-iris'));
-	this._elmts.save_iris.click(function() {
-		_self._setSaveToIris();
-	});
-}
-function getPer(rightCnt, totalCnt) {
-	const val1 = (rightCnt/totalCnt*100).toFixed(10);
-	const cnt = Math.floor(val1*100)/100
-	return cnt;
-}
 EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	// create chart
 	const self = this;
@@ -631,10 +298,6 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	    .innerRadius(innerRadius)
 	    .outerRadius(outerRadius);
 
-	const color = d3.scaleOrdinal()
-	.domain(data.map(d => d.name))
-	.range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());
-	
 	const arcs = pie(data);
 	const arcLabel = ()=>{
 		const radius = Math.min(w, h) / 2 * 0.8;
@@ -651,7 +314,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		.join("path")
 		.attr('id', (d, i)=> 'path_id_'+i)
 		.attr('class', 'real-path')
-		.attr("fill", d => color(d.data.name))
+		.attr("fill", d => d.data.color)
 		.attr("d", arc)
 		.on('mouseover', function (d){
 			const _this = $(this)
@@ -673,7 +336,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 			$(this)[0].classList.remove('ei-selected')
 		})		 
 		.on('click', function (d){
-			self._getCard3Row(d.data.name);
+			self._getCard3Row(d.data.name, 50, true);
 		})
 		.append("title")
 		.text(d => `${d.data.name}: ${d.data.value.toLocaleString()}`);	
@@ -684,7 +347,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 		.join("path")
 		.attr('id', (d, i)=> 'path_id_'+i)
 		.attr('class', 'real-path')
-		.attr("fill", d => color(d.data.name))
+		.attr("fill", d => d.data.color)
 		.attr("d", arc)
 		.on('mouseover', function (d){
 			const _this = $(this)
@@ -711,7 +374,7 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	
 	 // create chart legend
 	 const legendW = 360;
-	 const legendH = 20;
+	 const legendH = 30;
 	      
 	 var svg2 = d3.select('#'+parentId+'_legend')
 	 .append('svg')
@@ -730,19 +393,20 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 	 
 	 data.forEach((d, i)=> {
 		 if (i%2 == 0) {
-			 // 1번째
-			cx = 10;
-			cy = (10*i)+(10*(i+1));
+			 // i+1
+			 cx = 10;
 		 } else {
-			 // 2번째
+			 // i
 			 cx = dH;
 		 }
-		 
+		 cy = parseInt(i/2) * 30;
+		 cy = cy + 10;
+
 		 circleG.append("circle")
 		 .attr("cx", cx)
 		 .attr("cy", cy)
 		 .attr("r", 6)
-		 .style("fill", color(d.name))
+		 .style("fill", d.color)
 		 .attr("data-name",d.name)
 		 .attr("data-value",d.value)	 
 		 
@@ -767,19 +431,36 @@ EIDialogUI.prototype._createPieChart = function(parentId, data) {
 EIDialogUI.prototype._getGridBody = function(type) {
 	var selectBlank = false;
 	var selection = [];
+	var expression = null;
 	
-	if (type == 'NULL') {
-		selectBlank = true;
-		selection =[{"v":{"v":true,"l":"true"}}];
-	} else {
-		selectBlank = false;
-		selection =[{"v":{"v":false,"l":"false"}}];
+	if (OBJ.setting.indexId == 'ACCURACY') {
+		expression = 'if(value.toDate("'+getExtraPropertyVal()+'")=="Unable to convert to a date", "WRONG FORMAT", "DATE")'
+			
+		if (type == 'passed') {
+			// 날짜
+			selection = [{"v":{"v":"DATE","l":"DATE"}}];
+			
+		} else {
+			// 날짜인데 포멧이 안맞음
+			selection = [{"v":{"v":"WRONG FORMAT","l":"WRONG FORMAT"}}];
+		}
+			
+	} else if (OBJ.setting.indexId == 'COMPLETENESS') {
+		expression = "isBlank(value)";
+		if (type == 'NULL') {
+			selectBlank = true;
+			selection =[{"v":{"v":true,"l":"true"}}];
+		} else {
+			selectBlank = false;
+			selection =[{"v":{"v":false,"l":"false"}}];
+		}
 	}
+	
 	var facet = [{
 			"type":"list",
 			"name":OBJ.setting.columnName,
 			"columnName":OBJ.setting.columnName,
-			"expression":"isBlank(value)",
+			"expression": expression,
 			"omitBlank":false,
 			"omitError":false,
 			"selection":selection,
@@ -804,7 +485,8 @@ EIDialogUI.prototype._getTestData = function() {
 		data : {
 			columnId : OBJ.setting.columnId,
 			indexId : OBJ.setting.indexId,
-			testIndex : OBJ.setting.testIndex
+			testIndex : OBJ.setting.testIndex,
+			property : getExtraPropertyVal()
 		},
 		async : false,
 		success : function(data) {
@@ -815,18 +497,24 @@ EIDialogUI.prototype._getTestData = function() {
 	})
 	return response;
 }
-EIDialogUI.prototype._getCard3Row = function(type) {
+EIDialogUI.prototype._getCard3Row = function(type, limit, createGrid) {
 	const _self = this
 	const body = this._getGridBody(type);
+	var response = null;
 	
-	$.post(
-			"command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: 50 }),
-			body,
-			function(data) {
+	$.ajax({
+		type : 'POST',
+		url : "command/core/get-rows?" + $.param({ project: UI_CHART_INFO.selectedPId, start: 0, limit: limit }),
+		data : body,
+		async : false,
+		success : function(data) {
+			response = data;
+			if (createGrid) {
 				_self._createSelectRowGrid(data.rows);
-			},
-			"json"
-	);
+			}
+		}
+	});
+	return response;
 }
 EIDialogUI.prototype._getModelInfo = function(type) {
 	const _self = this
@@ -921,7 +609,7 @@ EIDialogUI.prototype._setCorrectedData = function() {
     			columnId : OBJ.setting.columnId,
     			indexId : OBJ.setting.indexId,
     			correctedIndex : OBJ.setting.correctedIndex,
-    			operations : 'deleteNull', 
+//    			operations : 'deleteNull', 
     			columnName : OBJ.setting.columnName,
 	            csrf_token: token,
 	            property : getExtraPropertyVal()
@@ -949,58 +637,6 @@ function getExtraPropertyVal() {
 		return $('.sub_properties').val();
 	}
 }
-EIDialogUI.prototype._setSaveToIris = function() {
-	const irisKey = this._elmts.indexColumnName.find('option:selected').text();
-	const irisDateKey = this._elmts.dateColumnName.find('option:selected').text();
-	const tableName = this._elmts.tableName.val();
-	
-	// value check
-	if (irisKey == '' || irisDateKey == '' || tableName == '') {
-		alert($.i18n('core-index-data-ei/iris-no-data'))
-		return;
-	}
-	var options = {
-			iris  : true,
-			irisKey : irisKey,	// INDEX COLUMN
-			irisDateKey : irisDateKey,	// 
-			tableName : tableName,
-			columns : ''
-	};
-	
-	const _self = this;
-	const warningDialog1 = DialogSystem.showBusy();
-	
-	setTimeout(()=>{
-		$.ajax({
-			type : 'POST',
-			url : "command/core/export-rows?" + $.param({
-				'options' : JSON.stringify(options),
-				'encoding' :"UTF-8",
-				'format' : "sql",
-				'preview' : false,
-				'project' : UI_CHART_INFO.selectedPId
-			}),
-			async : false,
-			success : function(data) {
-				alert($.i18n('core-index-data-ei/saved-project-iris'));
-			}, error: function(data) {
-				// alread exist table name
-				if (data.statusText.indexOf('already exists') > -1) {
-					alert(getIrisAlertMsg(tableName, 'export-already-exist-table-name'));
-				} else if (data.statusText.indexOf('Invalid Partition Time') > -1) {
-					alert(getIrisAlertMsg(tableName, 'export-invalid_time_column'));
-				} else if (data.statusText.indexOf('PARTITIONKEY column') > -1) {
-					alert(getIrisAlertMsg(tableName, 'export-invalid_index_column'));
-				}
-			}, complete : function() {
-				warningDialog1();
-			}
-		});
-	}, 10);
-}
-function getIrisAlertMsg(tableName, msgStr) {
-	return '[ ' + tableName + ' ] ' + $.i18n('core-index-data-ei/' + msgStr);
-}
 
 // when close Dialog 
 EIDialogUI.prototype._dismiss = function() {
@@ -1008,6 +644,7 @@ EIDialogUI.prototype._dismiss = function() {
 	_EIDialogUI = null;
 	
 	DialogSystem.dismissUntil(this._level - 1);
+	_refreshRows();
 };
 
 function getEvaluationIndexPropertiesById() {

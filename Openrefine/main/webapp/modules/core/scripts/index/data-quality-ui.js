@@ -410,10 +410,15 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 				
 				// 선택된 header가 있음 > 그 header로 진행
 				new EIDialogUI(index, name)
+				
 			}
 		});
 	}
 }
+function _refreshRows() {
+	$('#project_select_btn').click();
+}
+
 
 /* ************************************
  * Convert Data from Backend to tui.Grid

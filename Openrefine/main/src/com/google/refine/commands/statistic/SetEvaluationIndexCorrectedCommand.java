@@ -35,9 +35,7 @@ package com.google.refine.commands.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +47,7 @@ import com.google.refine.model.Project;
 import com.google.refine.statistic.AccuracyIndex;
 import com.google.refine.statistic.CompeletenessIndex;
 import com.google.refine.statistic.DataQualityIndex;
+import com.google.refine.statistic.ModifiableHttpServletRequest;
 import com.google.refine.util.ParsingUtilities;
 
 public class SetEvaluationIndexCorrectedCommand extends Command {
@@ -99,11 +98,8 @@ public class SetEvaluationIndexCorrectedCommand extends Command {
 				throw new Exception();
 			}
 
-			index.setCorrectedData(correctedIndex, request, response);
-			
-			// add params
-//			Map<String, Object> result = new HashMap<String, Object>();
-//			result.put("success", true);
+			ModifiableHttpServletRequest newRequest = new ModifiableHttpServletRequest(request);
+			index.setCorrectedData(correctedIndex, newRequest, response);
 			
 			String content = "{ \"code\" : \"ok\" }";
 			
