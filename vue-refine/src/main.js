@@ -10,6 +10,9 @@ import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false
 
+// 전역 event 처리 -- event bus 추가
+Vue.prototype.EventBus = new Vue();  // Vue에 등록
+
 export const vue = new Vue({
     router,
     store,
