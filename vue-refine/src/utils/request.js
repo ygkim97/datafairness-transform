@@ -3,7 +3,8 @@ import store from '@/store'
 import router from '@/router/routes.js'
 
 const service = axios.create({
-  baseURL: _baseURL + ':' + process.env.VUE_APP_API_BASE_PORT,
+  // baseURL: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+  baseURL: `http://localhost:${process.env.VUE_APP_PORT}`,
   timeout: 600000,
   withCredentials: true
 })
@@ -53,17 +54,6 @@ service.clear = () => {
 }
 
 service.interceptors.request.use(config => {
-  // flask_api를 이용할 경우, port 번호를 바꿔줘야 한다.
-  // /api/*.js 의 parameter를 이용해서 처리 하고 싶은데, 방법을 찾지 못함.
-  if (config.url == '/recommend/movie') {
-    // config.baseURL = config.baseURL.replace(process.env.VUE_APP_API_BASE_PORT, process.env.VUE_APP_FLASK_API_PORT)
-    // console.log(config.baseURL)
-    config.baseURL = 'http://192.168.101.42:9099'
-  }
-  if (store.getters.accessToken) {
-    config.headers.common['X-AUTH-TOKEN'] = store.getters.accessToken
-  }
-
   // post는 params가 아니고, data를 사용한다.
   if (config.method != 'get') {
     config.data = config.params;
@@ -104,40 +94,41 @@ service.interceptors.response.use(
       return response.data
   },
   error => {
+    console.log(error);
     removePending(error.config)
 
-    if (!axios.isCancel(error)) {
-      const _r = router
-      const vm = router.app
+    // if (!axios.isCancel(error)) {
+    //   const _r = router
+    //   const vm = router.app
 
-      if (error.message.toLowerCase() == 'network error') {
-        // network error 발생 = backend 서버 다운
-        _r.push({ name: 'error02' })
-      } else {
-        const resp = error.response.data
-        if (resp.error == 'Forbidden' && resp.message == 'Access Denied') {
-          // 표시되고 있는 modal을 닫는다.
-          vm.EventBus.$emit('modalClose')
+    //   if (error.message.toLowerCase() == 'network error') {
+    //     // network error 발생 = backend 서버 다운
+    //     _r.push({ name: 'error02' })
+    //   } else {
+    //     const resp = error.response.data
+    //     if (resp.error == 'Forbidden' && resp.message == 'Access Denied') {
+    //       // 표시되고 있는 modal을 닫는다.
+    //       vm.EventBus.$emit('modalClose')
 
-          // access Denied > login 메시지로 팅구기
-          vm.EventBus.$emit('modalAlert', {
-            title: 'Information',
-            text: '로그아웃되셨습니다. 로그인 페이지로 이동합니다.',
-            okTitle: '확인',
-            okRes: function () {
-              vm.$store.dispatch('logout')
-              _r.push({ name: 'login' })
-            }
-          });
-        } else {
-          console.log('err' + error)
-          return Promise.reject(error)
-        }
-      }
-    } else {
-      // return empty object for aborted request
-      return Promise.resolve({})
-    }
+    //       // access Denied > login 메시지로 팅구기
+    //       vm.EventBus.$emit('modalAlert', {
+    //         title: 'Information',
+    //         text: '로그아웃되셨습니다. 로그인 페이지로 이동합니다.',
+    //         okTitle: '확인',
+    //         okRes: function () {
+    //           vm.$store.dispatch('logout')
+    //           _r.push({ name: 'login' })
+    //         }
+    //       });
+    //     } else {
+    //       console.log('err' + error)
+    //       return Promise.reject(error)
+    //     }
+    //   }
+    // } else {
+    //   // return empty object for aborted request
+    //   return Promise.resolve({})
+    // }
   })
 
 export default service

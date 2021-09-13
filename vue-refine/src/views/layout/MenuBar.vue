@@ -4,31 +4,22 @@
     expand-on-hover
     app
   >
-    <!-- <v-sheet
-      color="grey lighten-4"
-      class="pa-4"
-    >
-    <div class="transition-swing text-h4"> {{ $route.params.tableName }}</div>
-      
-    </v-sheet>
-
-    <v-divider></v-divider> -->
 
     <v-list>        
       <v-list-item
-        v-for="[icon, text, linkTo] in links"
-        :key="icon"
+        v-for="[name, icon, text, linkTo] in links"
+        :key="name"
         link>
 
         <router-link 
         tag="div" 
         v-bind:class="{'display-flex':true, 'width-p-100' : true}"
-        v-bind:to="getLinkTo(linkTo, tableName)">
+        v-bind:to="getLinkTo(linkTo, tableName)">        
           <v-list-item-icon>
             <v-icon>{{ icon }}</v-icon>
           </v-list-item-icon>
 
-          <v-list-item-content>                      
+          <v-list-item-content>
             <v-list-item-title>{{ text }}</v-list-item-title>            
           </v-list-item-content>
         </router-link>
@@ -42,32 +33,39 @@
   export default  {
     name: 'menuBar',
 
+    created() {
+      this.setLink();
+    },
+
     computed : {
       tableName() {
-        return this.$store.getters.CONSTANTS.TABLE_NAME
+        return this.$store.getters.TABLE_NAME
       }
-    },
-    
-    created() {
-      this.EventBus.$on('setDrawer', this.setDrawer);
     },
 
     data: () => ({ 
-      drawer: null,
-      links: [
-        ['mdi-alert-octagon', 'Get Rule', '/view'],
-        ['mdi-send', 'Update Rule', '/update'],
-        // ['mdi-delete', 'Delete Rule', '/delete']
-      ],
+      links: [],
     }),
 
     methods: {
       getLinkTo : (link, tableName) => {
-        return `${link}/${tableName}`;
+        return `${link}`;
+        // return `${link}/${tableName}`;
       },
-      setDrawer() {
-        console.log('here')
-        this.drawer = !this.drawer
+
+      setLink() {
+        let path = '';
+
+        this.links = [];
+        this.$router.options.routes.forEach((r) => {
+          if ((Object.prototype.hasOwnProperty.call(r, 'meta') && r.meta.useMain) 
+          && Object.prototype.hasOwnProperty.call(r, 'children')) {
+            r.children.forEach((c) => {
+              path = (c.path.indexOf(':') > -1) ? c.path.split(':').shift() : c.path;  
+              this.links.push([c.name, c.icon, c.text, c.path]); 
+            })
+          }  
+        })
       }
     }
   }

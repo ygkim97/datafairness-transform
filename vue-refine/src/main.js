@@ -8,6 +8,12 @@ import router from '@/router/routes.js'
 // vurtify (ui)
 import vuetify from './plugins/vuetify';
 
+// popup message module 
+import VModal from 'vue-js-modal'
+Vue.use(VModal)
+import modals from '@/common/modal/AppModal.vue'
+Vue.component('modals', modals)
+
 Vue.config.productionTip = false
 
 // 전역 event 처리 -- event bus 추가

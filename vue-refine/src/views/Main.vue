@@ -1,0 +1,52 @@
+<template> 
+  <div>
+    <!-- menu bar -->
+    <menu-bar />
+
+    <!-- header -->
+    <header-bar />
+    
+    <!-- content -->
+    <v-main>
+      <v-container>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
+  </div>
+</template>
+
+<script>
+export default {    
+  name: 'Main',
+
+  computed : {
+    tableName() {
+      return this.$store.getters.TABLE_NAME;
+    }
+  },
+  
+  components : {
+    MenuBar: () => import('@/views/layout/MenuBar.vue'),
+    HeaderBar: () => import('@/views/layout/HeaderBar.vue')
+  },
+
+  created() {
+    // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
+    this.checkTableName();
+  },
+
+  methods : {
+    checkTableName() {
+      // router에서 값을 가져 오거나, 이전에 조회한 값을 가져온다
+      const tableName = this.$route.params.tableName || this.tableName;
+      if (tableName === undefined || tableName === null || tableName === '') {
+        // table 명이 존재하지 않을 경우, error 페이지로 redirect한다.
+        this.$router.push({name: 'error'})
+      } else {
+        // table명이 존재 할 경우, vuex에 저장한다.
+        this.$store.dispatch('setTableName', tableName);
+      }
+    }
+  }
+}
+</script>

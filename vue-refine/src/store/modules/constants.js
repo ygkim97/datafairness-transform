@@ -1,23 +1,23 @@
 const state = {
-    constants : {
-        TABLE_NAME : null
-    }
-    // constants: Object.freeze({
-    //     TABLE_NAME : null
-    // })
+    TABLE_NAME: null
 }
 const mutations = {
-    setTableName(state, tableName) {
-        console.log(tableName);
-        state.constants.TABLE_NAME = tableName;
+    setTableName(state, { tableName }) {
+        state.TABLE_NAME = tableName;
     }
 }
 const getters = {
-    CONSTANTS: state => {
-        return state.constants;
+    TABLE_NAME: state => {
+        return state.TABLE_NAME
     }
+    // CONSTANTS: state => {
+    //     return state.constants;
+    // }
 }
 const actions = {
+    setTableName({ commit }, tableName) {
+        commit('setTableName', { tableName: tableName });
+    }
 }
 
 export default {

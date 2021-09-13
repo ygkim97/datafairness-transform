@@ -1,23 +1,10 @@
 <template>
-    <v-main>
-      <router-view />
-    </v-main>
+    <router-view />
 </template>
 
 <script>
-  export default {
-    name: 'mainPanel',
-
-    created() {      
-      // set TableName
-      this.$store.commit('setTableName', this.$route.params.tableName);
-    },
-
-    data: () => ({ 
-    }),
-
-    methods: {
-    }
-  }
-    
+export default {};
 </script>
+
+<style>
+</style>
