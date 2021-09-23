@@ -18,7 +18,7 @@
 
     computed : {
       tableName() {
-        return this.$store.getters.TABLE_NAME
+        return this.$store.getters.tableName
       }
     },
     

@@ -14,6 +14,13 @@ Vue.use(VModal)
 import modals from '@/common/modal/AppModal.vue'
 Vue.component('modals', modals)
 
+// grid module
+import { Grid } from '@/common/grid/index.js';
+// import 'tui-grid/dist/tui-grid.css';
+// import { Grid } from '@toast-ui/vue-grid';
+// global components
+Vue.component('tui-grid', Grid);
+
 Vue.config.productionTip = false
 
 // 전역 event 처리 -- event bus 추가

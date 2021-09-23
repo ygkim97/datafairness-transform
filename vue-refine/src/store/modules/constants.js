@@ -1,23 +1,26 @@
 const state = {
-    TABLE_NAME: null
+    constants: Object.freeze({
+        compList: ['regex', 'regex_set', 'bin_regex_set', 'unique_regex_set', 'range'],
+        actions : {
+            CREATE : 'create',
+            DELETE : 'delete',
+            DISPLAY : 'display'
+        },
+        result : {
+            SUCCESS : 'success',
+            FAIL : 'fail'
+        },
+        gridNoData : '데이터가 없습니다.'
+    })
 }
 const mutations = {
-    setTableName(state, { tableName }) {
-        state.TABLE_NAME = tableName;
-    }
 }
 const getters = {
-    TABLE_NAME: state => {
-        return state.TABLE_NAME
+    CONSTANTS: state => {
+        return state.constants;
     }
-    // CONSTANTS: state => {
-    //     return state.constants;
-    // }
 }
 const actions = {
-    setTableName({ commit }, tableName) {
-        commit('setTableName', { tableName: tableName });
-    }
 }
 
 export default {

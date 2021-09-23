@@ -1,11 +1,10 @@
 <template>
   <div>
-    <template v-for="(compKey) in compList">
-      <div :key="compKey" class="rule_component_wrap">
+    <template v-for="(ruleKey) in compList">
+      <div :key="ruleKey" class="rule_component_wrap">
         <component 
           v-bind:is="component"
-          v-bind:ruleObj="ruleData[compKey]"
-          v-bind:ruleTitle="compKey"
+          v-bind:ruleKey="ruleKey"
         >
         </component>
       </div>
@@ -16,21 +15,19 @@
 <script>
 import viewComp from './comp/ruleComp.vue'
 
-import {
-    api_getRuleInfo
-} from '@/apis/rules.js'
-
 export default {
     name: 'viewRule',
 
     computed : {
+      compList() {
+        return this.$store.getters.CONSTANTS.compList
+      },
       tableName() {
-        return this.$store.getters.TABLE_NAME
+        return this.$store.getters.tableName
       }
     },
 
     created() {
-      this.getRuleData();
     },
   
     mounted() {
@@ -38,18 +35,11 @@ export default {
 
     data: () => ({
       component : viewComp,
-      // compList는 restAPI 서버의 각각의 rule 명과 맞춰서 작성해주어야함.
-      compList : ['regex', 'regex_set', 'bin_regex_set', 'unique_regex_set', 'range'],
+      // compList는 restAPI 서버의 각각의 rule 명과 맞춰서 작성해주어야함.      
       ruleData : {}
     }),
 
     methods : {
-      async getRuleData() {
-        await api_getRuleInfo('DQI').then((response) => {
-          console.log(response);
-          this.ruleData = response;
-        });
-      }
     }
 }
 </script>

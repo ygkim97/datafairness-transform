@@ -4,14 +4,20 @@ import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
+import grid from './modules/grid.js'
+import tableName from './modules/tableName.js'
 import constants from './modules/constants.js'
+import rule from './modules/rule.js'
 
 const store = new Vuex.Store({
-    modules : {
-        CONSTANTS: constants
+    modules: {
+        tableName : tableName,
+        CONSTANTS: constants,
+        GRID: grid,
+        ruleJson : rule
     },
     plugins: [
-        createPersistedState({ paths: ['CONSTANTS']})
+        // createPersistedState({ paths: ['ruleJson']})
     ]    
 });
 export default store;

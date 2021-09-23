@@ -23,6 +23,8 @@ export default {
 </script>
 
 <style lang="scss">
+  @import './assets/css/all.min.css';
+  
   @import './assets/css/dev.scss';
 </style>
 

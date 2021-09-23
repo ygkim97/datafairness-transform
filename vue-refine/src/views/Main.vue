@@ -1,15 +1,17 @@
 <template> 
   <div>
-    <!-- menu bar -->
-    <menu-bar />
-
     <!-- header -->
     <header-bar />
     
     <!-- content -->
     <v-main>
       <v-container>
-        <router-view></router-view>
+        <rule-buttons></rule-buttons>
+        
+        <v-divider></v-divider>
+
+        <view-panel></view-panel>
+        <!-- <router-view></router-view> -->
       </v-container>
     </v-main>
   </div>
@@ -21,18 +23,20 @@ export default {
 
   computed : {
     tableName() {
-      return this.$store.getters.TABLE_NAME;
+      return this.$store.getters.tableName;
     }
   },
   
   components : {
-    MenuBar: () => import('@/views/layout/MenuBar.vue'),
-    HeaderBar: () => import('@/views/layout/HeaderBar.vue')
+    HeaderBar: () => import('@/views/layout/HeaderBar.vue'),
+    RuleButtons: () => import('@/views/layout/RuleButtons.vue'),
+    ViewPanel: () => import('@/views/rule/view/ViewRule.vue'),
   },
 
   created() {
     // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
     this.checkTableName();
+    this.getRuleData();
   },
 
   methods : {
@@ -46,6 +50,9 @@ export default {
         // table명이 존재 할 경우, vuex에 저장한다.
         this.$store.dispatch('setTableName', tableName);
       }
+    },    
+    getRuleData() {
+      this.$store.dispatch("getJsonRules", this.tableName);        
     }
   }
 }

@@ -33,7 +33,7 @@ let routes = [{
     meta: {
         useMain: true
     },
-    // redirect: { name: "aPage" },
+    // redirect: { name: "viewRule" },
     children: [
             {
             path: '/rule/view',
