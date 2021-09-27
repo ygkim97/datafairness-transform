@@ -21,27 +21,27 @@
             v-bind:wrapType="wrapType"
             ></component>
 
-        <div :class="(wrapType == 'dialog') ? 'mu-alert-foot' : 'modal-footer mu-dialog-foot'">
+        <div :class="(wrapType === 'dialog') ? 'mu-alert-foot' : 'modal-footer mu-dialog-foot'">
 
             <!-- 초기화 -->
             <button 
             v-if="useResetBtn"
             type="button" 
-            :class="'mu-btn ' + ((wrapType == 'dialog') ? 'mu-btn-icon' : '')" 
+            :class="'mu-btn ' + ((wrapType === 'dialog') ? 'mu-btn-icon' : '')" 
             @click="reset()">초기화</button>
 
             <!-- 취소 -->
             <button 
             v-if="useCancelBtn"
             type="button" 
-            :class="'mu-btn ' + ((wrapType == 'dialog') ? 'mu-btn-icon' : 'fl')" 
+            :class="'mu-btn ' + ((wrapType === 'dialog') ? 'mu-btn-icon' : 'fl')" 
             mu-dialog-close="alarm.item-config"
             @click="cancel()">{{cancelBtn}}</button>
             <!-- 적용 -->
             <button 
             v-if="useSaveBtn"
             type="button"
-            :class="'mu-btn ' + ((wrapType == 'dialog') ? 'mu-btn-icon' : ' fr')" 
+            :class="'mu-btn ' + ((wrapType === 'dialog') ? 'mu-btn-icon' : ' fr')" 
             @click="confirm()">{{okBtn}}</button>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default {
       // TEST CODE
       // modal-footer height를 css로 지정하는 방법을 알지 못해서 수동으로 지정
       this.wrapType = componentObj.wrapType;
-      if (this.wrapType == 'dialog') {
+      if (this.wrapType === 'dialog') {
         this.modalBodyClass = 'mu-alert etc'
       } else {
         this.modalBodyClass = 'modal-body'
@@ -125,11 +125,11 @@ export default {
       this.cancelBtn = componentObj.btnName.cancel
 
       // 사용하지 않는 경우만 값을 보냄.
-      this.useSaveBtn = componentObj.btnName.useSaveBtn == undefined ? true : componentObj.btnName.useSaveBtn
-      this.useCancelBtn = componentObj.btnName.useCancelBtn == undefined ? true : componentObj.btnName.useCancelBtn
+      this.useSaveBtn = componentObj.btnName.useSaveBtn === undefined ? true : componentObj.btnName.useSaveBtn
+      this.useCancelBtn = componentObj.btnName.useCancelBtn === undefined ? true : componentObj.btnName.useCancelBtn
 
       // 사용하는 경우만 값을 보냄
-      this.useResetBtn = componentObj.btnName.useResetBtn == undefined ? false : componentObj.btnName.useResetBtn
+      this.useResetBtn = componentObj.btnName.useResetBtn === undefined ? false : componentObj.btnName.useResetBtn
 
       this.modalSubComponent = componentObj.component;
 
@@ -145,7 +145,7 @@ export default {
     confirm() {
       // 호출하고, eventbus에서 해제해준다.
       const result = this.$refs.modalSub.confirm();
-      if (result == true) {
+      if (result === true) {
         this.modalOpen = false
         this.$modal.hide(modalId);
       }

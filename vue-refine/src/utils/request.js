@@ -3,7 +3,6 @@ import store from '@/store'
 import router from '@/router/routes.js'
 
 const service = axios.create({
-  // baseURL: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
   baseURL: `http://localhost:${process.env.VUE_APP_PORT}`,
   timeout: 600000,
   withCredentials: true
@@ -20,10 +19,10 @@ const removePending = (config, f) => {
     const baseUrl = config.baseURL
     const methodUrl = (config.url.indexOf(baseUrl) > -1) ? config.url.replace(baseUrl, '') : config.url
     let params = ""
-    if (config.method == 'get') {
+    if (config.method === 'get') {
       params = JSON.stringify(config.params)
     } else {
-      if (typeof config.data == 'object') {
+      if (typeof config.data === 'object') {
         params = JSON.stringify(config.data);
       } else {
         params = JSON.stringify(JSON.parse(config.data));
@@ -60,9 +59,12 @@ service.interceptors.request.use(config => {
     config.params = null
   }
 
-  config.cancelToken = new CancelToken((c) => {
-    removePending(config, c)
-  })
+  config.headers['Access-Control-Allow-Origin'] = '*'
+  config.headers['Access-Control-Allow-Headers'] = '*'
+
+  // config.cancelToken = new CancelToken((c) => {
+  //   removePending(config, c)
+  // })
 
   return config
 }, error => {
@@ -76,9 +78,7 @@ service.interceptors.response.use(
       // response를 전체적으로 수정해야 할 경우, 여기서 한다.
       // response.data 가, back-end에서 넘어오는 부분이고,
       // response.status 는 front-end에서 back-end 로 axios 호출할때의 상태값이다.
-      if (response.data.status == "true"
-        || response.data.status == true
-        || response.data.status == "200") {
+      if (response.data.result === "SUCCESS") {
         response.data.status = true
       } else {
         // back-end 의 error를 일괄 처리 하고 싶을 경우, 여기서 처리한다.
@@ -101,12 +101,12 @@ service.interceptors.response.use(
     //   const _r = router
     //   const vm = router.app
 
-    //   if (error.message.toLowerCase() == 'network error') {
+    //   if (error.message.toLowerCase() === 'network error') {
     //     // network error 발생 = backend 서버 다운
     //     _r.push({ name: 'error02' })
     //   } else {
     //     const resp = error.response.data
-    //     if (resp.error == 'Forbidden' && resp.message == 'Access Denied') {
+    //     if (resp.error === 'Forbidden' && resp.message === 'Access Denied') {
     //       // 표시되고 있는 modal을 닫는다.
     //       vm.EventBus.$emit('modalClose')
 

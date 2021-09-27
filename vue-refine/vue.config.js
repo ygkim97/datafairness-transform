@@ -6,9 +6,8 @@ module.exports = {
     port: process.env.VUE_APP_PORT,
     disableHostCheck: true,
     proxy: {
-      "^/api": {
-        // target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
-        target : 'http://localhost:3000',
+      "^/function": {
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
         changeOrigin: true,
         logLevel: "debug",
         pathRewrite: { "^/api/": "/api/" }

@@ -1,15 +1,16 @@
 import request from '@/utils/request'
 
-export function api_getRuleInfo(tableName) {
+export function api_getRuleInfo(params) {
     return request({
-        url: `/api/get/${tableName}`,
-        method: 'get'
+        url: `/function/data-dqi-rule/`,
+        method: 'post',
+        params: params,
     })
 }
 
 export function api_deleteRule(params) {
     return request({
-        url: '/api/delete',
+        url: '/function/data-dqi-rule/',
         method: 'delete',
         params : params,
     })

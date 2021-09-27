@@ -46,6 +46,9 @@ export default {
     props: ['ruleKey'],
 
     computed : {
+        allRuleObj() {
+            return this.$store.getters.ruleJson
+        },
         ruleObj() {
             return this.$store.getters.ruleJson[this.ruleKey]
         },
@@ -88,11 +91,27 @@ export default {
         },
         createGrid() {
             let columns = [];
+            let ruleParam = null;
+            let editorParam = null;
+            
             Object.keys(this.ruleSample.dataSet).forEach((rs, ri) => {
+                ruleParam = this.ruleSample.dataSet[rs];
+
+                if (ruleParam.editorUse) {
+                    editorParam.type = ruleParam.type;
+                    if (editorParam.type === 'select')  {
+                        
+                        // editorParam.dependOn.split('.').pop()
+                        // editorParam.dependOn.split('.').pop();
+                        // editorParam.dependOn.split('.').shift();
+                    }
+                }
+
                 columns.push({
                     header: rs,
                     name: rs,
-                    align : 'center',
+                    align : Object.prototype.hasOwnProperty.call(ruleParam, 'align') ? ruleParam.align : 'center',
+                    width : Object.prototype.hasOwnProperty.call(ruleParam, 'width') ? ruleParam.width : '',
                     sortable : false,
                     editor : {
                         type : 'text'

@@ -26,10 +26,16 @@ const state = {
             columnKey: 'name',
             dataSet: {
                 name: {
+                    // column option
+                    align : 'left',
+                    width : 300,
+
+                    // editor option
                     editorUse: true,
                     type: 'text',
                 },
                 expression: {
+                    align: 'left',
                     editorUse: true,
                     type: 'text',
                 }
@@ -39,10 +45,13 @@ const state = {
             columnKey: 'name',
             dataSet: {
                 name: {
+                    align: 'left',
+                    width: 300,
                     editorUse: true,
                     type: 'text',
                 },
                 regex_name: {
+                    align: 'left',
                     editorUse: true,
                     type: 'select',
                     dependOn : 'regex.name',
@@ -150,13 +159,19 @@ const actions = {
     // },
     async getJsonRules({commit}, tableName) {
         try {
-            // API 서버에서 Rule Data를 호출해서 nuxt에 저장한다.
-            const response = await api_getRuleInfo(tableName);
+            // tableName은 고정이기 때문에 param에 추가하지 않는다.
+            // API 서버에서 Rule Data를 호출해서 vuex에 저장한다.
+            const response = await api_getRuleInfo({
+                "action": "display"
+            });
             
             // localStorage에 저장하고 있는 데이터를 리셋해준다.
             localStorage.vuex = null;
-            commit("setRuleJson", response);
-            return response;
+            console.log(response)
+            if (response !== undefined && Object.prototype.hasOwnProperty.call(response, 'rules')) {
+                commit("setRuleJson", response.rules);
+            }
+            // return response;
         } catch(error) {
             console.log(error);
         }
