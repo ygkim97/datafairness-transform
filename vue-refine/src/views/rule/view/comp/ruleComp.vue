@@ -43,12 +43,9 @@ import vBtn from './rowBtn.vue'
 export default {
     name : 'ruleComp',
 
-    props: ['ruleKey'],
+    props: ['ruleKey', 'selectList', 'allRuleObj'],
 
     computed : {
-        allRuleObj() {
-            return this.$store.getters.ruleJson
-        },
         ruleObj() {
             return this.$store.getters.ruleJson[this.ruleKey]
         },
@@ -64,7 +61,7 @@ export default {
     },
 
     watch : {
-        ruleObj(obj) {
+        ruleObj(obj) {            
             // ruleObj가 업데이트 되면, grid를 리셋한다.
             this.$refs[`tuiGrid_${this.ruleKey}`].invoke('resetData', obj);
         }
@@ -87,23 +84,25 @@ export default {
 
     methods : {
         addTemp() {
-            console.log(this.ruleDataSet)
+            console.log(this.ruleObj)
         },
         createGrid() {
             let columns = [];
             let ruleParam = null;
             let editorParam = null;
-            
+
             Object.keys(this.ruleSample.dataSet).forEach((rs, ri) => {
                 ruleParam = this.ruleSample.dataSet[rs];
+                
 
                 if (ruleParam.editorUse) {
+                    editorParam = {};
                     editorParam.type = ruleParam.type;
-                    if (editorParam.type === 'select')  {
-                        
-                        // editorParam.dependOn.split('.').pop()
-                        // editorParam.dependOn.split('.').pop();
-                        // editorParam.dependOn.split('.').shift();
+
+                    if (editorParam.type !== 'text')  {
+                        editorParam.options = {
+                            listItems : this.selectList[ruleParam.dependOn.split('.').shift()][ruleParam.dependOn.split('.').pop()]
+                        }                        
                     }
                 }
 
@@ -113,9 +112,7 @@ export default {
                     align : Object.prototype.hasOwnProperty.call(ruleParam, 'align') ? ruleParam.align : 'center',
                     width : Object.prototype.hasOwnProperty.call(ruleParam, 'width') ? ruleParam.width : '',
                     sortable : false,
-                    editor : {
-                        type : 'text'
-                    }
+                    editor : editorParam
                 });
             });
 

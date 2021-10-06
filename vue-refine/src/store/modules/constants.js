@@ -1,6 +1,12 @@
 const state = {
     constants: Object.freeze({
-        compList: ['regex', 'regex_set', 'bin_regex_set', 'unique_regex_set', 'range'],
+        compList: [
+            'regex', 
+            'regex_set', 
+            'bin_regex_set', 
+            'unique_regex_set', 
+            'range'
+        ],
         actions : {
             CREATE : 'create',
             DELETE : 'delete',

@@ -53,7 +53,7 @@ const state = {
                 regex_name: {
                     align: 'left',
                     editorUse: true,
-                    type: 'select',
+                    type: 'checkbox',
                     dependOn : 'regex.name',
                 }
             }
@@ -62,7 +62,7 @@ const state = {
             columnKey: 'set_name',
             dataSet: {
                 set_name: {
-                    editorUse: true,
+                    editorUse: false,
                     type: 'select',
                     dependOn: 'regex.name', // select 구성 기준값
                 }
@@ -72,7 +72,7 @@ const state = {
             columnKey: 'set_name',
             dataSet: {
                 set_name: {
-                    editorUse: true,
+                    editorUse: false,
                     type: 'select',
                     dependOn: 'regex.name', // select 구성 기준값
                 }
@@ -82,15 +82,15 @@ const state = {
             columnKey: 'name',
             dataSet: {
                 name: {
-                    editorUse: true,
+                    editorUse: false,
                     type: 'text',
                 },
                 min: {
-                    editorUse: true,
+                    editorUse: false,
                     type: 'number',
                 },
                 max: {
-                    editorUse: true,
+                    editorUse: false,
                     type: 'number',
                 }
             }
@@ -167,7 +167,6 @@ const actions = {
             
             // localStorage에 저장하고 있는 데이터를 리셋해준다.
             localStorage.vuex = null;
-            console.log(response)
             if (response !== undefined && Object.prototype.hasOwnProperty.call(response, 'rules')) {
                 commit("setRuleJson", response.rules);
             }
