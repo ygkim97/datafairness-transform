@@ -1,0 +1,212 @@
+<template>
+    <div>
+        <v-chip
+        class="ma-2 text-h5"
+        label
+        outlined
+        >{{ruleKey}}</v-chip>
+
+        <div class="grid-wrap">
+            <div class="float-right">
+                <div class="float-left grid-button">
+                    <component
+                        :is="vBtn"
+                        :eventType="'add'"
+                        :iconName="'mdi-plus-circle'"
+                        @addRow="addRow"
+                    ></component>
+                </div>
+            </div>
+
+            <tui-grid
+                :id="`tuiGrid_` + ruleKey"
+                :ref="`tuiGrid_` + ruleKey"
+                :data="ruleObj"
+                :columns="gridProps.columns"
+                :options="gridProps.options"
+                :theme="gridProps.theme"
+            ></tui-grid>                
+        </div>
+    </div>
+</template>
+
+<script>
+import vBtn from './rowBtn.vue'
+
+export default {
+    name : 'ruleComp',
+
+    props: ['ruleKey', 'selectList', 'allRuleObj'],
+
+    computed : {
+        ruleObj() {
+            return this.$store.getters.ruleJson[this.ruleKey]
+        },
+        ruleSample() {
+            return this.$store.getters.ruleSample[this.ruleKey]
+        },
+        allRuleSample() {
+            return this.$store.getters.ruleSample
+        },
+        ruleDataSet() {
+            return this.$store.getters.ruleDataSet[this.ruleKey]
+        },
+        gridInfo() {
+            return this.$store.getters.GRID
+        }
+    },
+
+    watch : {
+        ruleObj(obj) {            
+            // ruleObj가 업데이트 되면, grid를 리셋한다.
+            this.$refs[`tuiGrid_${this.ruleKey}`].invoke('resetData', obj);
+        },
+        selectList() {
+            // selectList 데이터가 변경되면 editor의 업데이터를 위해서 column을 갱신해준다.
+            this.setColumn();
+        }
+    },
+    async created() {
+        this.setColumn();
+        await this.createGrid()
+        await this.gridAfterChange();
+    },
+
+    mounted() {
+    },
+
+    data: () => ({
+        btnElement : null,
+        vBtn : vBtn,
+        gridProps : {},
+        gridData : [],
+        gridColumns : []
+    }),
+
+    methods : {
+        setColumn() {
+            let ruleParam = null;
+            let editorParam = null;
+
+            const me = this;
+
+            Object.keys(this.ruleSample.dataSet).forEach((rs) => {
+                ruleParam = this.ruleSample.dataSet[rs];
+
+                if (ruleParam.editorUse) {
+                    editorParam = {};
+                    editorParam.type = ruleParam.type;
+
+                    if (editorParam.type !== 'text')  {
+                        editorParam.options = {
+                            listItems : me.selectList[ruleParam.dependOn.split('.').shift()][ruleParam.dependOn.split('.').pop()]
+                        }
+                    }
+                }
+
+                me.gridColumns.push({
+                    header: rs,
+                    name: rs,
+                    align : Object.prototype.hasOwnProperty.call(ruleParam, 'align') ? ruleParam.align : 'center',
+                    width : Object.prototype.hasOwnProperty.call(ruleParam, 'width') ? ruleParam.width : '',
+                    sortable : false,
+                    editor : editorParam
+                });
+            });
+
+            // add delete button column
+            me.gridColumns.push({
+                header: "",
+                name: "",
+                align: "center",
+                width: 40, // pixel
+                renderer: {
+                    type: this.gridInfo.renderer.buttonColumn,
+                    options: {
+                        btnText: "view",
+                        vueIns: this,
+                        iClass : 'fas fa-minus-circle',
+                        keyColumnName : this.ruleSample.columnKey
+                    }
+                }
+            });
+        },
+        createGrid() {
+            this.gridProps = {
+                theme : this.gridInfo.theme,
+                options : {
+                    draggableRow: true,
+                    scrollX : false,
+                    scrollY : false
+                },
+                columns: this.gridColumns
+            }
+        },
+        addRow() {
+            this.gridGetDependOn('regex.name');
+            // this.$store.commit('addEmptyRow', {key : this.ruleKey})
+        },
+        deleteRow(keyParam) {
+            this.$store.dispatch('deleteRow', {key : this.ruleKey, keyParam : keyParam});
+        },
+        buttonColumnClick(attr) {
+            const keyParam = JSON.parse(attr.getAttribute('params'));
+            this.deleteRow(keyParam);
+        },
+        gridAfterChange() {
+            const vm = this;
+            this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on('afterChange', (ev) => {
+                const newRow = ev.changes[0];
+                // 변경한 내용을 vuex에 반영해준다.
+                vm.$store.dispatch('changeRow', {
+                    key: vm.ruleKey,
+                    columnName: newRow.columnName,
+                    rowIdx: newRow.rowKey,
+                    value: newRow.value,
+                });
+
+                console.log(newRow);
+                vm.updateDependOnData({
+                    dependOnVal : `${vm.ruleKey}.${newRow.columnName}`,
+                    previousVal : newRow.previous.value,
+                    newVal : newRow.value
+                });
+                // 만약 연결되어있는 값이 있을 경우, 해당 값들도 변경해주어야 한다.
+                // sampleRule의 dependOn 값에 따라 처리한다.
+                // 일단 dependOn의 값들이 있는지 확인한다.
+            })
+        },
+
+        updateDependOnData({dependOnVal, previousVal, newVal}) {
+            // get dependOn data
+            let rs = null;
+            let dataSet = null;
+            let ds = null;
+            let results = [];
+
+            for (rs in this.allRuleSample) {
+                dataSet = this.allRuleSample[rs].dataSet;
+                for (ds in dataSet) {
+                    if (Object.prototype.hasOwnProperty.call(dataSet[ds], 'dependOn')) {
+                        if (dataSet[ds].dependOn === dependOnVal) {
+                            results.push({key : rs, columnName : ds});
+                        }
+                    }
+                }
+            }
+
+            // set new value data
+            const vm = this;
+            results.forEach((r) => {
+                vm.$store.dispatch('changeRows', {
+                    key: r.key,
+                    columnName: r.columnName,
+                    previousValue: previousVal,
+                    newVal : newVal
+                });
+            })
+        }
+
+    }
+}
+</script>

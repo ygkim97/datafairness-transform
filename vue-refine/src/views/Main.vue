@@ -1,0 +1,59 @@
+<template> 
+  <div>
+    <!-- header -->
+    <header-bar />
+    
+    <!-- content -->
+    <v-main>
+      <v-container>
+        <rule-buttons></rule-buttons>
+        
+        <v-divider></v-divider>
+
+        <view-panel></view-panel>
+        <!-- <router-view></router-view> -->
+      </v-container>
+    </v-main>
+  </div>
+</template>
+
+<script>
+export default {    
+  name: 'Main',
+
+  computed : {
+    tableName() {
+      return this.$store.getters.tableName;
+    }
+  },
+  
+  components : {
+    HeaderBar: () => import('@/views/layout/HeaderBar.vue'),
+    RuleButtons: () => import('@/views/layout/RuleButtons.vue'),
+    ViewPanel: () => import('@/views/rule/view/ViewRule.vue'),
+  },
+
+  created() {
+    // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
+    this.checkTableName();
+    this.getRuleData();
+  },
+
+  methods : {
+    checkTableName() {
+      // router에서 값을 가져 오거나, 이전에 조회한 값을 가져온다
+      const tableName = this.$route.params.tableName || this.tableName;
+      if (tableName === undefined || tableName === null || tableName === '') {
+        // table 명이 존재하지 않을 경우, error 페이지로 redirect한다.
+        this.$router.push({name: 'error'})
+      } else {
+        // table명이 존재 할 경우, vuex에 저장한다.
+        this.$store.dispatch('setTableName', tableName);
+      }
+    },    
+    getRuleData() {
+      this.$store.dispatch("getJsonRules", this.tableName);        
+    }
+  }
+}
+</script>

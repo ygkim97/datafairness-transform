@@ -1,0 +1,35 @@
+header {
+    z-index: 16 !important;
+}
+
+
+.nav {
+    padding-top: 11px;
+}
+.display-flex {
+    display: flex;
+}
+.width-p-100 {
+    width : 100%;
+}
+
+.rule-buttons {
+    margin : 10px 0px;
+    height : 30px;
+    
+}
+.rule-buttons > div {
+    float : right;
+}
+.rule-buttons button {
+    float : left;
+    margin-right: 10px;
+}
+.rule_component_wrap {
+    margin : 10px;
+    padding : 20px;
+    border : 1px solid rgb(214, 214, 214);
+}
+.grid-button {
+    margin : 3px 15px;
+}
