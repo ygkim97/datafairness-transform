@@ -1,6 +1,7 @@
 // API function 
 import {
-    api_getRuleInfo
+    // api_getRuleInfo,
+    api_getRuleInfo_temp
 } from "@/apis/rules.js";
 
 // Data Type 정의
@@ -120,6 +121,12 @@ const mutations = {
     changeRow(state, param) {
         state.ruleJson[param.key][param.rowIdx][param.columnName] = param.value
     },
+    changeRows(state, param) {
+        // dependOn의 컬럼 값이 변경 되면, row의 값을 변경해준다.
+        state.ruleJson[param.key].forEach((obj) => {
+            console.log(obj)
+        })
+    },
 }
 const getters = {
     action: state => state.action,
@@ -132,7 +139,10 @@ const getters = {
     ruleDataSet: state => {
         return JSON.parse(JSON.stringify(state.ruleDataSet));
     },
-    
+    ruleParam: state => {
+        state.ruleJson.action = state.action;
+        return state.ruleJson;
+    }
 }
 // 비동기 처리
 const actions = {
@@ -140,37 +150,18 @@ const actions = {
         commit('setTableName', { tableName: tableName });
     },
     setAction({ commit }, action) {
-        // if (action === this.getters.CONSTANTS.actions.DISPLAY) {
-        //     console.log('DISPLAY');
-        // } else if (action === this.getters.CONSTANTS.actions.CREATE) {
-        //     console.log('CREATE');
-        //     this.setAction_Create({ commit });
-        // } else if (action === this.getters.CONSTANTS.actions.DELETE) {
-        //     console.log('DELETE')
-        //     this.setAction_Delete({ commit });
-        // } 
         commit('setAction', action);
     },
-    // setAction_Create() {
-
-    // },
-    // setAction_Delete() {
-
-    // },
     async getJsonRules({commit}, tableName) {
         try {
-            // tableName은 고정이기 때문에 param에 추가하지 않는다.
+            // action값을 Display로 설정해준다.
+            commit('setAction', this.getters.CONSTANTS.actions.DISPLAY);
             // API 서버에서 Rule Data를 호출해서 vuex에 저장한다.
-            const response = await api_getRuleInfo({
-                "action": "display"
-            });
-            
-            // localStorage에 저장하고 있는 데이터를 리셋해준다.
-            localStorage.vuex = null;
+            const response = await api_getRuleInfo_temp({tableName:tableName});
+
             if (response !== undefined && Object.prototype.hasOwnProperty.call(response, 'rules')) {
                 commit("setRuleJson", response.rules);
             }
-            // return response;
         } catch(error) {
             console.log(error);
         }
@@ -183,6 +174,9 @@ const actions = {
     },
     changeRow({ commit }, param) {
         commit('changeRow', param);
+    },
+    changeRows({ commit }, param) {
+        commit('changeRows', param);
     },
 }
 

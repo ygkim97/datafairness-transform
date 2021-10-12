@@ -25,10 +25,8 @@ export default class CheckboxColumn {
                 grid.uncheck(rowKey);
             }
         });
-        console.log('render')
 
         this.el = label;
-
         this.render(props);
     }
 
@@ -38,8 +36,6 @@ export default class CheckboxColumn {
 
     render(props) {
         const hiddenInput = this.el.querySelector('.hidden-input');
-        const checked = Boolean(props.value);
-
-        hiddenInput.checked = checked;
+        hiddenInput.checked = Boolean(props.value);
     }
 }

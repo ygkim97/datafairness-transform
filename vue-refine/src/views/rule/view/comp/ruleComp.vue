@@ -6,14 +6,7 @@
         outlined
         >{{ruleKey}}</v-chip>
 
-        <div class="grid-wrap">                    
-                    <v-btn
-                        elevation="1"
-                        icon
-                        x-small
-                        @click="addTemp()">
-                        <v-icon>mdi-plus-circle</v-icon>
-                    </v-btn>
+        <div class="grid-wrap">
             <div class="float-right">
                 <div class="float-left grid-button">
                     <component
@@ -52,6 +45,9 @@ export default {
         ruleSample() {
             return this.$store.getters.ruleSample[this.ruleKey]
         },
+        allRuleSample() {
+            return this.$store.getters.ruleSample
+        },
         ruleDataSet() {
             return this.$store.getters.ruleDataSet[this.ruleKey]
         },
@@ -64,9 +60,14 @@ export default {
         ruleObj(obj) {            
             // ruleObj가 업데이트 되면, grid를 리셋한다.
             this.$refs[`tuiGrid_${this.ruleKey}`].invoke('resetData', obj);
+        },
+        selectList() {
+            // selectList 데이터가 변경되면 editor의 업데이터를 위해서 column을 갱신해준다.
+            this.setColumn();
         }
     },
     async created() {
+        this.setColumn();
         await this.createGrid()
         await this.gridAfterChange();
     },
@@ -79,21 +80,18 @@ export default {
         vBtn : vBtn,
         gridProps : {},
         gridData : [],
-        testObj : []
-    }),                         
+        gridColumns : []
+    }),
 
     methods : {
-        addTemp() {
-            console.log(this.ruleObj)
-        },
-        createGrid() {
-            let columns = [];
+        setColumn() {
             let ruleParam = null;
             let editorParam = null;
 
-            Object.keys(this.ruleSample.dataSet).forEach((rs, ri) => {
+            const me = this;
+
+            Object.keys(this.ruleSample.dataSet).forEach((rs) => {
                 ruleParam = this.ruleSample.dataSet[rs];
-                
 
                 if (ruleParam.editorUse) {
                     editorParam = {};
@@ -101,12 +99,12 @@ export default {
 
                     if (editorParam.type !== 'text')  {
                         editorParam.options = {
-                            listItems : this.selectList[ruleParam.dependOn.split('.').shift()][ruleParam.dependOn.split('.').pop()]
-                        }                        
+                            listItems : me.selectList[ruleParam.dependOn.split('.').shift()][ruleParam.dependOn.split('.').pop()]
+                        }
                     }
                 }
 
-                columns.push({
+                me.gridColumns.push({
                     header: rs,
                     name: rs,
                     align : Object.prototype.hasOwnProperty.call(ruleParam, 'align') ? ruleParam.align : 'center',
@@ -117,7 +115,7 @@ export default {
             });
 
             // add delete button column
-            columns.push({
+            me.gridColumns.push({
                 header: "",
                 name: "",
                 align: "center",
@@ -132,7 +130,8 @@ export default {
                     }
                 }
             });
-          
+        },
+        createGrid() {
             this.gridProps = {
                 theme : this.gridInfo.theme,
                 options : {
@@ -140,11 +139,12 @@ export default {
                     scrollX : false,
                     scrollY : false
                 },
-                columns: columns
+                columns: this.gridColumns
             }
         },
         addRow() {
-            this.$store.commit('addEmptyRow', {key : this.ruleKey})
+            this.gridGetDependOn('regex.name');
+            // this.$store.commit('addEmptyRow', {key : this.ruleKey})
         },
         deleteRow(keyParam) {
             this.$store.dispatch('deleteRow', {key : this.ruleKey, keyParam : keyParam});
@@ -159,13 +159,54 @@ export default {
                 const newRow = ev.changes[0];
                 // 변경한 내용을 vuex에 반영해준다.
                 vm.$store.dispatch('changeRow', {
-                    key : vm.ruleKey,
-                    columnName : newRow.columnName,
-                    rowIdx : newRow.rowKey,
-                    value : newRow.value
+                    key: vm.ruleKey,
+                    columnName: newRow.columnName,
+                    rowIdx: newRow.rowKey,
+                    value: newRow.value,
                 });
-            })            
+
+                console.log(newRow);
+                vm.updateDependOnData({
+                    dependOnVal : `${vm.ruleKey}.${newRow.columnName}`,
+                    previousVal : newRow.previous.value,
+                    newVal : newRow.value
+                });
+                // 만약 연결되어있는 값이 있을 경우, 해당 값들도 변경해주어야 한다.
+                // sampleRule의 dependOn 값에 따라 처리한다.
+                // 일단 dependOn의 값들이 있는지 확인한다.
+            })
+        },
+
+        updateDependOnData({dependOnVal, previousVal, newVal}) {
+            // get dependOn data
+            let rs = null;
+            let dataSet = null;
+            let ds = null;
+            let results = [];
+
+            for (rs in this.allRuleSample) {
+                dataSet = this.allRuleSample[rs].dataSet;
+                for (ds in dataSet) {
+                    if (Object.prototype.hasOwnProperty.call(dataSet[ds], 'dependOn')) {
+                        if (dataSet[ds].dependOn === dependOnVal) {
+                            results.push({key : rs, columnName : ds});
+                        }
+                    }
+                }
+            }
+
+            // set new value data
+            const vm = this;
+            results.forEach((r) => {
+                vm.$store.dispatch('changeRows', {
+                    key: r.key,
+                    columnName: r.columnName,
+                    previousValue: previousVal,
+                    newVal : newVal
+                });
+            })
         }
+
     }
 }
 </script>

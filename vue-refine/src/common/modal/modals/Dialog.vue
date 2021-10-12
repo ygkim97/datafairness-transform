@@ -93,15 +93,11 @@ export default {
   },
   methods: {
     beforeOpened(event) {
-      // window.addEventListener('keyup', this.onKeyUp)
-
       this.params = event.params || {}
       this.$emit('before-opened', event)
     },
 
     beforeClosed(event) {
-      // window.removeEventListener('keyup', this.onKeyUp)
-
       this.params = {}
       this.$emit('before-closed', event)
     },
@@ -162,17 +158,5 @@ export default {
   color: inherit;
   font: inherit;
   outline: none;
-}
-
-.vue-dialog-button:hover {
-  background: #f9f9f9;
-}
-
-.vue-dialog-button:active {
-  background: #f3f3f3;
-}
-
-.vue-dialog-button:not(:first-of-type) {
-  border-left: 1px solid #eee;
 }
 </style>

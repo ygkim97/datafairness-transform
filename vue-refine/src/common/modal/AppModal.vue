@@ -1,9 +1,9 @@
 <template>
     <div>
         <!-- Modals -->
-        <modal-test/>
+        <modal-test></modal-test>
 
-        <customized-dialog/>
+        <customized-dialog></customized-dialog>
     </div>
 </template>
 
@@ -37,7 +37,7 @@ export default {
          */
         modalAlert(obj) {
             this.$modal.show('dialog', {
-                markType : obj.markType==undefined?'etc':obj.markType, // 'success, etc, error'
+                markType : obj.markType === undefined?'etc':obj.markType, // 'success, etc, error'
                 title: obj.title,
                 text: obj.text,
                 buttons : [{
@@ -45,7 +45,7 @@ export default {
                         default: false,
                         handler: () => {                            
                             this.$modal.hide('dialog')
-                            if (Object.prototype.hasOwnProperty.call(obj, 'okRes') && obj.okRes != undefined) {
+                            if (Object.prototype.hasOwnProperty.call(obj, 'okRes') && obj.okRes !== undefined) {
                                 obj.okRes()
                             }
                         }
@@ -64,7 +64,7 @@ export default {
          * }
          */
             this.$modal.show('dialog', {
-                markType : obj.markType==undefined?'etc':obj.markType, // 'success, etc, error'
+                markType : obj.markType === undefined?'etc':obj.markType, // 'success, etc, error'
                 title: obj.title,
                 text: obj.text,
                 buttons: [{
@@ -72,7 +72,7 @@ export default {
                     default: false,
                     handler: () => {
                         this.$modal.hide('dialog')
-                        if (Object.prototype.hasOwnProperty.call(obj, 'okRes') && obj.okRes != undefined) {
+                        if (Object.prototype.hasOwnProperty.call(obj, 'okRes') && obj.okRes !== undefined) {
                             obj.okRes()
                         }
                     }
@@ -82,7 +82,7 @@ export default {
                     default: false,
                     handler: () => {
                         this.$modal.hide('dialog')
-                        if (Object.prototype.hasOwnProperty.call(obj, 'cancelRes') && obj.cancelRes != undefined) {
+                        if (Object.prototype.hasOwnProperty.call(obj, 'cancelRes') && obj.cancelRes !== undefined) {
                             obj.cancelRes()
                         }
                     }

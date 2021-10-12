@@ -25,10 +25,6 @@ export default class ButtonColumn {
         el.value = props.grid.getRow(props.rowKey).id;
         
         el.setAttribute('style', "min-width : 5px !important;")
-        
-        // if (Object.prototype.hasOwnProperty.call(options, 'params')) {
-        //     el.setAttribute('params', JSON.stringify(options.params));
-        // }
 
         el.addEventListener('click', (ev) => {
             vueIns.buttonColumnClick(ev.target);

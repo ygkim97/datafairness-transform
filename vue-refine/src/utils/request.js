@@ -1,8 +1,7 @@
 import axios from 'axios'
-import store from '@/store'
-import router from '@/router/routes.js'
 
 const service = axios.create({
+  // baseURL을 localhost로 설정하여, proxy 설정을 맞춘다.
   baseURL: `http://localhost:${process.env.VUE_APP_PORT}`,
   timeout: 600000,
   withCredentials: true
@@ -10,15 +9,14 @@ const service = axios.create({
 
 // abort duplicate request
 const pending = {}
-const CancelToken = axios.CancelToken
 const removePending = (config, f) => {
-  if (config != undefined) {
+  if (config !== undefined) {
     // make sure the url is same for both request and response
     // stringify whole RESTful request with URL params
 
     const baseUrl = config.baseURL
     const methodUrl = (config.url.indexOf(baseUrl) > -1) ? config.url.replace(baseUrl, '') : config.url
-    let params = ""
+    let params = null
     if (config.method === 'get') {
       params = JSON.stringify(config.params)
     } else {
@@ -54,17 +52,13 @@ service.clear = () => {
 
 service.interceptors.request.use(config => {
   // post는 params가 아니고, data를 사용한다.
-  if (config.method != 'get') {
+  if (config.method !== 'get') {
     config.data = config.params;
     config.params = null
   }
 
   config.headers['Access-Control-Allow-Origin'] = '*'
   config.headers['Access-Control-Allow-Headers'] = '*'
-
-  // config.cancelToken = new CancelToken((c) => {
-  //   removePending(config, c)
-  // })
 
   return config
 }, error => {
@@ -78,15 +72,10 @@ service.interceptors.response.use(
       // response를 전체적으로 수정해야 할 경우, 여기서 한다.
       // response.data 가, back-end에서 넘어오는 부분이고,
       // response.status 는 front-end에서 back-end 로 axios 호출할때의 상태값이다.
-      if (response.data.result === "SUCCESS") {
-        response.data.status = true
-      } else {
-        // back-end 의 error를 일괄 처리 하고 싶을 경우, 여기서 처리한다.
-        response.data.status = false
-      }
+      response.data.status = response.data.result === "SUCCESS";
 
       // back-end와의 통신중, 발생하는 error는 여기서 해결한다.
-      if (response.status != 200) {
+      if (response.status !== 200) {
         throw new Error("error");
       }
 
@@ -94,41 +83,7 @@ service.interceptors.response.use(
       return response.data
   },
   error => {
-    console.log(error);
     removePending(error.config)
-
-    // if (!axios.isCancel(error)) {
-    //   const _r = router
-    //   const vm = router.app
-
-    //   if (error.message.toLowerCase() === 'network error') {
-    //     // network error 발생 = backend 서버 다운
-    //     _r.push({ name: 'error02' })
-    //   } else {
-    //     const resp = error.response.data
-    //     if (resp.error === 'Forbidden' && resp.message === 'Access Denied') {
-    //       // 표시되고 있는 modal을 닫는다.
-    //       vm.EventBus.$emit('modalClose')
-
-    //       // access Denied > login 메시지로 팅구기
-    //       vm.EventBus.$emit('modalAlert', {
-    //         title: 'Information',
-    //         text: '로그아웃되셨습니다. 로그인 페이지로 이동합니다.',
-    //         okTitle: '확인',
-    //         okRes: function () {
-    //           vm.$store.dispatch('logout')
-    //           _r.push({ name: 'login' })
-    //         }
-    //       });
-    //     } else {
-    //       console.log('err' + error)
-    //       return Promise.reject(error)
-    //     }
-    //   }
-    // } else {
-    //   // return empty object for aborted request
-    //   return Promise.resolve({})
-    // }
   })
 
 export default service

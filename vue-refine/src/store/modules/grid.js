@@ -1,5 +1,4 @@
 import CheckboxRenderer from '@/common/grid/renderer/CheckboxColumn.js'
-import DraggableRenderer from '@/common/grid/renderer/DraggableRenderer.js'
 
 import ButtonColumn from '@/common/grid/renderer/ButtonColumn.js'
 
@@ -48,8 +47,7 @@ const state = {
     },    
     renderer: {
       buttonColumn: ButtonColumn,
-      checkboxRenderer: CheckboxRenderer,
-      draggableRenderer: DraggableRenderer
+      checkboxRenderer: CheckboxRenderer
     }
   })
 };
