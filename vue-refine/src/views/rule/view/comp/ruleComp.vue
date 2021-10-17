@@ -57,13 +57,9 @@ export default {
     },
 
     watch : {
-        ruleObj(obj) {            
+        ruleObj(obj) {
             // ruleObj가 업데이트 되면, grid를 리셋한다.
             this.$refs[`tuiGrid_${this.ruleKey}`].invoke('resetData', obj);
-        },
-        selectList() {
-            // selectList 데이터가 변경되면 editor의 업데이터를 위해서 column을 갱신해준다.
-            this.setColumn();
         }
     },
     async created() {
@@ -143,8 +139,8 @@ export default {
             }
         },
         addRow() {
-            this.gridGetDependOn('regex.name');
-            // this.$store.commit('addEmptyRow', {key : this.ruleKey})
+            // this.gridGetDependOn('regex.name');
+            this.$store.commit('addEmptyRow', {key : this.ruleKey})
         },
         deleteRow(keyParam) {
             this.$store.dispatch('deleteRow', {key : this.ruleKey, keyParam : keyParam});
@@ -165,10 +161,9 @@ export default {
                     value: newRow.value,
                 });
 
-                console.log(newRow);
                 vm.updateDependOnData({
                     dependOnVal : `${vm.ruleKey}.${newRow.columnName}`,
-                    previousVal : newRow.previous.value,
+                    previousVal : newRow.prevValue,
                     newVal : newRow.value
                 });
                 // 만약 연결되어있는 값이 있을 경우, 해당 값들도 변경해주어야 한다.

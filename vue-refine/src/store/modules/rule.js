@@ -1,13 +1,13 @@
 // API function 
 import {
-    // api_getRuleInfo,
-    api_getRuleInfo_temp
+    api_dataDqiRule, api_dataDqiRule_temp,
 } from "@/apis/rules.js";
 
 // Data Type 정의
 const state = {
     tableName: null,
     action : null,
+    selectList : {},
     ruleJson : {
         regex : [],
         regex_set: [],
@@ -127,7 +127,54 @@ const mutations = {
             console.log(obj)
         })
     },
+
+    // 각 rule grid component에서 사용하는 editor 컬럼값을 여기서 만들어준다.
+    async getJsonRules(state, param) {
+        let env = process.env.VUE_APP_REST_SERVER_URL;
+        try {
+            // action값을 Display로 설정해준다.
+            this.commit('setAction', this.getters.CONSTANTS.actions.DISPLAY);
+            // Local Test 서버와 테스트 서버 일때, 코드 분리
+            let response = null;
+
+            if (env.indexOf("localhost") < 0) {
+                response = await api_dataDqiRule();
+            } else {
+                response = await api_dataDqiRule_temp();
+            }
+            if (response !== undefined && Object.prototype.hasOwnProperty.call(response, 'rules')) {
+                this.commit("setRuleJson", response.rules);
+                this.commit("setSelectList");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    setSelectList(state, param) {
+        let newSelectList = {};
+
+        /**
+         * state의 ruleJson의 regex의 데이터를 가지고
+         *
+         */
+        let arr = [];
+        state.ruleJson.regex.forEach( r => {
+            arr.push({ text: r.name, value: r.name});
+        })
+        newSelectList.regex = {};
+        newSelectList.regex.name = arr;
+
+        arr = [];
+        state.ruleJson.regex_set.forEach( r => {
+            arr.push({ text: r.name, value: r.name});
+        })
+        newSelectList.regex_set = {};
+        newSelectList.regex_set.name = arr;
+
+        state.selectList = newSelectList;
+    }
 }
+
 const getters = {
     action: state => state.action,
     ruleJson: state => {
@@ -142,6 +189,9 @@ const getters = {
     ruleParam: state => {
         state.ruleJson.action = state.action;
         return state.ruleJson;
+    },
+    selectList : state => {
+        return state.selectList;
     }
 }
 // 비동기 처리
@@ -151,20 +201,6 @@ const actions = {
     },
     setAction({ commit }, action) {
         commit('setAction', action);
-    },
-    async getJsonRules({commit}, tableName) {
-        try {
-            // action값을 Display로 설정해준다.
-            commit('setAction', this.getters.CONSTANTS.actions.DISPLAY);
-            // API 서버에서 Rule Data를 호출해서 vuex에 저장한다.
-            const response = await api_getRuleInfo_temp({tableName:tableName});
-
-            if (response !== undefined && Object.prototype.hasOwnProperty.call(response, 'rules')) {
-                commit("setRuleJson", response.rules);
-            }
-        } catch(error) {
-            console.log(error);
-        }
     },
     addEmptyRow({ commit }, param) {
         commit('addEmptyRow', param);

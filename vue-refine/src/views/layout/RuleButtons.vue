@@ -25,8 +25,7 @@
 
 <script>
 import {
-    api_createRule,
-    api_deleteRule
+    api_dataDqiRule
 } from '@/apis/rules.js'
 
 export default {
@@ -49,7 +48,7 @@ export default {
 
         async saveRule() {
             // api를 호출 할때 param은 store에 저장되어있는 값을 사용하기 때문에, param를 전달하지 않음.
-            await api_createRule().then((response) => {
+            await api_dataDqiRule().then((response) => {
                 console.log(response);
             })
         },
@@ -70,7 +69,7 @@ export default {
         async removeRule() {
             const _vm = this;
 
-            await api_deleteRule({tableName : this.tableName}).then((response) => {
+            await api_dataDqiRule({tableName : this.tableName}).then((response) => {
                 // 테스트 backend API에서 return해주는 success값으로,
                 // 추후에 실 API에서 return 해주는 값으로 변경해서 처리해야함.
                 console.log(response)

@@ -52,7 +52,13 @@ export default {
       }
     },    
     getRuleData() {
-      this.$store.dispatch("getJsonRules", this.tableName);        
+      // Table Name 기반으로 Rule 정보를 조회한다.
+      // 동기로 조회
+      this.$store.commit('getJsonRules', {
+        tableName : this.tableName
+      })
+      // this.$store.dispatch("getJsonRules", this.tableName);
+
     }
   }
 }

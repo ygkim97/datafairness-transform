@@ -9,7 +9,7 @@
     </v-btn>
     <template v-for="(ruleKey) in compList">
       <div :key="ruleKey" class="rule_component_wrap">
-        <component 
+        <component
           v-bind:is="component"
           v-bind:ruleKey="ruleKey"
           v-bind:selectList="selectList"
@@ -36,21 +36,16 @@ export default {
       },
       tableName() {
         return this.$store.getters.tableName
+      },
+      selectList() {
+        return this.$store.getters.selectList;
       }
     },
 
     watch : {
-      ruleJson(obj) {
-        // 데이터가 변경되면
-        this.resetSelectList();
-
-        obj.regex.forEach( r => {
-          this.selectList.regex.name.push({ text: r.name, value: r.name});
-        })
-
-        obj.regex_set.forEach( r => {
-          this.selectList.regex.name.push({ text: r.name, value: r.name});
-        })
+      selectList: {
+        handle(obj) {
+        }, deep :true
       }
     },
 
@@ -64,30 +59,13 @@ export default {
       component : viewComp,
       // compList는 restAPI 서버의 각각의 rule 명과 맞춰서 작성해주어야함.      
       ruleData : {},
-      selectList : {
-        regex : {
-          name : []
-        },
-        regex_set : {
-          name : []
-        }
-      },
       dataChanged : false
     }),
 
     methods : {
-      resetSelectList() {
-        this.selectList = {
-          regex : {
-            name : []
-          },
-          regex_set : {
-            name : []
-          }
-        }
-      },
-      setDataChanged(isChanged) {
-        this.dataChanged = isChanged;
+      temp() {
+        console.log('here')
+
       }
     }
 }
