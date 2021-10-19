@@ -53,7 +53,7 @@ export default {
       } else {
         // table명이 존재 할 경우, vuex에 저장한다.
         this.$store.commit('setTableName', {
-          tableName : this.tableName
+          tableName : tableName
         })
       }
     },    

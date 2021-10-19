@@ -124,7 +124,8 @@ export default {
             ? ruleParam.width
             : "",
           sortable: false,
-          editor: editorParam
+          editor: editorParam,
+          // whiteSpace: 'pre-wrap'
         });
       });
 

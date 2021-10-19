@@ -47,9 +47,33 @@ export default {
         },
 
         async saveRule() {
+            console.log(JSON.stringify(this.$store.getters.ruleParam));
             // api를 호출 할때 param은 store에 저장되어있는 값을 사용하기 때문에, param를 전달하지 않음.
+
+            const _vm = this;
             await api_dataDqiRule().then((response) => {
                 console.log(response);
+
+                if (response.result === 'SUCCESS') {
+                    setTimeout( function() {
+                        _vm.EventBus.$emit("modalAlert", {
+                            title: "알림",
+                            text: "저장되었습니다.",
+                            okTitle: "확인",
+                            okRes : function() {
+                                // viewRule로 이동시키지 않고, vuex의 데이터를 삭제한 후에 화면을 다시 그리는 방안으로 해야함.
+                                // 같은 url을 router를 통해서 다시 실행하게 되면, 에러가 발생하기 때문.
+                                // _vm.$router.push({name: 'viewRule'})
+                            }
+                        });
+                    }, 500);
+                } else {
+                    _vm.EventBus.$emit("modalAlert", {
+                        title: "경고",
+                        text: "저장되지 않았습니다.. <br>잠시 후 다시 시도해 주세요.",
+                        okTitle: "확인"
+                    });
+                }
             })
         },
         remove() {
@@ -78,7 +102,7 @@ export default {
                     console.log('success')
                     setTimeout( function() {
                         _vm.EventBus.$emit("modalAlert", {
-                            title: "Alert",
+                            title: "알림",
                             text: "삭제되었습니다.",
                             okTitle: "확인",
                             okRes : function() {
@@ -90,8 +114,8 @@ export default {
                     }, 500);
                 } else {
                     _vm.EventBus.$emit("modalAlert", {
-                        title: "Alert",
-                        text: "삭제가 정상적으로 처리되지 않았습니다. <br>잠시 후 다시 시도해 주세요.",
+                        title: "경고",
+                        text: "삭제되지 않았습니다. <br>잠시 후 다시 시도해 주세요.",
                         okTitle: "확인"
                     });
                 }

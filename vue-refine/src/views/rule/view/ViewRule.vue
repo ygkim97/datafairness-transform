@@ -38,7 +38,7 @@ export default {
   watch: {
     selectList(obj) {
       // this.selectList = obj;
-      console.log(obj)
+      // console.log(obj)
     }
     // selectList: {
     //   handle(obj) {

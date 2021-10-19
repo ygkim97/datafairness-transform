@@ -29,7 +29,7 @@ const state = {
                 name: {
                     // column option
                     align : 'left',
-                    width : 300,
+                    width : 200,
 
                     // editor option
                     editorUse: true,
@@ -47,7 +47,7 @@ const state = {
             dataSet: {
                 name: {
                     align: 'left',
-                    width: 300,
+                    width: 200,
                     editorUse: true,
                     type: 'text',
                 },
@@ -203,7 +203,7 @@ const getters = {
 }
 // 비동기 처리
 const actions = {
-    setTableName({ commit }, tableName) {
+    setTableName({ commit }, {tableName}) {
         commit('setTableName', { tableName: tableName });
     },
     setAction({ commit }, action) {
