@@ -36,7 +36,11 @@ export default {
   created() {
     // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
     this.checkTableName();
-    this.getRuleData();
+
+    const me = this;
+    this.$nextTick(()=>{
+      me.getRuleData();
+    })
   },
 
   methods : {
@@ -48,7 +52,9 @@ export default {
         this.$router.push({name: 'error'})
       } else {
         // table명이 존재 할 경우, vuex에 저장한다.
-        this.$store.dispatch('setTableName', tableName);
+        this.$store.commit('setTableName', {
+          tableName : this.tableName
+        })
       }
     },    
     getRuleData() {
@@ -57,8 +63,6 @@ export default {
       this.$store.commit('getJsonRules', {
         tableName : this.tableName
       })
-      // this.$store.dispatch("getJsonRules", this.tableName);
-
     }
   }
 }

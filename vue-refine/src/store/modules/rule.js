@@ -7,7 +7,7 @@ import {
 const state = {
     tableName: null,
     action : null,
-    selectList : {},
+    selectList : null,
     ruleJson : {
         regex : [],
         regex_set: [],
@@ -116,9 +116,15 @@ const mutations = {
         state.ruleJson[param.key].push(emptyRow);
     },
     deleteRow(state, param) {
+        // 삭제하려는 rule이 다른 properties에 연결되어있는 경우, 값을 변경해주어야 함.
+        console.log(param);
+
         state.ruleJson[param.key].splice(Number(param.keyParam.rowIdx), 1)
     },
     changeRow(state, param) {
+        // 변경하려는 rule이 다른 properties에 연결되어있는 경우, 값을 변경해주어야 함.
+        console.log(param);
+
         state.ruleJson[param.key][param.rowIdx][param.columnName] = param.value
     },
     changeRows(state, param) {
@@ -142,6 +148,7 @@ const mutations = {
             } else {
                 response = await api_dataDqiRule_temp();
             }
+
             if (response !== undefined && Object.prototype.hasOwnProperty.call(response, 'rules')) {
                 this.commit("setRuleJson", response.rules);
                 this.commit("setSelectList");

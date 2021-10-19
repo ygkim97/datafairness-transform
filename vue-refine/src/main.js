@@ -8,7 +8,7 @@ import router from '@/router/routes.js'
 // vurtify (ui)
 import vuetify from './plugins/vuetify';
 
-// popup message module 
+// popup message module
 import VModal from 'vue-js-modal'
 Vue.use(VModal)
 import modals from '@/common/modal/AppModal.vue'
@@ -19,6 +19,9 @@ import { Grid } from '@/common/grid/index.js';
 // global components
 Vue.component('tui-grid', Grid);
 
+import { VueSimpleSpinner } from '@/common/loader/index.js'
+Vue.component('Spinner', VueSimpleSpinner);
+
 Vue.config.productionTip = false
 
 // 전역 event 처리 -- event bus 추가
@@ -28,5 +31,5 @@ export const vue = new Vue({
     router,
     store,
     vuetify,
-    render: h => h(App),
+    render: h => h(App)
 }).$mount('#app')
