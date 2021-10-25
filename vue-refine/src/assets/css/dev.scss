@@ -33,3 +33,31 @@ header {
 .grid-button {
     margin : 3px 15px;
 }
+
+/**
+    dialog
+ */
+.mu-dialog-background{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10;background-color:#000;opacity:.4;filter:alpha(opacity=40)}
+.mu-dialog{display:inline-block;position:absolute;z-index:11;min-width:320px;border:1px solid #c3c3c3;border-radius:2px;box-shadow: 1px 1px 3px 0 #41414165;background-color: rgb(255 255 255 / 61%);text-align:left}
+.mu-dialog-head{height:44px;line-height:44px;font-size:14px; border-bottom:1px solid #eaedf3;background-color:#f2f3f6;font-size: 20px;padding: 0px 20px;}
+.mu-dialog-head > *{line-height:44px}
+.mu-dialog-head:after{display:block;content:'';clear:both;visibility:hidden;height:0}
+.mu-dialog-head:active{cursor:move}
+.mu-dialog-head .title{float:left;margin-left:12px;font-family:dotum,'돋움';font-weight:bold;color:#000}
+.mu-dialog-head .mu-btn{float:right;margin-right:12px}
+.mu-dialog-head .mu-btn i:before{color:#98a9c4}
+.mu-dialog-head .mu-btn:hover i:before{color:#ff7c99}
+.mu-dialog-head .mu-btn:active i:before{color:#ff4971}
+.mu-dialog-body{overflow:auto;padding:20px}
+.mu-dialog-foot{padding:12px 20px;border-top:1px solid #d7dde9;text-align:left;vertical-align:middle}
+.mu-dialog-foot .mu-btn{min-width:100px;text-transform:capitalize}
+
+.mu-fix-foot{min-height:160px}
+.mu-fix-foot .mu-dialog-head{position:absolute;top:0;right:0;left:0}
+.mu-fix-foot .mu-dialog-body{position:absolute;top:34px;width:100%;height:calc(100% - 34px - 55px)}
+.mu-fix-foot .mu-dialog-foot{position:absolute;right:0;bottom:0;left:0}
+
+.mu-modal-open{overflow:hidden}
+
+.mu-alert-foot{background-color:#f2f3f6;line-height: 40px;}
+.mu-alert-foot > .mu-btn{width:100px;height:25px;line-height:25px}

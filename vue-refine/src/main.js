@@ -19,7 +19,7 @@ import { Grid } from '@/common/grid/index.js';
 // global components
 Vue.component('tui-grid', Grid);
 
-import { VueSimpleSpinner } from '@/common/loader/index.js'
+import { VueSimpleSpinner } from "@/common/loader/index.js";
 Vue.component('Spinner', VueSimpleSpinner);
 
 Vue.config.productionTip = false

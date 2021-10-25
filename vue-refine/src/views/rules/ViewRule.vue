@@ -1,14 +1,12 @@
 <template>
   <div>
-    <v-btn elevation="1" icon x-small @click="temp()">
-      <v-icon>mdi-plus-circle</v-icon>
-    </v-btn>
     <template v-for="ruleKey in compList">
       <div :key="ruleKey" class="rule_component_wrap">
         <component
           v-bind:is="component"
           v-bind:ruleKey="ruleKey"
-          v-if="selectList !== null" :selectList="selectList"
+          v-if="selectList !== null"
+          :selectList="selectList"
           v-bind:allRuleObj="ruleJson"
         >
         </component>
@@ -19,6 +17,7 @@
 
 <script>
 import viewComp from "./comp/ruleComp.vue";
+// import { api_dataDqiRuleChange } from "@/apis/rules.js";
 
 export default {
   name: "viewRule",
@@ -36,16 +35,6 @@ export default {
   },
 
   watch: {
-    selectList(obj) {
-      // this.selectList = obj;
-      // console.log(obj)
-    }
-    // selectList: {
-    //   handle(obj) {
-    //     console.log(obj);
-    //   },
-    //   deep: true
-    // }
   },
 
   created() {},
@@ -60,9 +49,6 @@ export default {
   }),
 
   methods: {
-    temp() {
-      console.log("here");
-    }
   }
 };
 </script>

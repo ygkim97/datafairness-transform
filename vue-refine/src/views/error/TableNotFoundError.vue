@@ -1,10 +1,9 @@
 <template>
-    <v-container>
-        Table 명이 없습니다. 
-    </v-container>
+  <v-container>
+    Table 명이 없습니다.
+  </v-container>
 </template>
 
 <script>
-export default {
-}
+export default {};
 </script>

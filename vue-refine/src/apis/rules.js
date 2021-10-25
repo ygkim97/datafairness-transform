@@ -1,18 +1,25 @@
 import request from '@/utils/request'
-import store from '@/store'
 
-export function api_dataDqiRule() {
+export function api_dataDqiRule(param) {
     return request({
         url: `/function/data-dqi-rule`,
         method: 'post',
-        params: store.getters.ruleParam,
+        params : param
     })
 }
 
-export function api_dataDqiRule_temp() {
+export function api_dataDqiRuleChange(param) {
+    return request({
+        url: `/function/data-dqi-rule`,
+        method: 'post',
+        params: param,
+    })
+}
+
+export function api_dataDqiRule_temp(param) {
     return request({
         url: `/api/get/DQI`,
         method: 'get',
-        data : store.getters.ruleParam
+        data : param
     })
 }

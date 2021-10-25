@@ -9,8 +9,11 @@
             :is="vBtn"
             :eventType="'add'"
             :iconName="'mdi-plus-circle'"
-            @addRow="addRow"
+            :ruleKey="ruleKey"
+            :selectList="selectList"
+            :ruleSample="ruleSample"
           ></component>
+          <!--            @addRow="addRow"-->
         </div>
       </div>
 
@@ -27,11 +30,13 @@
 </template>
 
 <script>
+import RuleMixin from "@/mixins/RuleMixin.js";
 import vBtn from "./rowBtn.vue";
 
 export default {
   name: "ruleComp",
 
+  mixins: [RuleMixin],
   props: ["ruleKey", "selectList", "allRuleObj"],
 
   computed: {
@@ -72,8 +77,6 @@ export default {
       console.log("err");
     }
   },
-
-  mounted() {},
 
   data: () => ({
     btnElement: null,
@@ -123,8 +126,8 @@ export default {
           width: Object.prototype.hasOwnProperty.call(ruleParam, "width")
             ? ruleParam.width
             : "",
-          sortable: false,
-          editor: editorParam,
+          sortable: false
+          // editor: editorParam
           // whiteSpace: 'pre-wrap'
         });
       });
@@ -157,10 +160,6 @@ export default {
         columns: this.gridColumns
       };
     },
-    addRow() {
-      // this.gridGetDependOn('regex.name');
-      this.$store.commit("addEmptyRow", { key: this.ruleKey });
-    },
     deleteRow(keyParam) {
       this.$store.dispatch("deleteRow", {
         key: this.ruleKey,
@@ -177,13 +176,21 @@ export default {
         "afterChange",
         (ev) => {
           const newRow = ev.changes[0];
+          // 변경한 내용을 Backend 서버로 보내서 반영 한 후에, grid를 다시 그려준다.
+          let obj = {};
+          obj[newRow.columnName] = newRow.value;
+          let params = {
+            action: "create"
+          };
+          params[vm.ruleKey] = obj;
+
           // 변경한 내용을 vuex에 반영해준다.
-          vm.$store.dispatch("changeRow", {
-            key: vm.ruleKey,
-            columnName: newRow.columnName,
-            rowIdx: newRow.rowKey,
-            value: newRow.value
-          });
+          // vm.$store.dispatch("changeRow", {
+          //   key: vm.ruleKey,
+          //   columnName: newRow.columnName,
+          //   rowIdx: newRow.rowKey,
+          //   value: newRow.value
+          // });
 
           // vm.updateDependOnData({
           //   dependOnVal: `${vm.ruleKey}.${newRow.columnName}`,
@@ -197,35 +204,39 @@ export default {
       );
     },
 
-    updateDependOnData({ dependOnVal, previousVal, newVal }) {
-      // get dependOn data
-      let rs = null;
-      let dataSet = null;
-      let ds = null;
-      let results = [];
-
-      for (rs in this.allRuleSample) {
-        dataSet = this.allRuleSample[rs].dataSet;
-        for (ds in dataSet) {
-          if (Object.prototype.hasOwnProperty.call(dataSet[ds], "dependOn")) {
-            if (dataSet[ds].dependOn === dependOnVal) {
-              results.push({ key: rs, columnName: ds });
-            }
-          }
-        }
-      }
-
-      // set new value data
-      const vm = this;
-      results.forEach((r) => {
-        vm.$store.dispatch("changeRows", {
-          key: r.key,
-          columnName: r.columnName,
-          previousValue: previousVal,
-          newVal: newVal
-        });
-      });
+    ruleChange() {
+      this.$emit("ruleChange");
     },
+
+    // updateDependOnData({ dependOnVal, previousVal, newVal }) {
+    //   // get dependOn data
+    //   let rs = null;
+    //   let dataSet = null;
+    //   let ds = null;
+    //   let results = [];
+    //
+    //   for (rs in this.allRuleSample) {
+    //     dataSet = this.allRuleSample[rs].dataSet;
+    //     for (ds in dataSet) {
+    //       if (Object.prototype.hasOwnProperty.call(dataSet[ds], "dependOn")) {
+    //         if (dataSet[ds].dependOn === dependOnVal) {
+    //           results.push({ key: rs, columnName: ds });
+    //         }
+    //       }
+    //     }
+    //   }
+    //
+    //   // set new value data
+    //   const vm = this;
+    //   results.forEach((r) => {
+    //     vm.$store.dispatch("changeRows", {
+    //       key: r.key,
+    //       columnName: r.columnName,
+    //       previousValue: previousVal,
+    //       newVal: newVal
+    //     });
+    //   });
+    // },
     test() {
       console.log("test");
       this.EventBus.$emit("loaderOpen");

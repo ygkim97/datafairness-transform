@@ -12,6 +12,10 @@ const state = {
             DELETE : 'delete',
             DISPLAY : 'display'
         },
+        mode : {
+            AUTO : 'auto',
+            RULE : 'rule'
+        },
         result : {
             SUCCESS : 'success',
             FAIL : 'fail'

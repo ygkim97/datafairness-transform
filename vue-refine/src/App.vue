@@ -5,15 +5,15 @@
     <!-- Global Component -->
     <modals></modals>
 
-<!--    <div class="spinner-custom">-->
-<!--      <spinner-->
-<!--        ref="spinner"-->
-<!--        :size="88"-->
-<!--        :line-size="12"-->
-<!--        :font-size="20"-->
-<!--        :message="message"-->
-<!--      ></spinner>-->
-<!--    </div>-->
+    <!--    <div class="spinner-custom">-->
+    <!--      <spinner-->
+    <!--        ref="spinner"-->
+    <!--        :size="88"-->
+    <!--        :line-size="12"-->
+    <!--        :font-size="20"-->
+    <!--        :message="message"-->
+    <!--      ></spinner>-->
+    <!--    </div>-->
   </v-app>
 </template>
 
@@ -32,22 +32,22 @@ export default {
 
   data() {
     return {
-      message : 'Loading 중...'
-    }
+      message: "Loading 중..."
+    };
   },
 
   methods: {
     test() {
-      this.message = new Date() + '_LOADING'
+      this.message = new Date() + "_LOADING";
     },
 
     loaderOpen() {
-        console.log("here");
-        this.$refs['spinner-wrap'].show();
+      console.log("here");
+      this.$refs["spinner-wrap"].show();
     },
     loaderClose() {
-        console.log("here");
-        this.$refs['spinner-wrap'].hide();
+      console.log("here");
+      this.$refs["spinner-wrap"].hide();
     }
   }
 };
