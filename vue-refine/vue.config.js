@@ -17,24 +17,34 @@ module.exports = {
       }
     }
   },
-  
-  transpileDependencies: [
-    'vuetify'
-  ],
+
+  transpileDependencies: ["vuetify"],
 
   pluginOptions: {
     i18n: {
-      locale: 'ko',
-      fallbackLocale: 'ko',
-      localeDir: 'locales',
-      enableInSFC: false,
-    },
+      locale: "ko",
+      fallbackLocale: "ko",
+      localeDir: "locales",
+      enableInSFC: false
+    }
   },
 
-  pages : {
-    index : {
-      entry : 'src/main.js',
-      title : 'IRIS-Refine-Rule'
+  pages: {
+    index: {
+      entry: "src/main.js",
+      title: "IRIS-Refine-Rule"
+    }
+  },
+
+  configureWebpack: {
+    performance: {
+      hints: false
+    },
+    optimization: {
+      splitChunks: {
+        minSize: 10000,
+        maxSize: 250000
+      }
     }
   }
-}
+};
