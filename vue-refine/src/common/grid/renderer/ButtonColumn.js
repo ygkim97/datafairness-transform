@@ -47,9 +47,8 @@ export default class ButtonColumn {
 
         this.el.setAttribute('idx', props.rowKey);        
         this.el.setAttribute('params', JSON.stringify({
-            rowIdx : props.rowKey,
-            keyColumnName: options.keyColumnName,
-            keyValue: row[options.keyColumnName]
+            keyValue: row[options.keyColumnName],
+            row : JSON.stringify(row)
         }));
 
         this.el.style.display = '';

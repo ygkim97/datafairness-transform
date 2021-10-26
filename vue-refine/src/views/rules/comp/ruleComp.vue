@@ -13,7 +13,6 @@
             :selectList="selectList"
             :ruleSample="ruleSample"
           ></component>
-          <!--            @addRow="addRow"-->
         </div>
       </div>
 
@@ -30,8 +29,10 @@
 </template>
 
 <script>
-import RuleMixin from "@/mixins/RuleMixin.js";
 import vBtn from "./rowBtn.vue";
+
+import RuleMixin from "@/mixins/RuleMixin.js";
+import modalComponent from "@/common/modal/modals/modalComp/add-rule-modal.vue";
 
 export default {
   name: "ruleComp",
@@ -46,12 +47,6 @@ export default {
     ruleSample() {
       return this.$store.getters.ruleSample[this.ruleKey];
     },
-    allRuleSample() {
-      return this.$store.getters.ruleSample;
-    },
-    ruleDataSet() {
-      return this.$store.getters.ruleDataSet[this.ruleKey];
-    },
     gridInfo() {
       return this.$store.getters.GRID;
     }
@@ -64,22 +59,17 @@ export default {
     }
   },
   created() {
-    const me = this;
-    me.setColumn();
+    this.setColumn();
+    this.createGrid();
 
-    try {
-      me.createGrid();
-      // 화면이 모두 렌더링 된 후에 이벤트를 걸어준다.
-      this.$nextTick(function() {
-        me.gridAfterChange();
-      });
-    } catch {
-      console.log("err");
-    }
+    const me = this;
+    this.$nextTick(function() {
+      me.gridHighlight();
+      me.gridDblClick();
+    });
   },
 
   data: () => ({
-    btnElement: null,
     vBtn: vBtn,
     gridProps: {
       columns: [],
@@ -93,8 +83,6 @@ export default {
   methods: {
     setColumn() {
       let ruleParam = null;
-      let editorParam = null;
-
       const me = this;
 
       if (Object.keys(me.selectList).length === 0) {
@@ -102,20 +90,6 @@ export default {
       }
       Object.keys(this.ruleSample.dataSet).forEach((rs) => {
         ruleParam = this.ruleSample.dataSet[rs];
-
-        if (ruleParam.editorUse) {
-          editorParam = {};
-          editorParam.type = ruleParam.type;
-
-          if (editorParam.type !== "text") {
-            editorParam.options = {
-              listItems:
-                me.selectList[ruleParam.dependOn.split(".").shift()][
-                  ruleParam.dependOn.split(".").pop()
-                ]
-            };
-          }
-        }
 
         me.gridColumns.push({
           header: rs,
@@ -126,9 +100,8 @@ export default {
           width: Object.prototype.hasOwnProperty.call(ruleParam, "width")
             ? ruleParam.width
             : "",
-          sortable: false
-          // editor: editorParam
-          // whiteSpace: 'pre-wrap'
+          sortable: false,
+          whiteSpace: "pre-wrap"
         });
       });
 
@@ -153,6 +126,7 @@ export default {
       this.gridProps = {
         theme: this.gridInfo.theme,
         options: {
+          rowHeight: "auto",
           draggableRow: true,
           scrollX: false,
           scrollY: false
@@ -160,87 +134,61 @@ export default {
         columns: this.gridColumns
       };
     },
-    deleteRow(keyParam) {
-      this.$store.dispatch("deleteRow", {
-        key: this.ruleKey,
-        keyParam: keyParam
+    buttonColumnClick(attr) {
+      // Click the delete button for each row
+      const rowParams = JSON.parse(attr.getAttribute("params"));
+      const keyRow = JSON.parse(rowParams.row);
+
+      let params = {
+        [this.ruleKey]: []
+      };
+      let obj = {};
+      Object.keys(this.ruleSample.dataSet).forEach((ds) => {
+        obj[ds] = keyRow[ds];
+      });
+      params[this.ruleKey].push(obj);
+      this.ruleDelete(params);
+    },
+
+    gridDblClick() {
+      const vm = this;
+
+      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on("dblclick", (ev) => {
+        const grid = ev.instance;
+
+        // 데이터 추가
+        // 추가 popup을 표시한다.
+        const ruleParams = vm.createRuleParamPopup({
+          mode: vm.$store.getters.CONSTANTS.popupType.EDIT,
+          selectedRow : grid.getRow(ev.rowKey)
+        });
+        vm.openRulePopup(ruleParams, modalComponent);
       });
     },
-    buttonColumnClick(attr) {
-      const keyParam = JSON.parse(attr.getAttribute("params"));
-      this.deleteRow(keyParam);
-    },
-    gridAfterChange() {
-      const vm = this;
-      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on(
-        "afterChange",
-        (ev) => {
-          const newRow = ev.changes[0];
-          // 변경한 내용을 Backend 서버로 보내서 반영 한 후에, grid를 다시 그려준다.
-          let obj = {};
-          obj[newRow.columnName] = newRow.value;
-          let params = {
-            action: "create"
-          };
-          params[vm.ruleKey] = obj;
 
-          // 변경한 내용을 vuex에 반영해준다.
-          // vm.$store.dispatch("changeRow", {
-          //   key: vm.ruleKey,
-          //   columnName: newRow.columnName,
-          //   rowIdx: newRow.rowKey,
-          //   value: newRow.value
-          // });
-
-          // vm.updateDependOnData({
-          //   dependOnVal: `${vm.ruleKey}.${newRow.columnName}`,
-          //   previousVal: newRow.prevValue,
-          //   newVal: newRow.value
-          // });
-          // 만약 연결되어있는 값이 있을 경우, 해당 값들도 변경해주어야 한다.
-          // sampleRule의 dependOn 값에 따라 처리한다.
-          // 일단 dependOn의 값들이 있는지 확인한다.
+    gridHighlight() {
+      let selectedRowKey = null;
+      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on("focusChange", (ev) => {
+        console.log('highlight')
+        const grid = ev.instance;
+        if (selectedRowKey !== null) {
+          grid.removeRowClassName(selectedRowKey, "custom-grid-row-highlight");
         }
-      );
-    },
-
-    ruleChange() {
-      this.$emit("ruleChange");
-    },
-
-    // updateDependOnData({ dependOnVal, previousVal, newVal }) {
-    //   // get dependOn data
-    //   let rs = null;
-    //   let dataSet = null;
-    //   let ds = null;
-    //   let results = [];
-    //
-    //   for (rs in this.allRuleSample) {
-    //     dataSet = this.allRuleSample[rs].dataSet;
-    //     for (ds in dataSet) {
-    //       if (Object.prototype.hasOwnProperty.call(dataSet[ds], "dependOn")) {
-    //         if (dataSet[ds].dependOn === dependOnVal) {
-    //           results.push({ key: rs, columnName: ds });
-    //         }
-    //       }
-    //     }
-    //   }
-    //
-    //   // set new value data
-    //   const vm = this;
-    //   results.forEach((r) => {
-    //     vm.$store.dispatch("changeRows", {
-    //       key: r.key,
-    //       columnName: r.columnName,
-    //       previousValue: previousVal,
-    //       newVal: newVal
-    //     });
-    //   });
-    // },
-    test() {
-      console.log("test");
-      this.EventBus.$emit("loaderOpen");
+        selectedRowKey = ev.rowKey;
+        grid.addRowClassName(selectedRowKey, "custom-grid-row-highlight");
+      });
     }
   }
 };
 </script>
+
+<style>
+/* row를 선택 했을때, 선택한 cell만 blue/grey색의 border가 표시되는 현상 삭제 */
+.tui-grid-layer-focus,
+.tui-grid-layer-focus-deactive {
+  display: none !important;
+}
+.custom-grid-row-highlight {
+  background-color: #e9f6ff !important;
+}
+</style>

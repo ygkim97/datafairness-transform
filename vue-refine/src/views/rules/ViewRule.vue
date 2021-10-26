@@ -44,8 +44,7 @@ export default {
   data: () => ({
     component: viewComp,
     // compList는 restAPI 서버의 각각의 rule 명과 맞춰서 작성해주어야함.
-    ruleData: {},
-    dataChanged: false
+    ruleData: {}
   }),
 
   methods: {

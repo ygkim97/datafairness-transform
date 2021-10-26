@@ -7,11 +7,13 @@
 </template>
 
 <script>
+import RuleMixin from "@/mixins/RuleMixin.js";
 import modalComponent from "@/common/modal/modals/modalComp/add-rule-modal.vue";
 
 export default {
   name: "rowBtn",
 
+  mixins: [RuleMixin],
   props: ["eventType", "iconName", "ruleKey", "selectList", "ruleSample"],
 
   created() {
@@ -29,58 +31,11 @@ export default {
     addRow() {
       // 데이터 추가
       // 추가 popup을 표시한다.
-      let ruleParams = {
-        ruleKey: this.ruleKey,
-        title: this.ruleKey + " Rule 추가",
-        columns: []
-      };
 
-      let columnKeyObj = null;
-
-      const keyDataSet = this.ruleSample.dataSet;
-      let obj = {};
-
-      const vm = this;
-      Object.keys(keyDataSet).forEach((ds) => {
-        columnKeyObj = keyDataSet[ds];
-        obj = {
-          type: columnKeyObj.type,
-          label: ds
-        };
-
-        if (columnKeyObj.type === "select") {
-          /**
-           * ex) dependOn = regex.name
-           * ~~.split('.').shift() = 'regex'
-           * ~~.split('.').pop() = 'name'
-           *
-           * selectKey = {
-           *    'regex' : {name:[]}, expression:[],
-           *    'regex_set' : {name:[]}, regex_name:[]
-           * }
-           */
-
-          obj["selectList"] =
-            vm.selectList[columnKeyObj.dependOn.split(".").shift()][
-              columnKeyObj.dependOn.split(".").pop()
-            ];
-        }
-        ruleParams.columns.push(obj);
-      });
-
-      this.EventBus.$emit("setModalComponent", {
-        wrapType: "dialog",
-        component: modalComponent,
-        styleObj: {
-          minWidth: 400,
-          minHeight: 200
-        },
-        btnName: {
-          ok: "저장",
-          cancel: "취소"
-        },
-        params: ruleParams
-      });
+      const ruleParams = this.createRuleParamPopup({
+        mode : this.$store.getters.CONSTANTS.popupType.CREATE
+      })
+      this.openRulePopup(ruleParams, modalComponent);
     }
   }
 };

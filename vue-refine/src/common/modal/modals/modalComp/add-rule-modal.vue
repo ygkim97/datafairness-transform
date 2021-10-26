@@ -12,21 +12,46 @@
             persistent-hint
             chips
             small-chips
-            :label="param.label"
+            outlined
+            v-on:change="changeSelect"
             v-if="param.type === 'select'"
+            :label="param.label"
             :key="'column_' + idx"
             v-model="column[idx]"
             :items="param.selectList"
+            required
+            :disabled="!param.isEditable"
             hint="select box를 클릭해 값을 선택해 주세요."
           ></v-autocomplete>
-          <v-text-field
-            v-else
+          <v-textarea
+            clearable
+            dense
+            no-resize
+            outlined
+            rows="3"
+            v-else-if="param.type === 'textarea'"
+            class="text-body-2"
             :key="'column_' + idx"
             v-model="column[idx]"
             :label="param.label"
             :v-show="param.useColumn"
             :type="param.type"
             required
+            :disabled="!param.isEditable"
+            hint="줄바꿈은 저장되지 않습니다. (한줄로 처리됨)"
+          ></v-textarea>
+          <v-text-field
+            v-else
+            clearable
+            outlined
+            class="text-body-2"
+            :key="'column_' + idx"
+            v-model="column[idx]"
+            :label="param.label"
+            :v-show="param.useColumn"
+            :type="param.type"
+            required
+            :disabled="!param.isEditable"
           ></v-text-field>
         </template>
       </v-form>
@@ -46,11 +71,15 @@ export default {
       column: []
     };
   },
-  created() {},
+  created() {
+    const vm = this;
+    this.params.columns.forEach((c) => {
+      vm.column.push(c.value);
+    });
+  },
   methods: {
     createRuleParam() {
       let addRuleParam = {
-        action: "create", // action : 생성/수정
         [this.params.ruleKey]: []
       };
       // column값을 기반으로, 새로 입력받은 값을
@@ -64,6 +93,8 @@ export default {
           // input box가 select(autoComplted)인 경우, modal value가 array로 되어있다.
           // array를 String으로 변환해서 API에 전송한다.
           columnValue = columnValue.join(",");
+        } else {
+          columnValue = this.removeEnter(columnValue)
         }
         obj[c.label] = columnValue;
       });
@@ -96,6 +127,9 @@ export default {
         // API 호출이 정상적으로 완료된 경우에만, modal창을 닫아준다.
         this.EventBus.$emit("modalClose");
       }
+    },
+    changeSelect(val) {
+      console.log(val)
     }
   }
 };
@@ -104,5 +138,11 @@ export default {
 <style scoped="">
 .custom-modal {
   height: calc(100% - 40px);
+}
+.mu-dialog-body {
+  /*overflow: hidden !important;*/
+}
+.mu-fix-foot .mu-dialog-body {
+  top: 45px;
 }
 </style>

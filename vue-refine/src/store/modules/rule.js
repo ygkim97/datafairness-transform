@@ -33,7 +33,7 @@ const state = {
         expression: {
           align: "left",
           editorUse: true,
-          type: "text"
+          type: "textarea"
         }
       }
     },
@@ -103,19 +103,9 @@ const mutations = {
     const emptyRow = JSON.parse(JSON.stringify(state.ruleDataSet[param.key]));
     state.ruleJson[param.key].push(emptyRow);
   },
-  deleteRow(state, param) {
-    // 삭제하려는 rule이 다른 properties에 연결되어있는 경우, 값을 변경해주어야 함.
-    console.log(param);
-
-    state.ruleJson[param.key].splice(Number(param.keyParam.rowIdx), 1);
-  },
-  changeRow(state, param) {
-    // API 서버에서 Validation을 모두 체크해주기 때문에, 여기서는 그냥 변경 처리만 한다.
-    state.ruleJson[param.key][param.rowIdx][param.columnName] = param.value;
-  },
 
   // 각 rule grid component에서 사용하는 editor 컬럼값을 여기서 만들어준다.
-  async getJsonRules(state) {
+  async getJsonRules() {
     let env = process.env.VUE_APP_REST_SERVER_URL;
     try {
       // Local Test 서버와 테스트 서버 일때, 코드 분리
@@ -142,7 +132,7 @@ const mutations = {
       console.log(error);
     }
   },
-  setSelectList(state, param) {
+  setSelectList(state) {
     let newSelectList = {};
 
     /**
@@ -190,12 +180,7 @@ const actions = {
   addEmptyRow({ commit }, param) {
     commit("addEmptyRow", param);
   },
-  deleteRow({ commit }, param) {
-    commit("deleteRow", param);
-  },
-  changeRow({ commit }, param) {
-    commit("changeRow", param);
-  }
+
 };
 
 export default {

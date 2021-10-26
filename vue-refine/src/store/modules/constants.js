@@ -12,6 +12,15 @@ const state = {
             DELETE : 'delete',
             DISPLAY : 'display'
         },
+        popupType : {
+            CREATE : 'create',
+            EDIT : 'edit'
+        },
+        inputType : {
+            SELECT : 'select',
+            TEXT : 'text',
+            NUMBER : 'number'
+        },
         mode : {
             AUTO : 'auto',
             RULE : 'rule'
