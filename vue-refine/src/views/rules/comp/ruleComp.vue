@@ -65,7 +65,13 @@ export default {
     const me = this;
     this.$nextTick(function() {
       me.gridHighlight();
-      me.gridDblClick();
+
+      /**
+       * 1026
+       * Backend 서버와 상의해서 수정 기능은 사용하지 않는걸로 함. (주석처리)
+       * 추후에 필요해질 경우 주석 해제 하고 사용.
+       */
+      // me.gridDblClick();
     });
   },
 
@@ -153,30 +159,39 @@ export default {
     gridDblClick() {
       const vm = this;
 
-      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on("dblclick", (ev) => {
-        const grid = ev.instance;
+      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on(
+        "dblclick",
+        (ev) => {
+          const grid = ev.instance;
 
-        // 데이터 추가
-        // 추가 popup을 표시한다.
-        const ruleParams = vm.createRuleParamPopup({
-          mode: vm.$store.getters.CONSTANTS.popupType.EDIT,
-          selectedRow : grid.getRow(ev.rowKey)
-        });
-        vm.openRulePopup(ruleParams, modalComponent);
-      });
+          // 데이터 추가
+          // 추가 popup을 표시한다.
+          const ruleParams = vm.createRuleParamPopup({
+            mode: vm.$store.getters.CONSTANTS.popupType.EDIT,
+            selectedRow: grid.getRow(ev.rowKey)
+          });
+          vm.openRulePopup(ruleParams, modalComponent);
+        }
+      );
     },
 
     gridHighlight() {
       let selectedRowKey = null;
-      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on("focusChange", (ev) => {
-        console.log('highlight')
-        const grid = ev.instance;
-        if (selectedRowKey !== null) {
-          grid.removeRowClassName(selectedRowKey, "custom-grid-row-highlight");
+      this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on(
+        "focusChange",
+        (ev) => {
+          console.log("highlight");
+          const grid = ev.instance;
+          if (selectedRowKey !== null) {
+            grid.removeRowClassName(
+              selectedRowKey,
+              "custom-grid-row-highlight"
+            );
+          }
+          selectedRowKey = ev.rowKey;
+          grid.addRowClassName(selectedRowKey, "custom-grid-row-highlight");
         }
-        selectedRowKey = ev.rowKey;
-        grid.addRowClassName(selectedRowKey, "custom-grid-row-highlight");
-      });
+      );
     }
   }
 };
