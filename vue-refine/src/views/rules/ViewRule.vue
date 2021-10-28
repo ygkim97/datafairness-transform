@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-for="ruleKey in compList">
-      <div :key="ruleKey" class="rule_component_wrap">
+      <div :key="ruleKey" class="py-4">
         <component
           v-bind:is="component"
           v-bind:ruleKey="ruleKey"

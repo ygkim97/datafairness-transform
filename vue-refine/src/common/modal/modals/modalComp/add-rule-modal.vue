@@ -1,6 +1,6 @@
 <template>
   <div class="custom-modal">
-    <div class="mu-dialog-head">
+    <div class="mu-dialog-head blue-grey darken-3 white--text">
       {{ params.title }}
     </div>
 
@@ -39,6 +39,7 @@
             required
             :disabled="!param.isEditable"
             hint="줄바꿈은 저장되지 않습니다. (한줄로 처리됨)"
+            color="text--secondary"
           ></v-textarea>
           <v-text-field
             v-else
@@ -52,6 +53,7 @@
             :type="param.type"
             required
             :disabled="!param.isEditable"
+            color="text--secondary"
           ></v-text-field>
         </template>
       </v-form>

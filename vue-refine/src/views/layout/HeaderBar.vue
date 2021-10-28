@@ -1,10 +1,10 @@
 <template>
-  <v-app-bar app>
+  <v-app-bar color="blue-grey darken-3" app style="z-index: 17 !important;">
     <v-toolbar-title class="title left">
-      <span class="transition-swing text-h5 mb-1">
+      <span class="transition-swing text-h5 mb-1 white--text">
         TABLE NAME :
       </span>
-      <span class="transition-swing text-h4 mb-1">
+      <span class="transition-swing text-h4 mb-1 white--text">
         {{ tableName }}
       </span>
     </v-toolbar-title>
