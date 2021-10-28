@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '@/store/index.js'
 
 const service = axios.create({
   // baseURL을 localhost로 설정하여, proxy 설정을 맞춘다.
@@ -16,6 +17,7 @@ const removePending = (config, f) => {
 
     const baseUrl = config.baseURL
     const methodUrl = (config.url.indexOf(baseUrl) > -1) ? config.url.replace(baseUrl, '') : config.url
+
     let params = null
     if (config.method === 'get') {
       params = JSON.stringify(config.params)
@@ -60,14 +62,21 @@ service.interceptors.request.use(config => {
   config.headers['Access-Control-Allow-Origin'] = '*'
   config.headers['Access-Control-Allow-Headers'] = '*'
 
+  // spinnerOn
+  store.commit('spinnerOn');
+
   return config
 }, error => {
+
   console.log(error)
   Promise.reject(error)
 })
 
 service.interceptors.response.use(
   response => {
+    // spinnerOff
+    store.commit('spinnerOff');
+
     removePending(response.config)
       // response를 전체적으로 수정해야 할 경우, 여기서 한다.
       // response.data 가, back-end에서 넘어오는 부분이고,

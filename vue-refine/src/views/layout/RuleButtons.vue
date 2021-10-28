@@ -17,8 +17,8 @@ import { api_dataDqiRule } from "@/apis/rules.js";
 export default {
   methods: {
     gotoRouter(val) {
-      // console.log(this.$router)
-      this.$router.push({ name: val });
+      // /test url에서 다시 /test 를 호출할때 발생 하는 에러 메시지를 무시하기 위한 코드
+      this.$router.push({ name: val }).catch(() => {});
     },
 
     save() {

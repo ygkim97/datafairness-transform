@@ -5,15 +5,10 @@
     <!-- Global Component -->
     <modals></modals>
 
-    <!--    <div class="spinner-custom">-->
-    <!--      <spinner-->
-    <!--        ref="spinner"-->
-    <!--        :size="88"-->
-    <!--        :line-size="12"-->
-    <!--        :font-size="20"-->
-    <!--        :message="message"-->
-    <!--      ></spinner>-->
-    <!--    </div>-->
+    <spinner-comp
+      :spinnerOn="$store.getters.spinnerStatus"
+      :message="$store.getters.spinnerMessage"
+    ></spinner-comp>
   </v-app>
 </template>
 
@@ -21,35 +16,15 @@
 export default {
   name: "App",
 
-  components: {},
+  components: {
+    SpinnerComp: () => import("@/common/loader/Spinner.vue")
+  },
 
   mounted() {
     this.EventBus.$on("loaderOpen", this.loaderOpen);
     this.EventBus.$on("loaderClose", this.loaderClose);
   },
 
-  created() {},
-
-  data() {
-    return {
-      message: "Loading 중..."
-    };
-  },
-
-  methods: {
-    test() {
-      this.message = new Date() + "_LOADING";
-    },
-
-    loaderOpen() {
-      console.log("here");
-      this.$refs["spinner-wrap"].show();
-    },
-    loaderClose() {
-      console.log("here");
-      this.$refs["spinner-wrap"].hide();
-    }
-  }
 };
 </script>
 

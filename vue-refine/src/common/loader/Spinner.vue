@@ -1,24 +1,29 @@
 <template>
-    <div ref="spinner-wrap">
+    <div ref="spinner-wrap"
+        v-if="spinnerOn">
+        <div class="custom-spinner-overlay"></div>
         <div class="vue-simple-spinner" :style="spinner_style"></div>
         <div class="vue-simple-spinner-text" :style="text_style" v-if="message.length > 0">{{message}}</div>
     </div>
 </template>
 
 <script>
-    var isNumber = function(n) {
+    let isNumber = function(n) {
         return !isNaN(parseFloat(n)) && isFinite(n)
     }
     export default {
         props: {
+            spinnerOn: {
+                default : false
+            },
             'size': {
                 // either a number (pixel width/height) or 'tiny', 'small',
                 // 'medium', 'large', 'huge', 'massive' for common sizes
-                default: 32
+                default: 60
             },
             'line-size': {
                 type: Number,
-                default: 3
+                default: 8
             },
             'line-bg-color': {
                 type: String,
@@ -34,15 +39,17 @@
             },
             'spacing': {
                 type: Number,
-                default: 4
+                default: 10
             },
             'message': {
                 type: String,
-                default: ''
+                default: function() {
+                    return this.$store.getters.CONSTANTS.loadingMessage.LOADING
+                }
             },
             'font-size': {
                 type: Number,
-                default: 13
+                default: 20
             },
             'text-fg-color': {
                 type: String,
@@ -134,5 +141,17 @@
     @keyframes vue-simple-spinner-spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+    .vue-simple-spinner-text {
+        position: relative;
+    }
+
+    .custom-spinner-overlay {
+        background-color : #d3d3d3b8;
+        position: absolute;
+        top : 0;
+        left : 0;
+        height : 100%;
+        width : 100%;
     }
 </style>

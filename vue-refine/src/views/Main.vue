@@ -31,11 +31,6 @@ export default {
   created() {
     // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
     this.checkTableName();
-
-    const me = this;
-    this.$nextTick(() => {
-      me.getRuleData();
-    });
   },
 
   methods: {
@@ -51,11 +46,6 @@ export default {
           tableName: tableName
         });
       }
-    },
-    getRuleData() {
-      // Table Name 기반으로 Rule 정보를 조회한다.
-      // 동기로 조회
-      this.$store.commit("getJsonRules");
     }
   }
 };
