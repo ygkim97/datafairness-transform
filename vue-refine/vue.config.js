@@ -7,13 +7,19 @@ module.exports = {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
         changeOrigin: true,
         logLevel: "debug",
-        pathRewrite: { "^/api/": "/api/" }
+        // pathRewrite: { "^/api/": "/api/" }
       },
       "^/api": {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
         changeOrigin: true,
         logLevel: "debug",
-        pathRewrite: { "^/api/": "/api/" }
+        // pathRewrite: { "^/api/": "/api/" }
+      },
+      "^/cdn": {
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+        changeOrigin: true,
+        logLevel: "debug",
+        // pathRewrite: { "^/api/": "/api/" }
       }
     }
   },

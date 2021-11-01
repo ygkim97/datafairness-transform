@@ -1,5 +1,6 @@
 import vue from "vue";
 import vueRouter from "vue-router";
+import store from "@/store/index.js";
 
 vue.use(vueRouter);
 
@@ -52,7 +53,7 @@ let routes = [
         text: "Result",
         name: "viewResult",
         icon: "mdi-alert-octagon",
-        component: () => import("@/views/results/Result.vue"),
+        component: () => import("@/views/results/ViewResult.vue"),
         props: true
       }
       // , {
@@ -67,8 +68,20 @@ let routes = [
   }
 ];
 
-export default new vueRouter({
+const router = new vueRouter({
   mode: "history",
   base: "/",
   routes: routes
 });
+
+router.beforeEach((to, from, next) => {
+  store.commit("spinnerOn");
+  setTimeout(() => {
+    next();
+  }, 1);
+});
+router.afterEach((_) => {
+  store.commit("spinnerOff");
+});
+
+export default router;

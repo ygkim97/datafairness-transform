@@ -179,8 +179,7 @@ const getters = {
 const actions = {
   addEmptyRow({ commit }, param) {
     commit("addEmptyRow", param);
-  },
-
+  }
 };
 
 export default {

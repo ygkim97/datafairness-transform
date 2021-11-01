@@ -1,5 +1,5 @@
 <template>
-경  <div>
+  <div>
     <loader
       ref="loader"
       object="#ff9633"

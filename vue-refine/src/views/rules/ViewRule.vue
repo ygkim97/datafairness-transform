@@ -17,7 +17,6 @@
 
 <script>
 import viewComp from "./comp/ruleComp.vue";
-// import { api_dataDqiRuleChange } from "@/apis/rules.js";
 
 export default {
   name: "viewRule",
@@ -34,10 +33,10 @@ export default {
     }
   },
 
-  watch: {
-  },
+  watch: {},
 
-  created() {},
+  created() {
+  },
 
   mounted() {},
 

@@ -25,18 +25,22 @@ export default {
 
   components: {
     HeaderBar: () => import("@/views/layout/HeaderBar.vue"),
-    RuleButtons: () => import('@/views/layout/RuleButtons.vue')
+    RuleButtons: () => import("@/views/layout/RuleButtons.vue")
   },
-
-  created() {
-    // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
-    this.checkTableName();
-
-    const me = this;
-    this.$nextTick(() => {
-      me.getRuleData();
-    });
-  },
+    created() {
+        this.checkTableName();
+        this.getRuleData();
+    },
+  //
+  //   created() {
+  //   // console.log(process.env.VUE_APP_REST_SERVER_URL+':'+process.env.VUE_APP_REST_SERVER_PORT);
+  //   this.checkTableName();
+  //
+  //   const me = this;
+  //   this.$nextTick(() => {
+  //     me.getRuleData();
+  //   });
+  // },
 
   methods: {
     checkTableName() {
@@ -52,6 +56,7 @@ export default {
         });
       }
     },
+
     getRuleData() {
       // Table Name 기반으로 Rule 정보를 조회한다.
       // 동기로 조회
