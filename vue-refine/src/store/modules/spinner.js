@@ -1,5 +1,6 @@
 // Data Type 정의
 const state = {
+    spinnerCount : 0,
     spinnerStatus: false,
     spinnerMessage : "로딩중입니다"
 }
@@ -10,9 +11,13 @@ const mutations = {
         if (message) {
             state.spinnerStatus = message;
         }
+        state.spinnerCount++;
     },
     spinnerOff(state) {
-        state.spinnerStatus = false
+        state.spinnerCount--;
+        if (state.spinnerCount === 0) {
+            state.spinnerStatus = false
+        }
     }
 }
 const getters = {

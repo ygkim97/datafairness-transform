@@ -17,7 +17,6 @@
 
 <script>
 import viewComp from "./comp/ruleComp.vue";
-// import { api_dataDqiRuleChange } from "@/apis/rules.js";
 
 export default {
   name: "viewRule",
@@ -37,10 +36,6 @@ export default {
   watch: {},
 
   created() {
-    const me = this;
-    this.$nextTick(() => {
-      me.getRuleData();
-    });
   },
 
   mounted() {},
@@ -52,11 +47,6 @@ export default {
   }),
 
   methods: {
-    getRuleData() {
-      // Table Name 기반으로 Rule 정보를 조회한다.
-      // 동기로 조회
-      this.$store.commit("getJsonRules");
-    }
   }
 };
 </script>

@@ -4,6 +4,7 @@ import { api_dataDqi } from "@/apis/results.js";
 // Data Type 정의
 const state = {
   mode: null,
+  // radio 구성 데이터
   resultMode: [
     {
       mode: "auto",
@@ -14,9 +15,22 @@ const state = {
       text: "Rule 기반 지표 측정"
     }
   ],
-  rules: [],
-  defaultRules: [{ columns: "STATUS", rule: "STATS" }],
-  resultResponse: null,
+
+  // rule array
+  resultRuleParam: [],
+  // rule default obj
+  // defaultRules: [{ column: "STATUS", rule: "STATS" }],
+
+  resultResponse: {
+    auto: {
+      column_stats: [],
+      table_dqi: {}
+    },
+    rule: {
+      column_stats: [],
+      table_dqi: {}
+    }
+  },
   columnList: []
 };
 // 동기 처리
@@ -30,7 +44,7 @@ const mutations = {
     state.rules = param;
   },
   setResultResponse(state, param) {
-    state.resultResponse = param;
+    state.resultResponse[param.mode] = param.response;
   },
   async getColumnName() {
     const response = await api_dataDqi({
@@ -42,6 +56,11 @@ const mutations = {
   },
   setColumnList(state, param) {
     state.columnList = param;
+  },
+  setResultRuleParam(state, param) {
+    state.resultRuleParam = param.map((e) => {
+      return { column: e.column, rule: e.rule };
+    });
   }
 };
 
@@ -53,15 +72,30 @@ const getters = {
       mode: state.mode,
       table_name: rootState.tableName.tableName
     };
+
     if (state.mode === rootState.CONSTANTS.constants.mode.RULE) {
+      const selectedRules = Object.keys(state.resultRuleParam);
+
       // 결과조회 타입이 "rule"일 경우, rules object도 포함해줘야함.
-      returnParam["rules"] =
-        state.rules.length > 1 ? state.rules : state.defaultRules;
+      // columnList를 체크하면서 grid에서 설정되지 않은 rule은, 기본값을 셋팅해준다.
+      // if (selectedRules.length < 1) {
+      //   returnParam["rules"] = state.defaultRules;
+      // } else {
+        state.columnList.forEach((c) => {
+          if (selectedRules.indexOf(c)) {
+            console.log("c");
+            state.resultRuleParam.push({ column: c, rule: "STATS" });
+          }
+        });
+        returnParam["rules"] = state.resultRuleParam;
+      // }
+      // state.rules.length > 1 ? state.rules : state.defaultRules;
     }
     return returnParam;
   },
   resultResponse: (state) => state.resultResponse,
-  columnList: (state) => state.columnList
+  columnList: (state) => state.columnList,
+  resultRuleParam: (state) => state.resultRuleParam
 };
 // 비동기 처리
 const actions = {

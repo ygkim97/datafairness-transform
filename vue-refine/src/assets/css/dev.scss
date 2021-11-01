@@ -34,6 +34,11 @@ header {
     margin : 3px 15px;
 }
 
+
+.v-autocomplete__content {
+    z-index: 15 !important;
+}
+
 /**
     dialog
  */
