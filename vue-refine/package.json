@@ -1,0 +1,69 @@
+{
+  "name": "vue-refine",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --mode production",
+    "local": "vue-cli-service serve --mode local",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@mdi/font": "5.9.55",
+    "@toast-ui/vue-grid": "^4.18.1",
+    "@vue/composition-api": "^1.1.4",
+    "axios": "^0.21.4",
+    "cookie": "^0.4.1",
+    "core-js": "^3.6.5",
+    "js-cookie": "^3.0.1",
+    "roboto-fontface": "*",
+    "vue": "^2.6.11",
+    "vue-router": "^3.5.2",
+    "vue-simple-spinner": "^1.2.10",
+    "vuetify": "^2.5.10",
+    "vuex": "^3.6.2",
+    "vuex-persistedstate": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "http-proxy-middleware": "^2.0.1",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
+    "vue-cli-plugin-vuetify": "~2.4.2",
+    "vue-js-modal": "^2.0.1",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.7.0",
+    "webpack-bundle-analyzer": "^4.4.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {
+      "no-console": "off",
+      "no-unused-vars": "off"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "description": "## Project setup ``` npm install ```",
+  "main": "babel.config.js",
+  "author": "",
+  "license": "ISC"
+}

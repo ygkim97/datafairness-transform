@@ -75,6 +75,7 @@ public class Project {
     transient private LocalDateTime _lastSave = LocalDateTime.now();
 
     final static Logger logger = LoggerFactory.getLogger("project");
+    public String query;
 
     static public long generateID() {
         return System.currentTimeMillis() + Math.round(Math.random() * 1000000000000L);
@@ -258,4 +259,12 @@ public class Project {
     public ProcessManager getProcessManager() {
         return this.processManager;
     }
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
+	}
 }
