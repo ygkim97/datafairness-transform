@@ -1,12 +1,18 @@
 <template>
   <v-flex class="rule-buttons">
     <div>
-      <v-btn elevation="1" small plain @click="gotoRouter('viewRule')"
-        >RULE</v-btn
-      >
-      <v-btn elevation="1" small plain @click="gotoRouter('viewResult')"
-        >RESULT</v-btn
-      >
+      <v-btn 
+        color="blue-grey darken-3" 
+        small 
+        @click="gotoRouter('viewRule')" class="white--text"
+      >RULE
+      </v-btn>
+      <v-btn 
+        color="blue-grey darken-3"
+        small 
+        @click="gotoRouter('viewResult')" class="white--text"
+      >RESULT
+      </v-btn>
     </div>
   </v-flex>
 </template>

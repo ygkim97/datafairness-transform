@@ -1,6 +1,12 @@
 <template>
-  <div>
-    <v-chip class="ma-2 text-h5" label outlined>{{ ruleKey }}</v-chip>
+  <v-card elevation="2">
+    <v-toolbar
+      color="blue-grey darken-3"
+      dark
+      height="40"
+      flat
+    >{{ ruleKey }}
+    </v-toolbar>
 
     <div class="grid-wrap">
       <div class="float-right">
@@ -25,7 +31,7 @@
         :theme="gridProps.theme"
       ></tui-grid>
     </div>
-  </div>
+  </v-card>
 </template>
 
 <script>
