@@ -37,10 +37,11 @@ const state = {
     },
     gridNoData: "데이터가 없습니다.",
     result_str: {
+      no_data: " - ",
       column_name: "컬럼 명",
       column_type: "해당 컬럼의 데이터 타입",
       column_pattern: "해당 컬럼의 패턴",
-      Named_entity_recognition: "ko electra-ner 결과",
+      named_entity_recognition: "ko electra-ner 결과",
       row_count: "컬럼 row 수",
       missing_count: "결측 값 수",
       pattern: "패턴 통계",
@@ -65,7 +66,12 @@ const state = {
       mean: "평균",
       std: "표준편차",
       median: "중위 값",
-      quartile: "데이터 분포 표현"
+      quartile: "데이터 분포 표현",
+      string_stat: "문자 구문",
+      number_stat: "숫자 구문",
+      key: "값",
+      len: "길이",
+      count: "개수"
     }
   })
 };

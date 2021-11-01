@@ -74,22 +74,16 @@ const getters = {
     };
 
     if (state.mode === rootState.CONSTANTS.constants.mode.RULE) {
-      const selectedRules = Object.keys(state.resultRuleParam);
+      const selectedRules = state.resultRuleParam.map((r)=>r.column);
 
       // 결과조회 타입이 "rule"일 경우, rules object도 포함해줘야함.
       // columnList를 체크하면서 grid에서 설정되지 않은 rule은, 기본값을 셋팅해준다.
-      // if (selectedRules.length < 1) {
-      //   returnParam["rules"] = state.defaultRules;
-      // } else {
-        state.columnList.forEach((c) => {
-          if (selectedRules.indexOf(c)) {
-            console.log("c");
-            state.resultRuleParam.push({ column: c, rule: "STATS" });
-          }
-        });
-        returnParam["rules"] = state.resultRuleParam;
-      // }
-      // state.rules.length > 1 ? state.rules : state.defaultRules;
+      state.columnList.forEach((c) => {
+        if (selectedRules.indexOf(c) < 0) {
+          state.resultRuleParam.push({ column: c, rule: "STATS" });
+        }
+      });
+      returnParam["rules"] = state.resultRuleParam;
     }
     return returnParam;
   },
