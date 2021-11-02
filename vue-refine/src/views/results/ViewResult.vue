@@ -63,6 +63,8 @@ export default {
   },
 
   created() {
+    this.$store.commit("resetData");
+
     this.$store.commit("getColumnName");
 
     this.createGrid();

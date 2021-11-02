@@ -71,7 +71,8 @@ const state = {
       number_stat: "숫자 구문",
       key: "값",
       len: "길이",
-      count: "개수"
+      count: "개수",
+      time_distrinution : "시간 분포"
     }
   })
 };

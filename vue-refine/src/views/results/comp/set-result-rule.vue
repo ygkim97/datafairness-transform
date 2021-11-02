@@ -34,15 +34,20 @@
               ></v-autocomplete>
             </v-flex>
             <v-flex align-self-start>
-              <v-btn elevation="1" icon x-small @click="addRule">
-                <v-icon>mdi-plus-circle</v-icon>
-              </v-btn>
+              <v-btn
+                color="grey lighten-5"
+                class=""
+                small
+                bottom
+                @click="addRule"
+                >추가</v-btn
+              >
             </v-flex>
           </v-layout>
 
           <v-layout row><v-divider></v-divider> </v-layout>
           <v-layout row>
-            <v-flex class="grid-wrap">
+            <v-flex class="">
               <tui-grid
                 id="tuiGrid_popup"
                 ref="tuiGrid_popup"
@@ -96,11 +101,11 @@ export default {
     addRule() {
       // 1. ColumnName이나 RuleName 중 하나라도 선택하지 않은 경우, 추가하지 않는다.
       if (this.column === null || this.rule === null) {
-      this.EventBus.$emit("modalAlert", {
+        this.EventBus.$emit("modalAlert", {
           title: "경고",
           text: `Column Name과 Rule Name을 선택 해 주세요.`,
           okTitle: "확인"
-      });
+        });
         return;
       }
       // 2. 중복된 값이 있을 경우 추가 하지 않는다.

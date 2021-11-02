@@ -61,6 +61,19 @@ const mutations = {
     state.resultRuleParam = param.map((e) => {
       return { column: e.column, rule: e.rule };
     });
+  },
+  resetData(state) {
+    state.resultRuleParam = [];
+    state.resultResponse = {
+      auto: {
+        column_stats: [],
+        table_dqi: {}
+      },
+      rule: {
+        column_stats: [],
+        table_dqi: {}
+      }
+    };
   }
 };
 
@@ -74,7 +87,7 @@ const getters = {
     };
 
     if (state.mode === rootState.CONSTANTS.constants.mode.RULE) {
-      const selectedRules = state.resultRuleParam.map((r)=>r.column);
+      const selectedRules = state.resultRuleParam.map((r) => r.column);
 
       // 결과조회 타입이 "rule"일 경우, rules object도 포함해줘야함.
       // columnList를 체크하면서 grid에서 설정되지 않은 rule은, 기본값을 셋팅해준다.
