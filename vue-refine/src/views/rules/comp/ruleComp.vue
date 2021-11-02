@@ -203,7 +203,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* row를 선택 했을때, 선택한 cell만 blue/grey색의 border가 표시되는 현상 삭제 */
 .tui-grid-layer-focus,
 .tui-grid-layer-focus-deactive {
@@ -211,5 +211,8 @@ export default {
 }
 .custom-grid-row-highlight {
   background-color: #e9f6ff !important;
+}
+.grid-wrap{
+    padding: 40px;
 }
 </style>
