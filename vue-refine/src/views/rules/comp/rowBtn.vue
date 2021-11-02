@@ -1,8 +1,13 @@
 <template>
   <div>
-    <v-btn elevation="1" icon x-small @click="btnClick()">
-      <v-icon>{{ iconName }}</v-icon>
-    </v-btn>
+    <v-btn
+      color="blue-grey lighten-1"
+      class="white--text"
+      small
+      bottom
+      @click="btnClick"
+      >추가</v-btn
+    >
   </div>
 </template>
 
@@ -33,8 +38,8 @@ export default {
       // 추가 popup을 표시한다.
 
       const ruleParams = this.createRuleParamPopup({
-        mode : this.$store.getters.CONSTANTS.popupType.CREATE
-      })
+        mode: this.$store.getters.CONSTANTS.popupType.CREATE
+      });
       this.openRulePopup(ruleParams, modalComponent);
     }
   }

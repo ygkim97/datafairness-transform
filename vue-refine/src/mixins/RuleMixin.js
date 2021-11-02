@@ -33,7 +33,7 @@ export default {
             mode === this.$store.getters.CONSTANTS.popupType.EDIT &&
             ds === columnKey
           ),
-          value: selectedRow !== undefined ? selectedRow[ds].split(',') : ""
+          value: selectedRow !== undefined ? selectedRow[ds].split(",") : ""
         };
 
         if (
@@ -74,14 +74,27 @@ export default {
         params: ruleParams
       });
     },
-    isRuleValid(params) {
+
+    isInValid(params) {
+      let inValid = false;
+
+      // params가 배열로 전달됨.
+      // 모든 경우에서 params는 단일로 처리되고 있기 때문에 첫번째 배열의 값만 유효함.
+      // 그러힉 때문에 첫번째 배열의 값만 validation 체크를 해준다.
+      params = params[0];
+      Object.keys(params).forEach((e) => {
+        if (this.isStringEmpty(e) || this.isStringEmpty(params[e])) {
+          // true 일때만 저장해준다.
+          inValid = true;
+        }
+      });
       // validationCheck
-      return true;
+      return inValid;
     },
     removeEnter(str) {
-      str = str.replace(/\n/g, "");//행바꿈제거
-      str = str.replace(/\r/g, "");//엔터제거
-      return str
+      str = str.replace(/\n/g, ""); //행바꿈제거
+      str = str.replace(/\r/g, ""); //엔터제거
+      return str;
     },
     ruleChange(params) {
       params.action = this.$store.getters.CONSTANTS.actions.CREATE;

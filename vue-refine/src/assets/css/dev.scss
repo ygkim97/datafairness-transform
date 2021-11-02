@@ -38,6 +38,14 @@ header {
 .v-autocomplete__content {
     z-index: 15 !important;
 }
+
+.v-menu__content {
+    z-index : 999 !important;
+}
+
+.grid-wrap{
+    padding: 40px;
+}
 /**
     dialog
  */

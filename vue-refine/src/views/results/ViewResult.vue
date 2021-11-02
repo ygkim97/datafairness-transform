@@ -63,6 +63,8 @@ export default {
   },
 
   created() {
+    this.$store.commit("resetData");
+
     this.$store.commit("getColumnName");
 
     this.createGrid();
@@ -116,9 +118,6 @@ export default {
       if (this.mode === this.$store.getters.CONSTANTS.mode.RULE) {
         this.ruleSelected();
       }
-      console.log(this.ruleNodeParam)
-
-
 
       const vm = this;
       await api_dataDqi(this.ruleNodeParam).then((response) => {

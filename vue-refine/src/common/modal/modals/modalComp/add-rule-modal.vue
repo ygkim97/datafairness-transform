@@ -13,7 +13,6 @@
             chips
             small-chips
             outlined
-            v-on:change="changeSelect"
             v-if="param.type === 'select'"
             :label="param.label"
             :key="'column_' + idx"
@@ -116,11 +115,15 @@ export default {
       const addRuleParam = this.createRuleParam();
 
       // 2. validation체크
-      if (this.isRuleValid(addRuleParam)) {
-        console.log("valid");
-      } else if (this.isRuleValid(addRuleParam)) {
-        console.log("not valid");
+      if (this.isInValid(addRuleParam[this.params.ruleKey])) {
+          this.EventBus.$emit("modalAlert", {
+              title: "경고",
+              text: "입력되지 않은 값이 있습니다. 확인 후 다시 시도해 주세요.",
+              okTitle: "확인"
+          });
+          return;
       }
+
       // 3. api 통신 및 결과값 처리
       // 결과값이 success 면 vuex에 업데이트 해준다. (mixins 함수에서 모두 처리)
       // 결과값이 fail 이면 alert 메시지를 표시해준다.
@@ -129,9 +132,6 @@ export default {
         // API 호출이 정상적으로 완료된 경우에만, modal창을 닫아준다.
         this.EventBus.$emit("modalClose");
       }
-    },
-    changeSelect(val) {
-      console.log(val)
     }
   }
 };
