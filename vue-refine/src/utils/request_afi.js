@@ -10,42 +10,7 @@ const service = axios.create({
 
 // abort duplicate request
 const pending = {};
-const removePending = (config, f) => {
-  if (config !== undefined) {
-    // make sure the url is same for both request and response
-    // stringify whole RESTful request with URL params
 
-    const baseUrl = config.baseURL;
-    const methodUrl =
-      config.url.indexOf(baseUrl) > -1
-        ? config.url.replace(baseUrl, "")
-        : config.url;
-
-    let params = null;
-    if (config.method === "get") {
-      params = JSON.stringify(config.params);
-    } else {
-      if (typeof config.data === "object") {
-        params = JSON.stringify(config.data);
-      } else {
-        params = JSON.stringify(JSON.parse(config.data));
-      }
-    }
-    let flagUrl = baseUrl + "&" + methodUrl + "&" + params;
-
-    if (flagUrl in pending) {
-      if (f) {
-        f(); // abort the request
-      } else {
-        delete pending[flagUrl];
-      }
-    } else {
-      if (f) {
-        pending[flagUrl] = f; // store the cancel function
-      }
-    }
-  }
-};
 service.clear = () => {
   Object.keys(pending).map((e) => {
     if (pending[e]) {

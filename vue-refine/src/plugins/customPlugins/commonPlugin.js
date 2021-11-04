@@ -1,6 +1,6 @@
 // common plugins
 
-import request from "@/utils/request"; // axios interceptor
+import request from "@/utils/request_dqi"; // axios interceptor
 
 export default {
   install(Vue) {

@@ -9,6 +9,7 @@ import spinner from "./modules/spinner.js";
 import constants from "./modules/constants.js";
 import rule from "./modules/rule.js";
 import results from "./modules/results.js";
+import afi from "./modules/afi.js";
 
 const store = new Vuex.Store({
   modules: {
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
     CONSTANTS: constants,
     GRID: grid,
     ruleJson: rule,
-    results: results
+    results: results,
+    afi: afi
   }
 });
 export default store;

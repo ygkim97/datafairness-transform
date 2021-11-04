@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from "@/utils/request_afi";
 
 export function api_dataDqiRule(param) {
   return request({

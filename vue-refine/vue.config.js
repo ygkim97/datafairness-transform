@@ -4,22 +4,24 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       "^/function": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
         logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
       },
       "^/api": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
         logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
       },
       "^/cdn": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
         logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
+      },
+      "^/test": {
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_AFI}:${process.env.VUE_APP_REST_SERVER_PORT_AFI}`,
+        changeOrigin: true,
+        logLevel: "debug",
       }
     }
   },
