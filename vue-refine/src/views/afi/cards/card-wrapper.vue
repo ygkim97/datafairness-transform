@@ -2,7 +2,7 @@
   <v-card>
     <card-header :params="stepper[step]"></card-header>
     <!-- card-actions-->
-    <component :is="component" :step="step"></component>
+    <component :is="component" :step="step" :pageKey="stepper[step].key"></component>
     <!-- // card-actions-->
   </v-card>
 </template>

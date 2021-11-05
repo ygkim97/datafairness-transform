@@ -1,6 +1,6 @@
 // common plugins
 
-import request from "@/utils/request_dqi"; // axios interceptor
+import request from "@/utils/request"; // axios interceptor
 
 export default {
   install(Vue) {
@@ -90,6 +90,9 @@ export default {
         replaceAll(str, oldVal, newVal) {
           const reg = new RegExp(oldVal, "gi");
           return str.replace(reg, newVal);
+        },
+        getHtmlDesc(val) {
+          return val.replaceAll('\n', '<br>');
         }
       }
     });

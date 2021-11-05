@@ -20,6 +20,15 @@
               @click="gotoNext"
               >NEXT</v-btn
             >
+            <v-btn
+              v-if="step < compPanels.length"
+              color="blue-grey lighten-1"
+              class="float-right"
+              dark
+              small
+              @click="checkData"
+              >DATA</v-btn
+            >
           </v-flex>
         </v-layout>
 
@@ -38,10 +47,10 @@
 </template>
 
 <script>
-import DataSet from "./comp/data-set.vue";
-import CheckMetrics from "./comp/check-metrics.vue";
-import SetMitigate from "./comp/set-mitigate.vue";
-import Compare from "./comp/compare.vue";
+import DataSet from "./cards/data-set.vue";
+import CheckMetrics from "./cards/check-metrics.vue";
+import SetMitigate from "./cards/set-mitigate.vue";
+import Compare from "./cards/compare.vue";
 
 export default {
   name: "Main",
@@ -54,15 +63,15 @@ export default {
 
   data() {
     return {
-      step: 1,
+      step: 2,
       compPanels: [DataSet, CheckMetrics, SetMitigate, Compare]
     };
   },
 
   components: {
     HeaderBar: () => import("@/views/layout/HeaderBar.vue"),
-    FlowStepper: () => import("@/views/afi/comp/card-stepper.vue"),
-    CardWrapper: () => import("@/views/afi/comp/card-wrapper.vue")
+    FlowStepper: () => import("@/views/afi/cards/card-stepper.vue"),
+    CardWrapper: () => import("@/views/afi/cards/card-wrapper.vue")
   },
   created() {
     console.log(
@@ -74,7 +83,6 @@ export default {
   },
 
   watch: {
-    step(val) {}
   },
 
   methods: {
@@ -94,6 +102,9 @@ export default {
     gotoNext() {
       // checkValidation
       this.step++;
+    },
+    checkData() {
+      console.log(JSON.stringify(this.$store.getters.afiRowData));
     },
     clickStep(idx) {
       this.step = idx + 1;

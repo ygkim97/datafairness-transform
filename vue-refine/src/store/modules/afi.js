@@ -1,19 +1,19 @@
 // API function
-// import { api_dataDqi } from "@/apis/results.js";
+import { afi_getAFIResponse } from "@/apis/afi.js";
 
 // Data Type 정의
 const state = {
   // card 컴포넌트를 구성하는데 필요한 데이터
   stepper: [
     {
-      key: "data-set",
+      key: "dataset",
       text: "Dataset",
       title: "1. Dataset",
       subtitle: "",
       params: {}
     },
     {
-      key: "check-metrics",
+      key: "metric",
       text: "Bias Metric",
       title: "2. Bias Metric",
       params: {}
@@ -94,13 +94,90 @@ const state = {
           "Function name must be `custom_preprocessing`",
         dataType: "textarea"
       }
+    },
+    metric: {
+      title: "Bias Metric",
+      privileged_groups: {
+        text: "Privileged Groups",
+        desc:
+          "Each element describes a single group. (must be disjoint)\n" +
+          "See examples for more details.\n" +
+          "    example)\n" +
+          "    * privileged groups\n" +
+          "        - element1: name=sex, value=1        name=age, value=0\n" +
+          "    * unprivileged groups\n" +
+          "        - element2: name=sex, value=1        name=age, value=1\n" +
+          "        - element3: name=sex, value=0",
+        dataType: "array",
+        params: {
+          name: {
+            text: "Name",
+            desc: "name in `protected attributes`",
+            dataType: "text"
+          },
+          value: {
+            text: "Value",
+            desc:
+              "value in `protected_attributes`\n" +
+              "(value: `privileged class` is 1 the other is 0)",
+            dataType: "text"
+          }
+        }
+      },
+      unprivileged_groups: {
+        text: "Unprivileged Groups",
+        desc: "Same format as `privileged groups`",
+        dataType: "array",
+        params: {
+          name: {
+            text: "Name",
+            desc: "name in `protected attributes`",
+            dataType: "text"
+          },
+          value: {
+            text: "Value",
+            desc:
+              "value in `protected_attributes`\n" +
+              "(value: `privileged class` is 1 the other is 0)",
+            dataType: "text"
+          }
+        }
+      },
+      metrics: {
+        text: "Metrics",
+        dataType: "grid",
+        params: {
+          statistical_parity_difference: {
+            text: "Statistical Parity Difference",
+            desc:
+              "Computed as the difference of the rate of favorable outcomes received by the unprivileged group to the privileged group.\n" +
+              "The ideal value of this metric is 0.\n" +
+              "Fairness for this metric is between -0.1 and 0.1.",
+            dataType: "checkbox"
+          },
+          disparate_impact: {
+            text: "Disparate Impact",
+            desc:
+              "Computed as the ratio of rate of favorable outcome for the unprivileged group to that of the privileged group.\n" +
+              "The ideal value of this metric is 1.0 A value < 1 implies higher benefit for the privileged group and a value >1 implies a higher benefit for the unprivileged group.\n" +
+              "Fairness for this metric is between 0.8 and 1.25",
+            dataType: "checkbox"
+          }
+        }
+      }
     }
   },
   afiRowData: {
+    // table 데이터 셋팅해줘야함.
+    input : {
+      type : 'iris',
+      target : null
+    },
     dataset: {
       label: {
         name: "credit",
-        favorable_classes: [1]
+        // array 형식으로 바꿔줘야함.
+        favorable_classes: "1"
       },
       protected_attributes: [
         {
@@ -112,27 +189,38 @@ const state = {
           privileged_class: "eval: x > 25"
         }
       ],
-      categorical_features: [
-        "status",
-        "credit_history",
-        "purpose",
-        "savings",
-        "employment",
-        "other_debtors",
-        "property",
-        "installment_plans",
-        "housing",
-        "skill_level",
-        "telephone",
-        "foreign_worker"
-      ],
-      features_to_keep: [],
-      features_to_drop: ["personal_status"],
+      // array 형식으로 바꿔줘야함.
+      categorical_features:
+        "status,credit_history,purpose,savings,employment,other_debtors,property,installment_plans,housing,skill_level,telephone,foreign_worker",
+      // array 동일
+      features_to_keep: "",
+      // arry 동일
+      features_to_drop: "personal_status",
       custom_preprocessing:
         "def custom_preprocessing(df):" +
         "status_map = {'A91': 'male', 'A93': 'male', 'A94': 'male', 'A92': 'female', 'A95': 'female'}" +
         "df['sex'] = df['personal_status'].replace(status_map) " +
         "return df"
+    },
+    metric: {
+      // name:value 형식으로 convert 해줘야함.
+      privileged_groups: [
+        {
+          name : 'age',
+          value : 1
+        }
+      ],
+      unprivileged_groups: [
+        {
+          name : 'age',
+          value : 0
+        }
+      ],
+      metrics: {
+        // array 형식으로 배꿔좌야함.
+        "statistical_parity_difference" : true,
+        "disparate_impact" : true
+      }
     }
   }
 };

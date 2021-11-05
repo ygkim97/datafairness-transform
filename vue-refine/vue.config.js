@@ -1,27 +1,28 @@
 module.exports = {
+  runtimeCompiler: true,
   devServer: {
     port: process.env.VUE_APP_PORT,
     disableHostCheck: true,
     proxy: {
-      "^/function": {
+      "^/function/data-dqi": {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
-        logLevel: "debug",
+        logLevel: "debug"
       },
-      "^/api": {
+      "^/function/data-dqi-rule": {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
-        logLevel: "debug",
+        logLevel: "debug"
       },
       "^/cdn": {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
-        logLevel: "debug",
+        logLevel: "debug"
       },
-      "^/test": {
+      "^/function/fairness": {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL_AFI}:${process.env.VUE_APP_REST_SERVER_PORT_AFI}`,
         changeOrigin: true,
-        logLevel: "debug",
+        logLevel: "debug"
       }
     }
   },

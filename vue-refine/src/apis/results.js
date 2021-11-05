@@ -1,4 +1,4 @@
-import request from "@/utils/request_dqi";
+import request from "@/utils/request";
 
 export function api_dataDqi(param) {
   return request({

@@ -1,8 +1,8 @@
-import request from "@/utils/request_dqi";
+import request from "@/utils/request";
 
-export function afi_getAIResult(param) {
+export function afi_getAFIResponse(param) {
     return request({
-        url: `/afi`,
+        url: `/function/fairness`,
         method: "post",
         params: param
     });
