@@ -60,7 +60,7 @@ const state = {
             desc: "Name of the protected attribute column in table",
             dataType: "label"
           },
-          privileged_class: {
+          privileged_classes: {
             text: "privileged classes",
             desc:
               "value which is considered privileged or a boolean function which return `True` if privileged for the corresponding column in `protected_attribute`",
@@ -169,9 +169,9 @@ const state = {
   },
   afiRowData: {
     // table 데이터 셋팅해줘야함.
-    input : {
-      type : 'iris',
-      target : null
+    input: {
+      type: "iris",
+      target: null
     },
     dataset: {
       label: {
@@ -181,12 +181,12 @@ const state = {
       },
       protected_attributes: [
         {
-          name: "name",
-          privileged_class: "male"
+          name: "sex",
+          privileged_classes: "male"
         },
         {
           name: "age",
-          privileged_class: "eval: x > 25"
+          privileged_classes: "eval: x > 25"
         }
       ],
       // array 형식으로 바꿔줘야함.
@@ -197,30 +197,33 @@ const state = {
       // arry 동일
       features_to_drop: "personal_status",
       custom_preprocessing:
-        "def custom_preprocessing(df):" +
-        "status_map = {'A91': 'male', 'A93': 'male', 'A94': 'male', 'A92': 'female', 'A95': 'female'}" +
-        "df['sex'] = df['personal_status'].replace(status_map) " +
-        "return df"
+        "def custom_preprocessing(df):\n" +
+        "    status_map = {'A91': 'male', 'A93': 'male', 'A94': 'male', 'A92': 'female', 'A95': 'female'}\n" +
+        "    df['sex'] = df['personal_status'].replace(status_map)\n" +
+        "    return df"
     },
     metric: {
       // name:value 형식으로 convert 해줘야함.
       privileged_groups: [
         {
-          name : 'age',
-          value : 1
+          name: "age",
+          value: 1
         }
       ],
       unprivileged_groups: [
         {
-          name : 'age',
-          value : 0
+          name: "age",
+          value: 0
         }
       ],
       metrics: {
         // array 형식으로 배꿔좌야함.
-        "statistical_parity_difference" : true,
-        "disparate_impact" : true
+        statistical_parity_difference: true,
+        disparate_impact: true
       }
+    },
+    mitigation: {
+      algorithm: "reweighing"
     }
   }
 };
@@ -234,11 +237,11 @@ const mutations = {
 
 const getters = {
   stepper: (state) => state.stepper,
-  fairnessRequest: (state) => {
-    return {};
-  },
   defaultData: (state) => state.defaultData,
-  afiRowData: (state) => state.afiRowData
+  afiRowData: (state, _, rootState) => {
+    state.afiRowData.input.target = rootState.tableName.tableName;
+    return state.afiRowData;
+  }
 };
 // 비동기 처리
 const actions = {};

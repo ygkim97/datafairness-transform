@@ -35,15 +35,6 @@
         >
         </data-set-grid>
       </template>
-      <!--        ><p>{{ defaultData[pageKey].text }}</p>-->
-      <!--        <p-->
-      <!--          class="text-subtitle-1"-->
-      <!--          v-if="-->
-      <!--            Object.prototype.hasOwnProperty.call(defaultData[key], 'desc') > -1-->
-      <!--          "-->
-      <!--          v-html="getHtmlDesc(defaultData[pageKey].desc)"-->
-      <!--        ></p>-->
-      <!--      </v-card-title>-->
     </v-card>
   </v-card-actions>
 </template>

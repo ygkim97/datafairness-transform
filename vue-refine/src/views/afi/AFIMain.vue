@@ -63,7 +63,7 @@ export default {
 
   data() {
     return {
-      step: 2,
+      step: 3,
       compPanels: [DataSet, CheckMetrics, SetMitigate, Compare]
     };
   },

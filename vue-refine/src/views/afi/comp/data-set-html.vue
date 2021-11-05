@@ -1,5 +1,7 @@
 <template>
   <div class="custom-card-content none-border">
+    <p>{{ rd }}</p>
+    --------
     <p v-html="getHtmlDesc(defaultData[compKey].desc)"></p>
     <div>
       <html-textarea v-model="afiRowData[compKey]"></html-textarea>
@@ -13,13 +15,12 @@ Vue.component("html-textarea", {
   template: '<pre contenteditable="true" @input="updateHTML"></pre>',
   props: ["value"],
   mounted: function() {
-    this.$el.innerHTML = this.value;
+    let d = this.value;
+    this.$el.innerHTML = d;
   },
   methods: {
     updateHTML: function(e) {
       let d = e.target.innerHTML;
-      console.log(d);
-      // d = d.replaceAll("\n", "AA");
       this.$emit("input", d);
     }
   }
@@ -35,8 +36,7 @@ export default {
   created() {
     this.htmlData = this.afiRowData[this.compKey];
   },
-  watch: {
-  },
+  watch: {},
   methods: {}
 };
 </script>

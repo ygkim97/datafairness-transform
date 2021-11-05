@@ -1,6 +1,7 @@
 // common plugins
 
-import request from "@/utils/request"; // axios interceptor
+import request from "@/utils/request";
+import { isString } from "vue-js-modal/src/utils/types"; // axios interceptor
 
 export default {
   install(Vue) {
@@ -11,7 +12,7 @@ export default {
         },
         // check string is empty
         isStringEmpty(val) {
-          return val !== 0 && (val === "" || val === null || false);
+          return val !== 0 && (val === "" || val === null || val === undefined);
         }, // axios cancel
         axiosCancel() {
           request.clear();
@@ -92,7 +93,72 @@ export default {
           return str.replace(reg, newVal);
         },
         getHtmlDesc(val) {
-          return val.replaceAll('\n', '<br>');
+          return val.replaceAll("\n", "<br>");
+        },
+        convertFAIData: function (req, useAlgorithm) {
+          // 내부 동작상, array로 처리되고 있던 부분 string 으로 변환
+
+          // favorable_classes는 array로 변경하는 부분이 조금 달라서 개별로 처리함.
+          req.dataset.label.favorable_classes = [Number(req.dataset.label.favorable_classes)]
+
+
+          // req.dataset.label.privileged_classes = this.convertArray(
+          //   req.dataset.label.privileged_classes
+          // );
+          // req.dataset.label.privileged_classes = this.convertArray(
+          //     req.dataset.label.privileged_classes
+          // );
+          req.dataset.protected_attributes = req.dataset.protected_attributes.map(
+              (e) => {
+                return {
+                  name: e.name,
+                  privileged_classes: this.convertArray(e.privileged_classes)
+                };
+              }
+          );
+          // protected_attributes
+
+          req.dataset.categorical_features = this.convertArray(
+              req.dataset.categorical_features
+          );
+          req.dataset.features_to_keep = this.convertArray(
+              req.dataset.features_to_keep
+          );
+          req.dataset.features_to_drop = this.convertArray(
+              req.dataset.features_to_drop
+          );
+
+          req.metric.privileged_groups = req.metric.privileged_groups.map(
+              (e) => {
+                return {[e.name]: e.value};
+              }
+          );
+          req.metric.unprivileged_groups = req.metric.unprivileged_groups.map(
+              (e) => {
+                return {[e.name]: e.value};
+              }
+          );
+
+          // object로 되어있는 값을, true/false 에 따라 array로 변환시켜준다.
+          req.metric.metrics = Object.keys(req.metric.metrics)
+              .map((e) => {
+                return req.metric.metrics[e] ? e : null;
+              })
+              .filter((e) => e !== null);
+
+          if (!useAlgorithm) {
+            // mitigation object 삭제
+            delete req["mitigation"];
+          }
+
+          return req;
+        },
+        convertArray(str) {
+          if (this.isStringEmpty(str)) {
+            return [];
+          } else {
+            return str.split(",");
+          }
         }
       }
     });
