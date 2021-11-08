@@ -20,15 +20,6 @@
               @click="gotoNext"
               >NEXT</v-btn
             >
-            <v-btn
-              v-if="step < compPanels.length"
-              color="blue-grey lighten-1"
-              class="float-right"
-              dark
-              small
-              @click="checkData"
-              >DATA</v-btn
-            >
           </v-flex>
         </v-layout>
 
@@ -74,6 +65,8 @@ export default {
     CardWrapper: () => import("@/views/afi/cards/card-wrapper.vue")
   },
   created() {
+    this.EventBus.$on("clickStep", this.clickStep);
+
     console.log(
       process.env.VUE_APP_REST_SERVER_URL_AFI +
         ":" +
@@ -82,8 +75,7 @@ export default {
     this.checkTableName();
   },
 
-  watch: {
-  },
+  watch: {},
 
   methods: {
     checkTableName() {
@@ -102,9 +94,6 @@ export default {
     gotoNext() {
       // checkValidation
       this.step++;
-    },
-    checkData() {
-      console.log(JSON.stringify(this.$store.getters.afiRowData));
     },
     clickStep(idx) {
       this.step = idx + 1;

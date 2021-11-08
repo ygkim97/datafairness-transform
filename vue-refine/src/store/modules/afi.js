@@ -1,6 +1,3 @@
-// API function
-import { afi_getAFIResponse } from "@/apis/afi.js";
-
 // Data Type 정의
 const state = {
   // card 컴포넌트를 구성하는데 필요한 데이터
@@ -19,7 +16,7 @@ const state = {
       params: {}
     },
     {
-      key: "set-mitigate",
+      key: "metrics",
       text: "Bias Metrics",
       title: "3. Bias Metrics, Mitigate",
       params: {}
@@ -150,21 +147,31 @@ const state = {
           statistical_parity_difference: {
             text: "Statistical Parity Difference",
             desc:
-              "Computed as the difference of the rate of favorable outcomes received by the unprivileged group to the privileged group.\n" +
-              "The ideal value of this metric is 0.\n" +
-              "Fairness for this metric is between -0.1 and 0.1.",
+                "Computed as the difference of the rate of favorable outcomes received by the unprivileged group to the privileged group.\n" +
+                "The ideal value of this metric is 0.\n" +
+                "Fairness for this metric is between -0.1 and 0.1.",
             dataType: "checkbox"
           },
           disparate_impact: {
             text: "Disparate Impact",
             desc:
-              "Computed as the ratio of rate of favorable outcome for the unprivileged group to that of the privileged group.\n" +
-              "The ideal value of this metric is 1.0 A value < 1 implies higher benefit for the privileged group and a value >1 implies a higher benefit for the unprivileged group.\n" +
-              "Fairness for this metric is between 0.8 and 1.25",
+                "Computed as the ratio of rate of favorable outcome for the unprivileged group to that of the privileged group.\n" +
+                "The ideal value of this metric is 1.0 A value < 1 implies higher benefit for the privileged group and a value >1 implies a higher benefit for the unprivileged group.\n" +
+                "Fairness for this metric is between 0.8 and 1.25",
             dataType: "checkbox"
           }
         }
-      }
+      },
+    },
+    metrics : {
+      text : 'Protected Attribute',
+      desc : ''
+    },
+    mitigate: {
+      text: "Mitigate",
+      subText: "Reweighing",
+      desc:
+        "Reweighing is a preprocessing technique that Weights the examples in each (group, label) combination differently to ensure fairness before classification.\n"
     }
   },
   afiRowData: {
@@ -222,7 +229,12 @@ const state = {
         disparate_impact: true
       }
     },
-    mitigation: {
+    mitigate: {
+      algorithmList: {
+        list: ["reweighing"],
+        label: "algorithm",
+        value: "reweighing"
+      },
       algorithm: "reweighing"
     }
   }
@@ -230,7 +242,6 @@ const state = {
 // 동기 처리
 const mutations = {
   setAfiRowData(state, param) {
-    console.log(param);
     state.afiRowData[param.key] = param.data;
   }
 };

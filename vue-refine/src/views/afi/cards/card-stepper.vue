@@ -9,7 +9,7 @@
           :editable="step > idx + 1"
           @click="step > idx + 1 ? clickStepper(idx) : ''"
         >
-          {{ s.text + '_' + idx}}
+          {{ s.text }}
         </v-stepper-step>
 
         <v-divider
@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     stepper() {
-        return this.$store.getters.stepper;
+      return this.$store.getters.stepper;
     }
   },
   methods: {

@@ -1,7 +1,6 @@
 <template>
   <div class="custom-card-content none-border">
     <p>{{ rd }}</p>
-    --------
     <p v-html="getHtmlDesc(defaultData[compKey].desc)"></p>
     <div>
       <html-textarea v-model="afiRowData[compKey]"></html-textarea>

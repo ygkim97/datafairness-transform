@@ -141,9 +141,6 @@ export default {
 .custom-modal {
   height: calc(100% - 40px);
 }
-.mu-dialog-body {
-  /*overflow: hidden !important;*/
-}
 .mu-fix-foot .mu-dialog-body {
   top: 45px;
 }
