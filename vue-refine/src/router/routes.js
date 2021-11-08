@@ -46,6 +46,8 @@ let routes = [
         name: "viewRule",
         icon: "mdi-alert-octagon",
         component: () => import("@/views/rules/ViewRule.vue"),
+        // true로 설정하면 데이터를 props로도 받는다.
+        // true로 설정하면 true.params가 컴포넌트 props로 설정된다.
         props: true
       },
       {
@@ -54,6 +56,13 @@ let routes = [
         name: "viewResult",
         icon: "mdi-alert-octagon",
         component: () => import("@/views/results/ViewResult.vue"),
+        props: true
+      },
+      {
+        path: "test",
+        text: "Test",
+        name: "test",
+        component: () => import("@/views/test/test.vue"),
         props: true
       }
       // , {
@@ -74,14 +83,20 @@ const router = new vueRouter({
   routes: routes
 });
 
+// router 생성할 때 전역 범위로 등록하여 사용하는 방법
 router.beforeEach((to, from, next) => {
   store.commit("spinnerOn");
   setTimeout(() => {
     next();
   }, 1);
 });
+
 router.afterEach((_) => {
   store.commit("spinnerOff");
 });
 
 export default router;
+
+/*
+ *  https://soheemon.tistory.com/entry/2021-03-15-vue-Router
+ */

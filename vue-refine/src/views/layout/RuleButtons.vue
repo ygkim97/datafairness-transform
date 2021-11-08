@@ -13,6 +13,12 @@
         @click="gotoRouter('viewResult')" class="white--text"
       >RESULT
       </v-btn>
+      <v-btn 
+        color="blue-grey darken-3"
+        small 
+        @click="gotoRouter('test')" class="white--text"
+      >TEST
+      </v-btn>
     </div>
   </v-flex>
 </template>

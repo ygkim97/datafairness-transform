@@ -3,11 +3,11 @@
     <template v-for="ruleKey in compList">
       <div :key="ruleKey" class="py-4">
         <component
-          v-bind:is="component"
-          v-bind:ruleKey="ruleKey"
+          :is="component"
+          :ruleKey="ruleKey"
           v-if="selectList !== null"
           :selectList="selectList"
-          v-bind:allRuleObj="ruleJson"
+          :allRuleObj="ruleJson"
         >
         </component>
       </div>
