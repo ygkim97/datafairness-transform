@@ -2,14 +2,15 @@
   <div>
     <v-layout>
       <v-flex xs5>
-        <v-tabs v-model="tab">
-          <v-tab v-for="(mode, idx) in resultMode" :key="'mode_' + idx">
+        <v-tabs v-model="tab" color="blue-grey darken-4" class="mx-3">
+          <v-tabs-slider color="blue-grey darken-4"></v-tabs-slider>
+          <v-tab v-for="(mode, idx) in resultMode" :key="'mode_' + idx" class="font-weight-bold">
             {{ mode.text }}
           </v-tab>
         </v-tabs>
       </v-flex>
     </v-layout>
-    <v-layout class="custom-result-body">
+    <v-layout class="custom-result-body mt-0">
       <v-flex>
         <template v-if="tab > 0">
           <rule-select-body v-bind:params="getRuleParams()"></rule-select-body>
