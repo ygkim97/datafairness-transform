@@ -31,10 +31,10 @@ let routes = [
     redirect: { name: "tableNotFound" }
   },
   {
-    path: "/:tableName",
+    path: "/dqi/:tableName",
     name: "main",
     text: "메인",
-    component: () => import("@/views/Main.vue"),
+    component: () => import("@/views/dqi/DQIMain.vue"),
     meta: {
       useMain: true
     },
@@ -45,7 +45,7 @@ let routes = [
         text: "Rule View",
         name: "viewRule",
         icon: "mdi-alert-octagon",
-        component: () => import("@/views/rules/ViewRule.vue"),
+        component: () => import("@/views/dqi/rules/ViewRule.vue"),
         props: true
       },
       {
@@ -53,18 +53,44 @@ let routes = [
         text: "Result",
         name: "viewResult",
         icon: "mdi-alert-octagon",
-        component: () => import("@/views/results/ViewResult.vue"),
+        component: () => import("@/views/dqi/results/ViewResult.vue"),
         props: true
       }
-      // , {
-      //     path: '/rule/change',
-      //     text: 'Rule Change',
-      //     name: 'changeRule',
-      //     icon: 'mdi-send',
-      //     component: () => import("@/views/rule/change/ChangeRule.vue"),
-      //     props: true
-      // }
     ]
+  },
+  {
+    path: "/afi/:tableName",
+    name: "main",
+    text: "메인",
+    component: () => import("@/views/afi/AFIMain.vue"),
+    meta: {
+      useMain: true
+    },
+    // children: [{
+    //   path : "main",
+    //   text : "AFI View",
+    //   name : 'afiMain',
+    //   component: () => import("@/views/afi/data-set.vue"),
+    // }]
+    // redirect: { name: "viewRule" },
+    // children: [~
+    //   {
+    //     path: "rules",
+    //     text: "Rule View",
+    //     name: "viewRule",
+    //     icon: "mdi-alert-octagon",
+    //     component: () => import("@/views/rules/ViewRule.vue"),
+    //     props: true
+    //   },
+    //   {
+    //     path: "result",
+    //     text: "Result",
+    //     name: "viewResult",
+    //     icon: "mdi-alert-octagon",
+    //     component: () => import("@/views/results/ViewResult.vue"),
+    //     props: true
+    //   }
+    // ]
   }
 ];
 

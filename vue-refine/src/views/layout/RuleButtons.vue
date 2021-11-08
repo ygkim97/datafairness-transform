@@ -44,13 +44,10 @@ export default {
     },
 
     async saveRule() {
-      console.log(JSON.stringify(this.$store.getters.ruleParam));
       // api를 호출 할때 param은 store에 저장되어있는 값을 사용하기 때문에, param를 전달하지 않음.
 
       const _vm = this;
       await api_dataDqiRule().then((response) => {
-        console.log(response);
-
         if (response.result === "SUCCESS") {
           setTimeout(function() {
             _vm.EventBus.$emit("modalAlert", {
@@ -93,10 +90,7 @@ export default {
       await api_dataDqiRule({ tableName: this.tableName }).then((response) => {
         // 테스트 backend API에서 return해주는 success값으로,
         // 추후에 실 API에서 return 해주는 값으로 변경해서 처리해야함.
-        console.log(response);
-
         if (response.result === "SUCCESS") {
-          console.log("success");
           setTimeout(function() {
             _vm.EventBus.$emit("modalAlert", {
               title: "알림",

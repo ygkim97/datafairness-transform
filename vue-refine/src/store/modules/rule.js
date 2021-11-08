@@ -106,7 +106,7 @@ const mutations = {
 
   // 각 rule grid component에서 사용하는 editor 컬럼값을 여기서 만들어준다.
   async getJsonRules() {
-    let env = process.env.VUE_APP_REST_SERVER_URL;
+    let env = process.env.VUE_APP_REST_SERVER_URL_DQI;
     try {
       // Local Test 서버와 테스트 서버 일때, 코드 분리
       let response = null;

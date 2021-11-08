@@ -40,6 +40,7 @@ export default {
         markType: obj.markType === undefined ? "etc" : obj.markType, // 'success, etc, error'
         title: obj.title,
         text: obj.text,
+        clickToClose: false,
         buttons: [
           {
             title: obj.okTitle,
@@ -71,6 +72,7 @@ export default {
         markType: obj.markType === undefined ? "etc" : obj.markType, // 'success, etc, error'
         title: obj.title,
         text: obj.text,
+        clickToClose: false,
         buttons: [
           {
             title: obj.okTitle,

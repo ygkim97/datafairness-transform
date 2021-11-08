@@ -1,25 +1,28 @@
 module.exports = {
+  runtimeCompiler: true,
   devServer: {
     port: process.env.VUE_APP_PORT,
     disableHostCheck: true,
     proxy: {
-      "^/function": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+      "^/function/data-dqi": {
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
-        logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
+        logLevel: "debug"
       },
-      "^/api": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+      "^/function/data-dqi-rule": {
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
-        logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
+        logLevel: "debug"
       },
       "^/cdn": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_DQI}:${process.env.VUE_APP_REST_SERVER_PORT_DQI}`,
         changeOrigin: true,
-        logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
+        logLevel: "debug"
+      },
+      "^/function/fairness": {
+        target: `http://${process.env.VUE_APP_REST_SERVER_URL_AFI}:${process.env.VUE_APP_REST_SERVER_PORT_AFI}`,
+        changeOrigin: true,
+        logLevel: "debug"
       }
     }
   },

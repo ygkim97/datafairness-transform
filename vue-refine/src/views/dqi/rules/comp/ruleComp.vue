@@ -186,7 +186,6 @@ export default {
       this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on(
         "focusChange",
         (ev) => {
-          console.log("highlight");
           const grid = ev.instance;
           if (selectedRowKey !== null) {
             grid.removeRowClassName(
