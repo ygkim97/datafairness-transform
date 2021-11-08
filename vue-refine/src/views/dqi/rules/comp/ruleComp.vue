@@ -9,7 +9,7 @@
     </v-toolbar>
 
     <div class="grid-wrap">
-      <div class="float-right">
+      <div class="float-right my-2 mr-n4">
         <div class="float-left grid-button">
           <component
             :is="vBtn"

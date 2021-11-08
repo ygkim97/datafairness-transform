@@ -1,12 +1,17 @@
 <template>
-  <div class="text-body-1 set-result-rule-wrap">
-    <v-expansion-panels>
+  <div class="text-body-1 set-result-rule-wrap mb-7" style="padding: 0px 10px;">
+    <v-expansion-panels focusable>
       <v-expansion-panel>
-        <v-expansion-panel-header>
-          <span>결과 조회 Rule 지표 설정</span>
+        <v-expansion-panel-header color="blue-grey darken-2">
+          <span class="white--text" style="z-index: 2;">결과 조회 Rule 지표 설정</span>
+          <template v-slot:actions>
+            <v-icon color="white">
+              $expand
+            </v-icon>
+          </template>
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-layout row>
+        <v-expansion-panel-content class="my-8">
+          <v-layout row class="my-3 px-5">
             <v-flex>
               <v-autocomplete
                 dense
@@ -18,6 +23,7 @@
                 :items="params.columnList"
                 required
                 hint="Rule을 적용할 Column을 선택해 주세요"
+                color="text--secondary"
               ></v-autocomplete>
             </v-flex>
             <v-flex>
@@ -31,18 +37,18 @@
                 :items="params.regexSetNames"
                 required
                 hint="Rule을 선택해 주세요"
+                color="text--secondary"
               ></v-autocomplete>
             </v-flex>
-            <v-flex align-self-start>
-              <v-btn
-                color="grey lighten-5"
-                class=""
-                small
-                bottom
-                @click="addRule"
-                >추가</v-btn
-              >
-            </v-flex>
+            <v-btn
+              color="blue-grey lighten-1"
+              class="white--text"
+              middle
+              bottom
+              @click="addRule"
+              style="height: 40px !important;"
+              >추가</v-btn
+            >
           </v-layout>
 
           <v-layout row><v-divider></v-divider> </v-layout>
