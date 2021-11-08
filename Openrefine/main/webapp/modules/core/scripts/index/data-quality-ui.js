@@ -2,6 +2,9 @@ const Grid = tui.Grid;
 const Pagination = tui.Pagination;
 const Chart = tui.chart;
 
+const DQI_SERVER_URL = "http://localhost:9090/dqi/";
+const AFI_SERVER_URL = "http://localhost:9090/afi/";
+
 var ui = {};
 
 /* ************************************
@@ -202,7 +205,6 @@ Refine.SetDataQualityUI.prototype._getProjectList = function() {
 Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
 	var selectbox = this._elmts.project_selectbox.empty();
 	const projectIds = Object.keys(data.projects);
-	
 	// project 목록이 없는 경우, selectbtn을 disabled 하고 return한다.
 	var optionHtml = '';
 	if (projectIds.length == 0) {
@@ -210,9 +212,19 @@ Refine.SetDataQualityUI.prototype._renderProjects = function(data) {
 		this._elmts.project_select_btn.prop('disabled', true);
 		return;
 	} else {
+		let tableName = null;
+		let reg = /[`~!@#$%^&*()|+\-=?;:'",.<>\{\}\[\]\\\/ ]/gim;
 		projectIds.forEach((pId) => {
 			const p = data.projects[pId];
-			optionHtml+= '<option value="'+pId+'" projectName="'+p.name+'">';
+
+			// table Name 셋팅
+			if (Object.prototype.hasOwnProperty.call(p, 'query') > -1
+			&& p.query !== null) {
+				tableName = p.query.split('FROM').pop();
+				tableName = tableName.replace(reg, "");
+			}
+
+			optionHtml+= '<option value="'+pId+'" projectName="'+p.name+'" tableName="'+tableName+'">';
 			optionHtml+= p.name;
 			optionHtml+= '</option>'
 		})
@@ -241,10 +253,12 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 	} else {
 		// use these btns st data assessment page.
 		this._elmts.get_evaluation_index.text($.i18n('core-index-data/evaluation-index'));
+		this._elmts.open_web_data_quality.text($.i18n('core-index-data/data-quality'));
+		this._elmts.open_web_fairness.text($.i18n('core-index-data/fairness'));
 	}
 	
 	// btn click 이벤트
-	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {		
+	this._elmts.project_select_btn.on('click', {_self : this}, function(e) {
 		// focus out
 		$(e.target).blur();
 		
@@ -269,8 +283,10 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		
 		_self.GridInstance = null;
 		_self.staticGridInstance2 = null;
-		
-		UI_CHART_INFO.selectedPName = _self._elmts.project_selectbox.find(':selected').attr('projectname')
+
+		let selected = _self._elmts.project_selectbox.find(':selected');
+		UI_CHART_INFO.selectedPName = selected.attr('projectname')
+		UI_CHART_INFO.tableName = selected.attr('tableName')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 		
 		setTimeout(()=>{
@@ -411,6 +427,39 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 				// 선택된 header가 있음 > 그 header로 진행
 				new EIDialogUI(index, name)
 				
+			}
+		});
+
+		this._elmts.open_web_data_quality.on('click', {_self : this}, (e) => {
+			// focus out - prevent dbl click
+			$(e.target).blur();
+
+			const _self = e.data._self;
+			_self._getDOM_ID();
+
+			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked')[0];
+
+			// 선택된 프로젝트가 없음 > 진행불가능
+			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+				alert($.i18n('core-index-data/no-selected-project'))
+			} else {
+				window.open(DQI_SERVER_URL+UI_CHART_INFO.tableName);
+			}
+		});
+		this._elmts.open_web_fairness.on('click', {_self : this}, (e) => {
+			// focus out - prevent dbl click
+			$(e.target).blur();
+
+			const _self = e.data._self;
+			_self._getDOM_ID();
+
+			const checked = $('#'+DOM_ID+' .custom_table_header_check:checked')[0];
+
+			// 선택된 프로젝트가 없음 > 진행불가능
+			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
+				alert($.i18n('core-index-data/no-selected-project'))
+			} else {
+				window.open(AFI_SERVER_URL+UI_CHART_INFO.tableName);
 			}
 		});
 	}
