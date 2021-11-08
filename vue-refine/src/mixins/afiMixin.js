@@ -5,7 +5,7 @@ export default {
 
       // favorable_classes는 array로 변경하는 부분이 조금 달라서 개별로 처리함.
       req.dataset.label.favorable_classes = [
-        Number(req.dataset.label.favorable_classes)
+        (isNaN(Number(req.dataset.label.favorable_classes)) ? req.dataset.label.favorable_classes : Number(req.dataset.label.favorable_classes))
       ];
 
       req.dataset.categorical_features = this.convertArray(
@@ -34,6 +34,8 @@ export default {
         })
         .filter((e) => e !== null);
 
+      // mitigate parameter 부분 수정
+      // 임의로 mitigate로 되어있는 부분을 mitigation으로 변경해줘야함.
       if (!useAlgorithm) {
         // mitigation object 삭제
         delete req["mitigate"];

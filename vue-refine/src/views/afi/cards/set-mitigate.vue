@@ -46,7 +46,8 @@ export default {
             text:
               "아래의 이유로 데이터 조회에 실패하였습니다. <br><br>" +
               response.reason +
-              "<br><br>메시지 확인 후 다시 시도해 주세요.",
+              "<br><br>메시지 확인 후 다시 시도해 주세요. <br>" +
+              "이전 페이지로 이동합니다.",
             okTitle: "확인",
             okRes: function() {
               vm.EventBus.$emit("clickStep", 1);
