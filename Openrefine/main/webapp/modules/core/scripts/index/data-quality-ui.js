@@ -2,8 +2,8 @@ const Grid = tui.Grid;
 const Pagination = tui.Pagination;
 const Chart = tui.chart;
 
-const DQI_SERVER_URL = "http://localhost:9090/dqi/";
-const AFI_SERVER_URL = "http://localhost:9090/afi/";
+const DQI_SERVER_URL = "http://"+location.hostname+":9090/dqi/";
+const AFI_SERVER_URL = "http://"+location.hostname+":9090/afi/";
 
 var ui = {};
 
