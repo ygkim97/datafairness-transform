@@ -44,6 +44,6 @@ export default {
 
 <style scoped>
 .v-sheet.v-stepper {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 </style>
