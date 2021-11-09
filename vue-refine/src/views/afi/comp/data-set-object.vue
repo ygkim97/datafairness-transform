@@ -6,11 +6,12 @@
         <v-col cols="6" class="label-col">
           <p>{{ innerKey }}</p>
           <p
+            class="text-caption"
             v-html="getHtmlDesc(defaultData[compKey]['params'][innerKey].desc)"
           ></p>
         </v-col>
         <v-col cols="4" class="value-col">
-          <v-text-field outlined dense v-model="rd[innerKey]"> </v-text-field>
+          <v-text-field outlined dense v-model="rd[innerKey]" color="text--secondary"> </v-text-field>
         </v-col>
       </v-row>
     </template>

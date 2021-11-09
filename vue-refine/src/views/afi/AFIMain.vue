@@ -14,7 +14,7 @@
             <v-btn
               v-if="step < compPanels.length"
               color="blue-grey lighten-1"
-              class="float-right"
+              class="float-right mr-7"
               dark
               small
               @click="gotoNext"
@@ -24,7 +24,7 @@
         </v-layout>
 
         <v-divider></v-divider>
-        <v-layout>
+        <v-layout class="px-2">
           <!-- array값이기 때문에, step에서 -1을 해준다.-->
           <card-wrapper
             class="afi-body"
@@ -109,10 +109,11 @@ export default {
 }
 .afi-body {
   margin: 20px;
-  border: 1px solid lightblue;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   width: 100%;
   min-height: 500px;
   padding: 20px;
+  border-radius:inherit;
 }
 .next-btn {
   margin: auto 0;

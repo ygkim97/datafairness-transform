@@ -1,7 +1,7 @@
 <template>
-  <div class="custom-card-content none-border">
+  <div class="custom-card-content none-border py-0">
     <p v-html="getHtmlDesc(defaultData[compKey].desc)"></p>
-    <div>
+    <div class="px-0 pb-0">
       <html-textarea v-model="afiRowData[compKey]"></html-textarea>
     </div>
   </div>
@@ -45,5 +45,8 @@ export default {
   display: inline-block;
   min-height: 80px;
   white-space: break-spaces;
+}
+pre{
+  padding: 10px;
 }
 </style>

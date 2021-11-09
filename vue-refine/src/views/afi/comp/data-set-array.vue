@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="add-button-wrap">
-      <v-btn elevation="1" icon x-small @click="addRow(compKey)"
-        ><v-icon>mdi-plus-circle</v-icon></v-btn
+      <v-btn elevation="1" small color="blue-grey lighten-1"
+      class="white--text" @click="addRow(compKey)"
+        >추가</v-btn
       >
     </div>
     <!-- array일 경우-->
@@ -25,7 +26,7 @@
                   ></p>
                 </v-col>
                 <v-col cols="5" class="value-col">
-                  <v-text-field outlined dense v-model="innerRd[dataKey]">
+                  <v-text-field outlined dense v-model="innerRd[dataKey]" color="text--secondary">
                   </v-text-field>
                 </v-col>
               </v-row>
@@ -35,12 +36,12 @@
         <v-col cols="1" class="button-wrap">
           <v-btn
             v-if="innerI > 0"
-            elevation="1"
+            small
+            color="blue-grey lighten-1"
+            class="white--text"
             icon
-            x-small
             @click="removeRow(compKey, innerI)"
-          >
-            <v-icon>mdi-minus-circle</v-icon>
+          ><v-icon>mdi-close-box</v-icon>
           </v-btn></v-col
         >
       </v-row>

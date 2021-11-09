@@ -8,6 +8,7 @@
           :complete="step > idx"
           :editable="step > idx + 1"
           @click="step > idx + 1 ? clickStepper(idx) : ''"
+          color="blue-grey darken-3"
         >
           {{ s.text }}
         </v-stepper-step>
