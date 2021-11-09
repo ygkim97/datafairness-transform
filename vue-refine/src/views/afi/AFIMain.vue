@@ -66,12 +66,6 @@ export default {
   },
   created() {
     this.EventBus.$on("clickStep", this.clickStep);
-
-    console.log(
-      process.env.VUE_APP_REST_SERVER_URL_AFI +
-        ":" +
-        process.env.VUE_APP_REST_SERVER_PORT_AFI
-    );
     this.checkTableName();
   },
 
@@ -108,7 +102,7 @@ export default {
   border: 1px solid slategray;
 }
 .afi-body {
-  margin: 20px;
+  margin: 20px 0;
   border: 1px solid rgba(0, 0, 0, 0.12);
   width: 100%;
   min-height: 500px;
