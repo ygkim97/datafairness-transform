@@ -3,7 +3,7 @@ import store from "@/store/index.js";
 
 const service = axios.create({
   // baseURL을 localhost로 설정하여, proxy 설정을 맞춘다.
-  baseURL: `http://localhost:${process.env.VUE_APP_PORT}`,
+  baseURL: `http://${location.hostname}:${process.env.VUE_APP_PORT}`,
   timeout: 600000,
   withCredentials: true
 });

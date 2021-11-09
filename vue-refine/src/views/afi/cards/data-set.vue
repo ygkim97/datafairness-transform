@@ -84,7 +84,7 @@ export default {
 
 <style>
 .custom-card-wrapper {
-  display: inline-block;
+  display: inherit !important;
   width: 80%;
 }
 .custom-card-wrapper > div {
