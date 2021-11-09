@@ -1,7 +1,13 @@
 <template>
   <v-card-actions class="custom-card-wrapper">
-    <v-card v-for="(rd, key, i) in afiRowData" :key="'card_' + i">
-      <v-card-title>{{ defaultData[key].text }}</v-card-title>
+    <v-card v-for="(rd, key, i) in afiRowData" :key="'card_' + i" class="mb-12">
+      <v-toolbar
+        color="blue-grey darken-2"
+        dark
+        height="40"
+        flat
+      >{{ defaultData[key].text }}
+      </v-toolbar>
       <template v-if="defaultData[key].dataType === 'array'">
         <!-- array component-->
         <data-set-array
@@ -10,6 +16,7 @@
           :compKey="key"
           :afiRowData="afiRowData"
           :defaultData="defaultData"
+          class="mt-16"
         >
         </data-set-array>
       </template>
@@ -34,6 +41,7 @@
           :compKey="key"
           :afiRowData="afiRowData"
           :defaultData="defaultData"
+          class="px-0"
         ></data-set-html>
       </template>
 
@@ -45,6 +53,7 @@
           :compKey="key"
           :afiRowData="afiRowData"
           :defaultData="defaultData"
+          class="px-0"
         ></data-set-html>
       </template>
       <template v-else> </template>
@@ -84,34 +93,40 @@ export default {
 
 <style>
 .custom-card-wrapper {
-  display: inherit !important;
-  width: 80%;
+  display: inline-block;
+  width: 100%;
 }
 .custom-card-wrapper > div {
   margin: 10px 0;
 }
 .custom-card-content {
-  padding: 5px;
-  margin: 3px 20px 10px 20px;
-  border: 1px solid lightblue;
+  padding: 20px;
+  margin: 40px 24px 16px 24px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   width: auto !important;
 }
 .custom-card-content.none-border {
   border: none !important;
 }
-.custom-card-content > div {
-  padding: 5px;
-}
 .custom-card-content .v-card__text {
   padding: 5px !important;
 }
-.button-wrap button {
-  margin: 0 50%;
+.button-wrap{
+  position: relative;
 }
-.add-button-wrap button {
+.button-wrap button {
   position: absolute;
-  right: 20px;
-  top: 40px;
+  top: -14px;
+  right: -14px;
+}
+.add-button-wrap{
+  position: absolute;
+  width: 100%;
+}
+.add-button-wrap button{
+  position: absolute;
+  right: 25px;
+  bottom: 10px;
 }
 .v-card {
   padding-bottom: 1px;

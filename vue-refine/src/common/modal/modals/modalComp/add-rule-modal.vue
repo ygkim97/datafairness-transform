@@ -21,6 +21,7 @@
             required
             :disabled="!param.isEditable"
             hint="select box를 클릭해 값을 선택해 주세요."
+            color="text--secondary"
           ></v-autocomplete>
           <v-textarea
             clearable

@@ -18,7 +18,7 @@
           </td>
           <!-- checkbox-->
           <td>
-            <v-checkbox v-model="rd[paramKey]"></v-checkbox>
+            <v-checkbox v-model="rd[paramKey]" color="blue-grey darken-2"></v-checkbox>
           </td>
         </tr>
       </tbody>

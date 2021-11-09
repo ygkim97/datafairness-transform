@@ -3,11 +3,16 @@
     <v-card
       v-for="(pa, i) in params.protected_attributes"
       :key="'pa_card_' + i"
+      class="mb-12"
     >
-      <v-card-title>
-        {{ defaultData.text + ": " + pa }}
-      </v-card-title>
-      <div class="comp_wrap">
+      <v-toolbar
+        color="blue-grey darken-2"
+        dark
+        height="40"
+        flat
+      >{{ defaultData.text + ": " + pa }}
+      </v-toolbar>
+      <div class="comp_wrap mt-10 mb-4 mx-6">
         <div class="text-h6">
           Privileged Group:
         </div>
@@ -61,6 +66,10 @@ export default {
 </script>
 
 <style scoped>
+.comp_wrap{
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 20px;
+}
 .comp_wrap > div:nth-child(2n) {
   margin-bottom: 20px;
 }

@@ -1,9 +1,13 @@
 <template>
   <div v-if="params !== null">
     <v-card>
-      <v-card-title>
-        {{ defaultData.text }}
-      </v-card-title>
+      <v-toolbar
+        color="blue-grey darken-2"
+        dark
+        height="40"
+        flat
+      >{{ defaultData.text }}
+      </v-toolbar>
       <v-card-subtitle>
         {{ defaultData.subText }}
         <p class="text-caption">{{ defaultData.desc }}</p>
@@ -17,6 +21,8 @@
           :items="afiRowData.algorithmList.list"
           required
           hint="select box를 클릭해 값을 선택해 주세요."
+          color="text--secondary"
+          item-color="blue-grey darken-2"
         ></v-autocomplete>
       </div>
     </v-card>
@@ -48,4 +54,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.comp_wrap{
+  border: none;
+}
+</style>

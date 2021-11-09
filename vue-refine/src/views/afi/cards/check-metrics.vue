@@ -1,9 +1,13 @@
 <template>
   <v-card-actions class="custom-card-wrapper">
-    <v-card v-for="(rd, key, i) in afiRowData" :key="'card_' + i">
-      <v-card-title>
-        {{ defaultData[key].text }}
-      </v-card-title>
+    <v-card v-for="(rd, key, i) in afiRowData" :key="'card_' + i" class="mb-12">
+      <v-toolbar
+        color="blue-grey darken-2"
+        dark
+        height="40"
+        flat
+      >{{ defaultData[key].text }}
+      </v-toolbar>
       <template
         v-if="Object.prototype.hasOwnProperty.call(defaultData[key], 'desc')"
       >
@@ -63,6 +67,6 @@ export default {
 
 <style scoped>
 div.noty {
-  padding: 0 20px;
+  padding: 10px 20px;
 }
 </style>
