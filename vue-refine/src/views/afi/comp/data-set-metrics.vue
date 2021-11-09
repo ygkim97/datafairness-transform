@@ -5,12 +5,8 @@
       :key="'pa_card_' + i"
       class="mb-12"
     >
-      <v-toolbar
-        color="blue-grey darken-2"
-        dark
-        height="40"
-        flat
-      >{{ defaultData.text + ": " + pa }}
+      <v-toolbar color="blue-grey darken-2" dark height="40" flat
+        >{{ defaultData.text + ": " + pa }}
       </v-toolbar>
       <div class="comp_wrap mt-10 mb-4 mx-6">
         <div class="text-h6">
@@ -24,6 +20,8 @@
             >{{ Object.values(params.privileged_groups[0])[0] }}:
           </span>
         </div>
+
+        <v-divider></v-divider>
         <div class="text-h6">
           Unprivileged Group:
         </div>
@@ -36,16 +34,20 @@
             >{{ Object.values(params.unprivileged_groups[0])[0] }}:
           </span>
         </div>
+
+        <v-divider v-if="params.mitigation !== null"></v-divider>
         <div class="text-h6 mitigation-wrap" v-if="params.mitigation !== null">
           <span class="key">
             Mitigation:
           </span>
           <span class="value">{{ params.mitigation }}</span>
         </div>
-
-        <div class="cart-wrap">
-          <div>CHART</div>
-          <div>CHART</div>
+        <v-divider></v-divider>
+        <div class="w">
+          <div class="text-h6">
+            Metrics
+          </div>
+          <data-set-chart :params="params.metrics"></data-set-chart>
         </div>
       </div>
     </v-card>
@@ -61,17 +63,20 @@ export default {
       return this.$store.getters.defaultData[this.compKey];
     }
   },
+  components: {
+    DataSetChart: () => import("./data-set-chart.vue")
+  },
   methods: {}
 };
 </script>
 
 <style scoped>
-.comp_wrap{
+.comp_wrap {
   border: 1px solid rgba(0, 0, 0, 0.12);
   padding: 20px;
 }
-.comp_wrap > div:nth-child(2n) {
-  margin-bottom: 20px;
+.v-divider {
+  margin: 20px 0;
 }
 .comp_wrap > div:last-child {
   margin-bottom: 0;
