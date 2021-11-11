@@ -4,6 +4,7 @@
 
     <!-- Global Component -->
     <modals></modals>
+    <scroll-top></scroll-top>
 
     <spinner-comp
       :spinnerOn="$store.getters.spinnerStatus"

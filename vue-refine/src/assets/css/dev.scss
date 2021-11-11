@@ -2,6 +2,9 @@ header {
     z-index: 16 !important;
 }
 
+div, pre, p {
+    outline : none;
+}
 
 .nav {
     padding-top: 11px;

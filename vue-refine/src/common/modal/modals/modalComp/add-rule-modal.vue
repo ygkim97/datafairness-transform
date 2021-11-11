@@ -21,6 +21,7 @@
             required
             :disabled="!param.isEditable"
             hint="select box를 클릭해 값을 선택해 주세요."
+            color="text--secondary"
           ></v-autocomplete>
           <v-textarea
             clearable
@@ -140,9 +141,6 @@ export default {
 <style scoped="">
 .custom-modal {
   height: calc(100% - 40px);
-}
-.mu-dialog-body {
-  /*overflow: hidden !important;*/
 }
 .mu-fix-foot .mu-dialog-body {
   top: 45px;

@@ -24,17 +24,18 @@ let routes = [
   },
   {
     path: "",
-    redirect: { name: "tableNotFound" }
+    name: "noty",
+    component: () => import("@/views/default/Noty.vue")
   },
   {
     path: "/",
-    redirect: { name: "tableNotFound" }
+    redirect: { name: "noty" }
   },
   {
-    path: "/:tableName",
+    path: "/dqi/:tableName",
     name: "main",
     text: "메인",
-    component: () => import("@/views/Main.vue"),
+    component: () => import("@/views/dqi/DQIMain.vue"),
     meta: {
       useMain: true
     },
@@ -45,9 +46,9 @@ let routes = [
         text: "Rule View",
         name: "viewRule",
         icon: "mdi-alert-octagon",
-        component: () => import("@/views/rules/ViewRule.vue"),
         // true로 설정하면 데이터를 props로도 받는다.
         // true로 설정하면 true.params가 컴포넌트 props로 설정된다.
+        component: () => import("@/views/dqi/rules/ViewRule.vue"),
         props: true
       },
       {
@@ -55,7 +56,7 @@ let routes = [
         text: "Result",
         name: "viewResult",
         icon: "mdi-alert-octagon",
-        component: () => import("@/views/results/ViewResult.vue"),
+        component: () => import("@/views/dqi/results/ViewResult.vue"),
         props: true
       },
       {
@@ -65,15 +66,41 @@ let routes = [
         component: () => import("@/views/test/test.vue"),
         props: true
       }
-      // , {
-      //     path: '/rule/change',
-      //     text: 'Rule Change',
-      //     name: 'changeRule',
-      //     icon: 'mdi-send',
-      //     component: () => import("@/views/rule/change/ChangeRule.vue"),
-      //     props: true
-      // }
     ]
+  },
+  {
+    path: "/afi/:tableName",
+    name: "main",
+    text: "메인",
+    component: () => import("@/views/afi/AFIMain.vue"),
+    meta: {
+      useMain: true
+    },
+    // children: [{
+    //   path : "main",
+    //   text : "AFI View",
+    //   name : 'afiMain',
+    //   component: () => import("@/views/afi/data-set.vue"),
+    // }]
+    // redirect: { name: "viewRule" },
+    // children: [~
+    //   {
+    //     path: "rules",
+    //     text: "Rule View",
+    //     name: "viewRule",
+    //     icon: "mdi-alert-octagon",
+    //     component: () => import("@/views/rules/ViewRule.vue"),
+    //     props: true
+    //   },
+    //   {
+    //     path: "result",
+    //     text: "Result",
+    //     name: "viewResult",
+    //     icon: "mdi-alert-octagon",
+    //     component: () => import("@/views/results/ViewResult.vue"),
+    //     props: true
+    //   }
+    // ]
   }
 ];
 

@@ -9,7 +9,7 @@
     </v-toolbar>
 
     <div class="grid-wrap">
-      <div class="float-right">
+      <div class="float-right my-2 mr-n4">
         <div class="float-left grid-button">
           <component
             :is="vBtn"
@@ -186,7 +186,6 @@ export default {
       this.$refs[`tuiGrid_${this.ruleKey}`].gridInstance.on(
         "focusChange",
         (ev) => {
-          console.log("highlight");
           const grid = ev.instance;
           if (selectedRowKey !== null) {
             grid.removeRowClassName(

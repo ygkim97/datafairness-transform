@@ -1,6 +1,6 @@
 <template>
   <div class="custom-json-body">
-    <div class="py-4">
+    <div class="py-3">
       <v-btn
         color="blue-grey lighten-1"
         class="float-right"
@@ -11,7 +11,7 @@
       >
     </div>
 
-    <div class="py-4">
+    <div class="py-7">
       <v-card elevation="2" min-height="200">
         <v-toolbar color="blue-grey darken-2" dark height="40" flat
           >전체 통계
@@ -49,7 +49,7 @@
         </v-card-text>
         <v-card-text>
           <template v-if="resultResponse.column_stats.length > 0">
-            <v-expansion-panels multiple v-model="expansionPanles">
+            <v-expansion-panels multiple v-model="expansionPanles" focusable>
               <v-expansion-panel
                 v-for="(column, idx) in resultResponse.column_stats"
                 :key="`expansion_panel_` + idx"

@@ -1,6 +1,7 @@
 // common plugins
 
-import request from "@/utils/request"; // axios interceptor
+import request from "@/utils/request";
+import { isString } from "vue-js-modal/src/utils/types"; // axios interceptor
 
 export default {
   install(Vue) {
@@ -11,7 +12,7 @@ export default {
         },
         // check string is empty
         isStringEmpty(val) {
-          return val !== 0 && (val === "" || val === null || false);
+          return val !== 0 && (val === "" || val === null || val === undefined);
         }, // axios cancel
         axiosCancel() {
           request.clear();
@@ -90,7 +91,10 @@ export default {
         replaceAll(str, oldVal, newVal) {
           const reg = new RegExp(oldVal, "gi");
           return str.replace(reg, newVal);
-        }
+        },
+        getHtmlDesc(val) {
+          return val.replaceAll("\n", "<br>");
+        },
       }
     });
   }

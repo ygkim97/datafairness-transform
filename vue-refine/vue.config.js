@@ -1,25 +1,13 @@
 module.exports = {
+  runtimeCompiler: true,
   devServer: {
     port: process.env.VUE_APP_PORT,
     disableHostCheck: true,
     proxy: {
-      "^/function": {
+      "^/function/*": {
         target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
         changeOrigin: true,
-        logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
-      },
-      "^/api": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
-        changeOrigin: true,
-        logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
-      },
-      "^/cdn": {
-        target: `http://${process.env.VUE_APP_REST_SERVER_URL}:${process.env.VUE_APP_REST_SERVER_PORT}`,
-        changeOrigin: true,
-        logLevel: "debug",
-        // pathRewrite: { "^/api/": "/api/" }
+        logLevel: "debug"
       }
     }
   },

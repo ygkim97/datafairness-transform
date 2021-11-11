@@ -1,7 +1,8 @@
 <template>
   <div>
+    <property-btns></property-btns>
     <template v-for="ruleKey in compList">
-      <div :key="ruleKey" class="py-4">
+      <div :key="ruleKey" :id="ruleKey" class="py-4 mt-2">
         <component
           :is="component"
           :ruleKey="ruleKey"
@@ -21,6 +22,10 @@ import viewComp from "./comp/ruleComp.vue";
 export default {
   name: "viewRule",
 
+  components: {
+    PropertyBtns: ()=> import("./comp/propertyBtns.vue")
+  },
+
   computed: {
     ruleJson() {
       return this.$store.getters.ruleJson;
@@ -36,6 +41,7 @@ export default {
   watch: {},
 
   created() {
+    this.EventBus.$emit("scrollView");
   },
 
   mounted() {},
