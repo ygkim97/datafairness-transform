@@ -25,6 +25,9 @@ Vue.component('tui-grid', Grid);
 import { VueSimpleSpinner } from "@/common/loader/index.js";
 Vue.component('Spinner', VueSimpleSpinner);
 
+import ScrollTop from "@/common/scroll/ScrollTop.vue";
+Vue.component('ScrollTop', ScrollTop);
+
 Vue.config.productionTip = false
 
 // 전역 event 처리 -- event bus 추가
