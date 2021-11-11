@@ -289,14 +289,14 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		UI_CHART_INFO.tableName = selected.attr('tableName')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 
-		if (UI_CHART_INFO.tableName !== null && UI_CHART_INFO.tableName !== undefined && UI_CHART_INFO.tableName !== '') {
-			// 버튼 표시
-			_self._elmts.open_web_fairness.show();
-			_self._elmts.open_web_data_quality.show();
-		} else {
-			// 버튼 가림
-			_self._elmts.open_web_fairness.hide();
-			_self._elmts.open_web_data_quality.hide();
+		if (_self._elmts.sec_btns !== undefined) {
+			if (UI_CHART_INFO.tableName !== null && UI_CHART_INFO.tableName !== undefined && UI_CHART_INFO.tableName !== '') {
+				// 버튼 표시
+				_self._elmts.sec_btns.show();
+			} else {
+				// 버튼 가림
+				_self._elmts.sec_btns.hide();
+			}
 		}
 		setTimeout(()=>{
 			_self._getModelInfo();

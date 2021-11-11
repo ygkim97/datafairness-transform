@@ -7,21 +7,18 @@
 		</div>
 		<div class="btn-group">
 			<div class="btn-popup">
-				<button bind="get_sta_btn"></button>
+				<button bind="get_sta_btn" class="btn-right"></button>
 				<button bind="view_qe_btn" style="display: none;"></button>
 			</div>
-			<div>
-				<div class="select_all_warpper">
+			<div class="select_all_warpper">
 					<span>
 						<label class="cursor_pointer" bind="select_all_label"></label>
 						<input type="checkbox" bind="check_all">
 					</span>
-					<div class="selected_wrapper" style="display: none;">
-						<label bind="selected_header"></label>
-						<label bind="selected_header_count"></label>
-					</div>
+				<div class="selected_wrapper" style="display: none;">
+					<label bind="selected_header"></label>
+					<label bind="selected_header_count"></label>
 				</div>
-				<!-- <button bind="check_all"></button> -->
 			</div>
 		</div>
 	</div>
