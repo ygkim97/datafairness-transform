@@ -78,7 +78,7 @@ const state = {
         dataType: "stringArray"
       },
       features_to_drop: {
-        text: "features to keep (optional)",
+        text: "features to drop (optional)",
         desc:
           "Column names to drop. *Note: this overrides* `features_to_keep`.",
         dataType: "stringArray"

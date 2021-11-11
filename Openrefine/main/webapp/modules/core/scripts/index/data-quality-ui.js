@@ -289,14 +289,14 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 		UI_CHART_INFO.tableName = selected.attr('tableName')
 		UI_CHART_INFO.selectedPId = _self._elmts.project_selectbox.val();
 
-		if (UI_CHART_INFO.tableName !== null && UI_CHART_INFO.tableName !== undefined && UI_CHART_INFO.tableName !== '') {
-			// 버튼 표시
-			_self._elmts.open_web_fairness.show();
-			_self._elmts.open_web_data_quality.show();
-		} else {
-			// 버튼 가림
-			_self._elmts.open_web_fairness.hide();
-			_self._elmts.open_web_data_quality.hide();
+		if (_self._elmts.sec_btns !== undefined) {
+			if (UI_CHART_INFO.tableName !== null && UI_CHART_INFO.tableName !== undefined && UI_CHART_INFO.tableName !== '') {
+				// 버튼 표시
+				_self._elmts.sec_btns.show();
+			} else {
+				// 버튼 가림
+				_self._elmts.sec_btns.hide();
+			}
 		}
 		setTimeout(()=>{
 			_self._getModelInfo();
@@ -452,9 +452,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 				alert($.i18n('core-index-data/no-selected-project'))
 			} else {
-				window.open(DQI_SERVER_URL+UI_CHART_INFO.tableName,
-					"RULE",
-					"menubar=0, toolbar=0, location=false, status=0, top=100px, left=100px, height=800px, width=1000px")
+				window.open(DQI_SERVER_URL+UI_CHART_INFO.tableName);
 			}
 		});
 		this._elmts.open_web_fairness.on('click', {_self : this}, (e) => {
@@ -470,9 +468,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 				alert($.i18n('core-index-data/no-selected-project'))
 			} else {
-				window.open(AFI_SERVER_URL+UI_CHART_INFO.tableName,
-					"FAIRNESS",
-					"menubar=0, toolbar=0, location=false, status=0, top=100px, left=100px, height=800px, width=1000px")
+				window.open(AFI_SERVER_URL+UI_CHART_INFO.tableName);
 			}
 		});
 	}

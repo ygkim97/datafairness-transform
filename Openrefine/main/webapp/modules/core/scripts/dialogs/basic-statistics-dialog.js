@@ -81,12 +81,12 @@ BasicStatisticsDialogUI.prototype._setDialog = function(drawType) {
 	
 	setTimeout(()=>{
 		// browser resized or normal
-		_self._createChart_default();
-		_self._createChart_d3();
 		if (drawType == 'all') {
 			_self._createGrid();
 			_self._setGridDetailBtn();
 		}
+		_self._createChart_default();
+		_self._createChart_d3();
 		warningDialog2();
 	}, 10)
 	
@@ -150,15 +150,20 @@ BasicStatisticsDialogUI.prototype._getD3ChartSeries = function(i) {
 // d3.js
 BasicStatisticsDialogUI.prototype._createChart_d3 = function() {
 	const td = $('#chart_template_'+0)
-	const width = td.width();
+	const gridTd = $($('#basic-statistics-grid td'));
+	// const width = gridTd.width();
 	const height = td.height();
 	const margin = {top: 10, right: 10, bottom: 10, left: 40}
+
+	// tr도 width 부여.
+	const gridWidth = $($('#basic-statistics-grid th')[0]).width();
+	$($('#basic-statistics-chart th')[0]).width(gridWidth);
 	
 	var parentId = '';
 	for (var i = 0, size = this.statData.columnInfo.length; i < size; i++) {
 		parentId = 'chart_template_' +i;
 		this._drawSvg(i, parentId, {
-			width: width, 
+			width: $(gridTd[i]).width() - 5,
 			height: height, 
 			margin: margin,
 			clipPathId: "clip_path_" + i,
@@ -518,6 +523,15 @@ BasicStatisticsDialogUI.prototype._createGrid = function() {
 	// template 생성
 	var template = '';
 	template += '<table>';
+
+	template += '<colgroup>';
+	template += '<col width="90px" />';
+	var widthCnt = 100 / (this.statData.columnInfo.length);
+
+	this.statData.columnInfo.forEach((k, rI)=>{
+		template += '<col width="'+widthCnt+'%" />';
+	})
+	template += '</colgroup>';
 	
 	const column = this.statData.columnInfo;
 	const rowNames = this.statData.rowNames;
