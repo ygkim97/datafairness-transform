@@ -24,11 +24,12 @@ let routes = [
   },
   {
     path: "",
-    redirect: { name: "tableNotFound" }
+    name: "noty",
+    component: () => import("@/views/default/Noty.vue")
   },
   {
     path: "/",
-    redirect: { name: "tableNotFound" }
+    redirect: { name: "noty" }
   },
   {
     path: "/dqi/:tableName",

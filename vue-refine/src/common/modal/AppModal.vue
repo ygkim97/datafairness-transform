@@ -18,8 +18,6 @@ export default {
   },
   data() {
     return {
-      showAlertModal: false,
-      showConfirmModal: false
     };
   },
   mounted() {
