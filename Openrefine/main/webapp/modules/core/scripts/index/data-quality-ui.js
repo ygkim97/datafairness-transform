@@ -452,9 +452,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 				alert($.i18n('core-index-data/no-selected-project'))
 			} else {
-				window.open(DQI_SERVER_URL+UI_CHART_INFO.tableName,
-					"RULE",
-					"menubar=0, toolbar=0, location=false, status=0, top=100px, left=100px, height=800px, width=1000px")
+				window.open(DQI_SERVER_URL+UI_CHART_INFO.tableName);
 			}
 		});
 		this._elmts.open_web_fairness.on('click', {_self : this}, (e) => {
@@ -470,9 +468,7 @@ Refine.SetDataQualityUI.prototype._btnSetting = function() {
 			if (UI_CHART_INFO.selectedPName == undefined || UI_CHART_INFO.selectedPName == '') {
 				alert($.i18n('core-index-data/no-selected-project'))
 			} else {
-				window.open(AFI_SERVER_URL+UI_CHART_INFO.tableName,
-					"FAIRNESS",
-					"menubar=0, toolbar=0, location=false, status=0, top=100px, left=100px, height=800px, width=1000px")
+				window.open(AFI_SERVER_URL+UI_CHART_INFO.tableName);
 			}
 		});
 	}
