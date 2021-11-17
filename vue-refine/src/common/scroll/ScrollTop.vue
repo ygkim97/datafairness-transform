@@ -30,6 +30,11 @@ export default {
 
     created() {
         this.EventBus.$on("scrollView", this.scrollView);
+        console.log('scroll created');
+    },
+
+    mounted() {
+        console.log('scroll mounted');
     },
 
     methods: {

@@ -112,6 +112,9 @@ const router = new vueRouter({
 
 // router 생성할 때 전역 범위로 등록하여 사용하는 방법
 router.beforeEach((to, from, next) => {
+  // to : 이동할 url
+  // from : 현재 url
+  // next : to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
   store.commit("spinnerOn");
   setTimeout(() => {
     next();

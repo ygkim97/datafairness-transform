@@ -24,7 +24,12 @@ export default {
   mounted() {
     this.EventBus.$on("loaderOpen", this.loaderOpen);
     this.EventBus.$on("loaderClose", this.loaderClose);
+    console.log('app mounted');
   },
+
+  created() {
+    console.log('app created');
+  }
 
 };
 </script>

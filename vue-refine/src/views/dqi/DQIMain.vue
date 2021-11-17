@@ -30,6 +30,10 @@ export default {
     created() {
         this.checkTableName();
         this.getRuleData();
+        console.log('dqimain created');
+    },
+    mounted(){
+      console.log('dqimain mounted');
     },
 
   methods: {
