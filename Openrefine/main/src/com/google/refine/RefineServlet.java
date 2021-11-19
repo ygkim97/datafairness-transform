@@ -66,12 +66,12 @@ import edu.mit.simile.butterfly.ButterflyModule;
 public class RefineServlet extends Butterfly {
 //    static private String ASSIGNED_VERSION = "3.4-beta2";
 //	static private String ASSIGNED_VERSION = "3.4-custom-SNAPSHOT";
-	static private String ASSIGNED_VERSION = "IRIS-Refine-v1.0";
+	static private String ASSIGNED_VERSION = "IRIS-DQ-v1.0";
     
     static public String VERSION = "";
     static public String REVISION = "";
     static public String FULL_VERSION = "";
-    static public String FULLNAME = "OpenRefine ";
+    static public String FULLNAME = "IRISDQ ";
 
     static final long serialVersionUID = 2386057901503517403L;
 
