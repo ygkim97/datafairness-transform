@@ -25,6 +25,7 @@
           :compKey="key"
           :afiRowData="afiRowData"
           :defaultData="defaultData"
+          :arrayList="arrayList"
         >
         </data-set-array>
       </template>
@@ -57,6 +58,14 @@ export default {
     },
     afiRowData() {
       return this.$store.getters.afiRowData[this.pageKey];
+    },
+    arrayList() {
+      let arrayList = [];
+      const items = this.$store.getters.afiRowData.dataset.protected_attributes;
+      for(let i in items){
+        arrayList.push(items[i].name);
+      }
+      return arrayList;
     }
   },
   data() {

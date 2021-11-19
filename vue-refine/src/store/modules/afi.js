@@ -1,5 +1,8 @@
 // Data Type 정의
 const state = {
+  labelColumnList: [
+    "credit", "sex", "age"
+  ],
   // card 컴포넌트를 구성하는데 필요한 데이터
   stepper: [
     {
@@ -39,7 +42,7 @@ const state = {
           name: {
             text: "Name",
             desc: "Name of the label column in table",
-            dataType: "label"
+            dataType: "array"
           },
           favorable_classes: {
             text: "favorable Classes",
@@ -55,7 +58,7 @@ const state = {
           name: {
             text: "Name",
             desc: "Name of the protected attribute column in table",
-            dataType: "label"
+            dataType: "array"
           },
           privileged_classes: {
             text: "privileged classes",
@@ -110,7 +113,7 @@ const state = {
           name: {
             text: "Name",
             desc: "name in `protected attributes`",
-            dataType: "text"
+            dataType: "array"
           },
           value: {
             text: "Value",
@@ -129,7 +132,7 @@ const state = {
           name: {
             text: "Name",
             desc: "name in `protected attributes`",
-            dataType: "text"
+            dataType: "array"
           },
           value: {
             text: "Value",
@@ -252,7 +255,8 @@ const getters = {
   afiRowData: (state, _, rootState) => {
     state.afiRowData.input.target = rootState.tableName.tableName;
     return state.afiRowData;
-  }
+  },
+  labelColumnList: (state) => state.labelColumnList
 };
 // 비동기 처리
 const actions = {};

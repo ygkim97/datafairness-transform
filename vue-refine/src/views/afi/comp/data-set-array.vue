@@ -25,10 +25,44 @@
                     "
                   ></p>
                 </v-col>
-                <v-col cols="5" class="value-col">
-                  <v-text-field outlined dense v-model="innerRd[dataKey]" color="text--secondary">
-                  </v-text-field>
-                </v-col>
+                <template v-if="defaultData[compKey]['params'][dataKey].dataType === 'array'">
+                  <v-col cols="5" class="value-col my-2">
+                    <template v-if="pageKey === 'dataset'">
+                      <v-autocomplete
+                        dense
+                        autocomplete="off"
+                        persistent-hint
+                        outlined
+                        required
+                        v-model="innerRd.name"
+                        label="Column Name"
+                        :items="labelColumnList"
+                        hint="Column을 선택해 주세요"
+                        color="text--secondary"
+                      ></v-autocomplete>
+                    </template>
+                    <template v-else-if="pageKey === 'metric'">
+                      <v-autocomplete
+                        dense
+                        autocomplete="off"
+                        persistent-hint
+                        outlined
+                        required
+                        v-model="afiRowData[compKey].name"
+                        label="Column Name"
+                        :items="arrayList"
+                        hint="Column을 선택해 주세요"
+                        color="text--secondary"
+                      ></v-autocomplete>
+                    </template>
+                  </v-col>
+                </template>
+                <template v-else>
+                  <v-col cols="5" class="value-col">
+                    <v-text-field outlined dense v-model="innerRd[dataKey]" color="text--secondary">
+                    </v-text-field>
+                  </v-col>
+                </template>
               </v-row>
             </v-row>
           </template>
@@ -52,7 +86,7 @@
 <script>
 export default {
   name: "data-set-array",
-  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData"],
+  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData", "arrayList"],
   methods: {
     addRow(k) {
       // 빈 object 추가
@@ -64,6 +98,11 @@ export default {
     },
     removeRow(k, fi) {
       this.afiRowData[k].splice(fi, 1);
+    }
+  },
+  computed: {
+    labelColumnList() {
+      return this.$store.getters.labelColumnList;
     }
   }
 };
