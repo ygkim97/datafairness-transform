@@ -4,7 +4,11 @@
       <v-flex xs5>
         <v-tabs v-model="tab" color="blue-grey darken-4" class="mx-3">
           <v-tabs-slider color="blue-grey darken-4"></v-tabs-slider>
-          <v-tab v-for="(mode, idx) in resultMode" :key="'mode_' + idx" class="font-weight-bold">
+          <v-tab
+            v-for="(mode, idx) in resultMode"
+            :key="'mode_' + idx"
+            class="font-weight-bold"
+          >
             {{ mode.text }}
           </v-tab>
         </v-tabs>
@@ -13,7 +17,7 @@
     <v-layout class="custom-result-body mt-0">
       <v-flex>
         <template v-if="tab > 0">
-          <rule-select-body v-bind:params="getRuleParams()"></rule-select-body>
+          <rule-select-body v-bind:regexSet="regexSet"></rule-select-body>
         </template>
         <result-body
           v-bind:resultBody="resultRuleParam"
@@ -33,7 +37,7 @@ export default {
 
   components: {
     ResultBody: () => import("./comp/result-body.vue"),
-    RuleSelectBody: () => import("./comp/set-result-rule.vue")
+    RuleSelectBody: () => import("./comp/set-result-rules.vue")
   },
 
   computed: {
@@ -41,13 +45,13 @@ export default {
       return this.$store.getters.resultMode;
     },
     regexSet() {
-      return this.$store.getters.ruleJson.regex_set.map((rs) => rs.name);
+      const regexSet = this.$store.getters.ruleJson.regex_set.map((rs) => {
+        return { key: rs.name, value: rs.name };
+      });
+      return [{ key: "STATS [Defaults]", value: "STATS" }].concat(regexSet);
     },
-    ruleNodeParam() {
+    ruleModeParam() {
       return this.$store.getters.ruleModeParam;
-    },
-    columnList() {
-      return this.$store.getters.columnList;
     },
     resultRuleParam() {
       return this.$store.getters.resultRuleParam;
@@ -66,9 +70,12 @@ export default {
   created() {
     this.$store.commit("resetData");
 
-    this.$store.commit("getColumnName");
-
-    this.createGrid();
+    // 초기값 설정
+    this.mode = this.$store.getters.CONSTANTS.mode.AUTO;
+    const me = this;
+    this.$nextTick(function() {
+      me.getResult();
+    });
   },
 
   mounted() {},
@@ -77,20 +84,10 @@ export default {
     tab: -1,
     expandRule: false,
     mode: null,
-    selectedRule: [],
-
-    gridProps: {
-      columns: [],
-      options: {},
-      theme: null
-    }
+    selectedRule: []
   }),
 
   methods: {
-    createGrid() {
-      // 데이터 초기값 설정
-      this.mode = this.$store.getters.CONSTANTS.mode.AUTO;
-    },
     getRuleData() {
       // TEST CODE
       this.$store.commit("setTableName", {
@@ -109,23 +106,26 @@ export default {
       // 필터링한 array를 vuex에 저장한다.
       this.$store.commit("setResultRules", resultParams);
     },
-    getRuleParams() {
-      return {
-        columnList: this.columnList,
-        regexSetNames: this.regexSet
-      };
-    },
     async getResult() {
       if (this.mode === this.$store.getters.CONSTANTS.mode.RULE) {
         this.ruleSelected();
       }
 
       const vm = this;
-      await api_dataDqi(this.ruleNodeParam).then((response) => {
-        vm.$store.dispatch("setResultResponse", {
-          response: response.data_dqi,
-          mode: vm.mode
-        });
+      await api_dataDqi(this.ruleModeParam).then((response) => {
+        if (response.data_dqi === null) {
+          // 데이터 조회를 하지 못한 경우
+          vm.EventBus.$emit("modalAlert", {
+            title: "경고",
+            text: "데이터 조회를 하지 못했습니다. 잠시후 다시 시도해 주세요",
+            okTitle: "확인"
+          });
+        } else {
+          vm.$store.dispatch("setResultResponse", {
+            response: response.data_dqi,
+            mode: vm.mode
+          });
+        }
       });
     }
   }

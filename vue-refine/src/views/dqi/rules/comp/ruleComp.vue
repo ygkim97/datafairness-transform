@@ -128,7 +128,7 @@ export default {
           options: {
             btnText: "view",
             vueIns: this,
-            iClass: "fas fa-minus-circle",
+            iClass: "mdi mdi-close-box fas fa-lg",
             keyColumnName: this.ruleSample.columnKey
           }
         }
