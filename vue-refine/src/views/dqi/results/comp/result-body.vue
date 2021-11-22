@@ -91,6 +91,7 @@ export default {
       return this.$store.getters.CONSTANTS.result_str;
     },
     resultResponse() {
+      this.expansionAll(false);
       return this.$store.getters.resultResponse[this.mode];
     }
   },

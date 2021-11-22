@@ -106,11 +106,6 @@ export default {
       // 필터링한 array를 vuex에 저장한다.
       this.$store.commit("setResultRules", resultParams);
     },
-    // getRuleParams() {
-    //   return {
-    //     regexSetNames: this.regexSet
-    //   };
-    // },
     async getResult() {
       if (this.mode === this.$store.getters.CONSTANTS.mode.RULE) {
         this.ruleSelected();
@@ -118,10 +113,19 @@ export default {
 
       const vm = this;
       await api_dataDqi(this.ruleModeParam).then((response) => {
-        vm.$store.dispatch("setResultResponse", {
-          response: response.data_dqi,
-          mode: vm.mode
-        });
+        if (response.data_dqi === null) {
+          // 데이터 조회를 하지 못한 경우
+          vm.EventBus.$emit("modalAlert", {
+            title: "경고",
+            text: "데이터 조회를 하지 못했습니다. 잠시후 다시 시도해 주세요",
+            okTitle: "확인"
+          });
+        } else {
+          vm.$store.dispatch("setResultResponse", {
+            response: response.data_dqi,
+            mode: vm.mode
+          });
+        }
       });
     }
   }
