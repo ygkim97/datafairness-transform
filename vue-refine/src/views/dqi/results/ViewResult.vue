@@ -70,8 +70,6 @@ export default {
   created() {
     this.$store.commit("resetData");
 
-    this.$store.commit("getColumnName");
-
     // 초기값 설정
     this.mode = this.$store.getters.CONSTANTS.mode.AUTO;
     const me = this;
