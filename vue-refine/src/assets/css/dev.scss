@@ -17,7 +17,7 @@ div, pre, p {
 }
 
 .rule-buttons {
-    margin : 10px 0px;
+    margin : 10px 0;
     height : 30px;
     
 }
@@ -49,12 +49,20 @@ div, pre, p {
 .grid-wrap{
     padding: 40px;
 }
+.custom-rule-wrap .v-text-field__details {
+    display : none !important;
+}
+.custom-rule-wrap .v-input,
+.custom-rule-wrap .table td {
+    font-size : 13px !important;
+}
+
 /**
     dialog
  */
 .mu-dialog-background{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10;background-color:#000;opacity:.4;filter:alpha(opacity=40)}
 .mu-dialog{display:inline-block;position:absolute;z-index:11;min-width:320px;border:1px solid #c3c3c3;border-radius:2px;box-shadow: 1px 1px 3px 0 #41414165;background-color: rgb(255 255 255 / 61%);text-align:left}
-.mu-dialog-head{height:44px;line-height:44px;font-size:14px; border-bottom:1px solid #eaedf3;background-color:#f2f3f6;font-size: 20px;padding: 0px 20px;}
+.mu-dialog-head{height:44px;line-height:44px;border-bottom:1px solid #eaedf3;background-color:#f2f3f6;font-size: 20px;padding: 0 20px;}
 .mu-dialog-head > *{line-height:44px}
 .mu-dialog-head:after{display:block;content:'';clear:both;visibility:hidden;height:0}
 .mu-dialog-head:active{cursor:move}

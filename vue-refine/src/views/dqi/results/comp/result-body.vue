@@ -14,21 +14,6 @@
     <div class="py-7">
       <v-card elevation="2" min-height="200">
         <v-toolbar color="blue-grey darken-2" dark height="40" flat
-          >전체 통계
-        </v-toolbar>
-        <tui-grid
-          id="tuiGrid_total"
-          ref="tuiGrid_total"
-          :data="gridProps.total.gridData"
-          :columns="gridProps.total.columns"
-          :options="gridProps.total.options"
-          :theme="gridProps.theme"
-        ></tui-grid>
-      </v-card>
-    </div>
-    <div class="py-4">
-      <v-card elevation="2" min-height="200">
-        <v-toolbar color="blue-grey darken-2" dark height="40" flat
           >컬럼별 통계
         </v-toolbar>
         <v-card-text class="float-right buttons">
@@ -49,7 +34,7 @@
         </v-card-text>
         <v-card-text>
           <template v-if="resultResponse.column_stats.length > 0">
-            <v-expansion-panels multiple v-model="expansionPanles" focusable>
+            <v-expansion-panels multiple v-model="expansionPanels" focusable>
               <v-expansion-panel
                 v-for="(column, idx) in resultResponse.column_stats"
                 :key="`expansion_panel_` + idx"
@@ -69,6 +54,23 @@
             <p class="center">데이터가 없습니다.</p>
           </template>
         </v-card-text>
+      </v-card>
+    </div>
+    <div class="py-4">
+      <v-card elevation="2" min-height="200">
+        <v-toolbar color="blue-grey darken-2" dark height="40" flat
+          >전체 통계
+        </v-toolbar>
+        <template class="all-grid-wrap">
+          <tui-grid
+            id="tuiGrid_total"
+            ref="tuiGrid_total"
+            :data="gridProps.total.gridData"
+            :columns="gridProps.total.columns"
+            :options="gridProps.total.options"
+            :theme="gridProps.theme"
+          ></tui-grid>
+        </template>
       </v-card>
     </div>
   </div>
@@ -102,7 +104,7 @@ export default {
   },
   data() {
     return {
-      expansionPanles: [],
+      expansionPanels: [],
       column: null,
       rule: null,
       gridProps: {
@@ -147,8 +149,6 @@ export default {
 
       this.gridProps.total = {
         options: {
-          bodyHeight: "fitToParent",
-          rowHeight: "auto",
           scrollX: false
         },
         columns: gridColumns,
@@ -161,12 +161,12 @@ export default {
     expansionAll(bool) {
       if (bool) {
         // expansion
-        this.expansionPanles = [
+        this.expansionPanels = [
           ...Array(this.resultResponse.column_stats.length).keys()
         ].map((k, i) => i);
       } else {
         // reduction
-        this.expansionPanles = [];
+        this.expansionPanels = [];
       }
     }
   }
@@ -176,19 +176,6 @@ export default {
 <style scoped>
 .custom-json-body {
   margin: 0 10px 10px 10px;
-}
-.result-body {
-  margin-top: 30px;
-  padding: 20px;
-  /*border: 1px solid lightgray;*/
-}
-.flex {
-  margin: 0 30px;
-}
-.inner-box {
-  margin-top: 20px;
-  border: thin solid rgba(0, 0, 0, 0.12);
-  padding: 20px;
 }
 p.center {
   text-align: center;
