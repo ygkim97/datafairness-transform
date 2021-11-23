@@ -154,7 +154,7 @@ check_pywin32() {
 check_running() {
     check_downloaders
     URL="http://${REFINE_HOST}:${REFINE_PORT}/"
-    CHECK_STR="<title>OpenRefine</title>"
+    CHECK_STR="<title>IRIS DQ</title>"
 
     if [ "$CURL" ] ; then
         curl -s -S -f $URL > /dev/null 2>&1
