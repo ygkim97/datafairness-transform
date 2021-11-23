@@ -5,6 +5,7 @@
         <v-tabs v-model="tab" color="blue-grey darken-4" class="mx-3">
           <v-tabs-slider color="blue-grey darken-4"></v-tabs-slider>
           <v-tab
+            :disabled="!isAvailableTab(idx)"
             v-for="(mode, idx) in resultMode"
             :key="'mode_' + idx"
             class="font-weight-bold"
@@ -48,7 +49,10 @@ export default {
       const regexSet = this.$store.getters.ruleJson.regex_set.map((rs) => {
         return { key: rs.name, value: rs.name };
       });
-      return [{ key: "STATS [Defaults]", value: "STATS" }].concat(regexSet);
+      const statsTag = this.$store.getters.CONSTANTS.resultDefault;
+      return [{ key: `${statsTag} [Defaults]`, value: statsTag }].concat(
+        regexSet
+      );
     },
     ruleModeParam() {
       return this.$store.getters.ruleModeParam;
@@ -72,22 +76,28 @@ export default {
 
     // 초기값 설정
     this.mode = this.$store.getters.CONSTANTS.mode.AUTO;
-    const me = this;
-    this.$nextTick(function() {
-      me.getResult();
-    });
   },
 
   mounted() {},
 
   data: () => ({
     tab: -1,
+    useTab2: false,
     expandRule: false,
     mode: null,
     selectedRule: []
   }),
 
   methods: {
+    isAvailableTab(idx) {
+      if (idx === 0) {
+        // tab1은 데이터 조회 여부와 상관 없이 클릭 가능하다.
+        return true;
+      } else {
+        // tab2는 데이터 조회가 완료된 후에 클릭 할 수 있다.
+        return this.useTab2;
+      }
+    },
     getRuleData() {
       // TEST CODE
       this.$store.commit("setTableName", {
@@ -111,8 +121,12 @@ export default {
         this.ruleSelected();
       }
 
+      // console.log(this.ruleModeParam)
+
       const vm = this;
       await api_dataDqi(this.ruleModeParam).then((response) => {
+        vm.useTab2 = true;
+
         if (response.data_dqi === null) {
           // 데이터 조회를 하지 못한 경우
           vm.EventBus.$emit("modalAlert", {

@@ -1,5 +1,10 @@
 const state = {
   constants: Object.freeze({
+    resultDefault: "STATS",
+    nerVal: {
+      ON: "on",
+      OFF: "off"
+    },
     compList: [
       "regex",
       "regex_set",
@@ -41,7 +46,7 @@ const state = {
       column_name: "컬럼 명",
       column_type: "해당 컬럼의 데이터 타입",
       column_pattern: "해당 컬럼의 패턴",
-      named_entity_recognition: "ko electra-ner 결과",
+      named_entity_recognition: "NER 결과",
       row_count: "컬럼 row 수",
       missing_count: "결측 값 수",
       pattern: "패턴 통계",
@@ -72,7 +77,7 @@ const state = {
       key: "값",
       len: "길이",
       count: "개수",
-      time_distrinution : "시간 분포"
+      time_distrinution: "시간 분포"
     }
   })
 };

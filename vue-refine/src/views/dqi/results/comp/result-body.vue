@@ -1,17 +1,29 @@
 <template>
   <div class="custom-json-body">
-    <div class="py-3">
-      <v-btn
-        color="blue-grey lighten-1"
-        class="float-right"
-        dark
-        small
-        @click="getResult"
-        >데이터 조회</v-btn
-      >
+    <div class="option-wrap">
+      <v-layout>
+        <v-flex xs12>
+          <span class="text-caption" v-if="mode === 'auto'"
+            >'RULE 기반 지표 측정' 은 '자동 지표 측정' 에서 조회한 데이터를 기반으로 표시됩니다. <br>'데이터 조회' 를 먼저 실행해주세요.</span
+          >
+        </v-flex>
+        <v-flex class="button-wrap" xs3>
+          <ner-checkbox :mode="mode"></ner-checkbox>
+        </v-flex>
+        <v-flex class="button-wrap">
+          <v-btn
+            color="blue-grey lighten-1"
+            class="float-right"
+            dark
+            small
+            @click="getResult"
+            >데이터 조회</v-btn
+          >
+        </v-flex>
+      </v-layout>
     </div>
 
-    <div class="py-7">
+    <div class="py-1">
       <v-card elevation="2" min-height="200">
         <v-toolbar color="blue-grey darken-2" dark height="40" flat
           >컬럼별 통계
@@ -56,7 +68,7 @@
         </v-card-text>
       </v-card>
     </div>
-    <div class="py-4">
+    <div class="py-2">
       <v-card elevation="2" min-height="200">
         <v-toolbar color="blue-grey darken-2" dark height="40" flat
           >전체 통계
@@ -81,7 +93,8 @@ export default {
   name: "result-body",
   props: ["mode"],
   components: {
-    ResultColumnSimpleTable: () => import("./result-column-simple-table.vue")
+    ResultColumnSimpleTable: () => import("./result-column-simple-table.vue"),
+    NerCheckbox: () => import("./ner-checkbox.vue")
   },
   computed: {
     gridInfo() {
@@ -183,5 +196,8 @@ p.center {
 }
 div.buttons button {
   margin: 5px 5px;
+}
+.option-wrap .button-wrap {
+  padding: 10px 5px;
 }
 </style>

@@ -1,7 +1,12 @@
 // Data Type 정의
 const state = {
-  STATS: "STATS",
   mode: null,
+
+  useNER: {
+    auto : true,
+    rule : true
+  },
+
   // radio 구성 데이터
   resultMode: [
     {
@@ -16,8 +21,6 @@ const state = {
 
   // rule array
   resultRuleParam: [],
-  // rule default obj
-  // defaultRules: [{ column: "STATUS", rule: "STATS" }],
 
   resultResponse: {
     auto: {
@@ -28,7 +31,7 @@ const state = {
       column_stats: [],
       table_dqi: {}
     }
-  },
+  }
 };
 // 동기 처리
 const mutations = {
@@ -46,6 +49,10 @@ const mutations = {
   setResultRuleParam(state, param) {
     state.resultRuleParam = param;
   },
+  setUseNER(state, param) {
+    state.useNER[param.mode] = param.useNER;
+  },
+
   resetData(state) {
     state.resultRuleParam = [];
     state.resultResponse = {
@@ -67,7 +74,10 @@ const getters = {
   ruleModeParam: (state, _, rootState) => {
     let returnParam = {
       mode: state.mode,
-      table_name: rootState.tableName.tableName
+      table_name: rootState.tableName.tableName,
+      ner: state.useNER[state.mode]
+        ? rootState.CONSTANTS.constants.nerVal.ON
+        : rootState.CONSTANTS.constants.nerVal.OFF
     };
 
     if (state.mode === rootState.CONSTANTS.constants.mode.RULE) {
@@ -76,7 +86,8 @@ const getters = {
     return returnParam;
   },
   resultResponse: (state) => state.resultResponse,
-  resultRuleParam: (state) => state.resultRuleParam
+  resultRuleParam: (state) => state.resultRuleParam,
+  useNER: (state) => state.useNER
 };
 // 비동기 처리
 const actions = {
