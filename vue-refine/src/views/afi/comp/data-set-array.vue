@@ -48,7 +48,7 @@
                         persistent-hint
                         outlined
                         required
-                        v-model="afiRowData[compKey][0]['name']"
+                        v-model="innerRd.name"
                         label="Column Name"
                         :items="arrayList"
                         hint="Column을 선택해 주세요"
