@@ -18,7 +18,7 @@
               <thead>
                 <tr>
                   <th>No.</th>
-                  <th>Column Name</th>
+                  <th>Column Name [Column type]</th>
                   <th>Rule</th>
                 </tr>
               </thead>
