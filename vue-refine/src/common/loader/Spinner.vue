@@ -152,7 +152,7 @@ export default {
 <style>
 .spinner-wrap {
   z-index: 999;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
 }
