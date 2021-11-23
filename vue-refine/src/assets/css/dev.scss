@@ -56,10 +56,22 @@ div, pre, p {
 .custom-rule-wrap .table td {
     font-size : 13px !important;
 }
+.custom-json-body .v-messages {
+    display : none !important;
+}
+.check-button-wrap .v-input--checkbox.v-input--dense {
+    margin-top: 0 !important;
+}
+
+.check-button-wrap .v-input__slot label {
+    font-size : 13px;
+    color : white;
+    font-weight: 400;
+}
 
 /**
-    dialog
- */
+dialog
+*/
 .mu-dialog-background{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10;background-color:#000;opacity:.4;filter:alpha(opacity=40)}
 .mu-dialog{display:inline-block;position:absolute;z-index:11;min-width:320px;border:1px solid #c3c3c3;border-radius:2px;box-shadow: 1px 1px 3px 0 #41414165;background-color: rgb(255 255 255 / 61%);text-align:left}
 .mu-dialog-head{height:44px;line-height:44px;border-bottom:1px solid #eaedf3;background-color:#f2f3f6;font-size: 20px;padding: 0 20px;}
