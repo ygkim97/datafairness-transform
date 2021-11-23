@@ -10,9 +10,27 @@
             v-html="getHtmlDesc(defaultData[compKey]['params'][innerKey].desc)"
           ></p>
         </v-col>
-        <v-col cols="4" class="value-col">
-          <v-text-field outlined dense v-model="rd[innerKey]" color="text--secondary"> </v-text-field>
-        </v-col>
+        <template v-if="defaultData[compKey]['params'][innerKey].dataType === 'array'">
+          <v-col cols="4" class="value-col my-2">
+            <v-autocomplete
+                dense
+                autocomplete="off"
+                persistent-hint
+                outlined
+                required
+                label="Column Name"
+                v-model="rd.name"
+                :items="labelColumnList"
+                hint="Column을 선택해 주세요"
+                color="text--secondary"
+              ></v-autocomplete>
+          </v-col>
+        </template>
+        <template v-else>
+          <v-col cols="4" class="value-col">
+            <v-text-field outlined dense v-model="rd[innerKey]" color="text--secondary"> </v-text-field>
+          </v-col>
+        </template>
       </v-row>
     </template>
   </div>
@@ -21,7 +39,7 @@
 <script>
 export default {
   name: "data-set-object",
-  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData"]
+  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData", "labelColumnList"],
 };
 </script>
 

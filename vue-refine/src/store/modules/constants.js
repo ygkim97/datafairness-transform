@@ -22,9 +22,11 @@ const state = {
       NUMBER: "number"
     },
     mode: {
+      RUN: "run",
       AUTO: "auto",
       RULE: "rule",
-      GET_COLUMN: "get_name"
+      GET_COLUMN: "get_name",
+      TABLE_INFO: "table_info"
     },
     result: {
       SUCCESS: "success",

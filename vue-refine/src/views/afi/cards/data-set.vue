@@ -16,6 +16,7 @@
           :compKey="key"
           :afiRowData="afiRowData"
           :defaultData="defaultData"
+          :labelColumnList="labelColumnList"
           class="mt-16"
         >
         </data-set-array>
@@ -29,6 +30,7 @@
           :compKey="key"
           :afiRowData="afiRowData"
           :defaultData="defaultData"
+          :labelColumnList="labelColumnList"
         >
         </data-set-object>
       </template>
@@ -62,6 +64,8 @@
 </template>
 
 <script>
+import { api_getAFIResponse } from "@/apis/afi.js";
+
 export default {
   name: "dataSet",
   props: ["step", "pageKey"],
@@ -76,16 +80,35 @@ export default {
     },
     afiRowData() {
       return this.$store.getters.afiRowData[this.pageKey];
+    },
+    labelColumnList() {
+      return this.$store.getters.labelColumnList;
     }
   },
   watch: {},
   data() {
     return {};
   },
-  created() {},
+  created() {
+    this.getColumnList();
+  },
   methods: {
     getHtmlCode(obj) {
       return obj.split("\n").join("<br>");
+    },
+    getColumnList() {
+      const params= {
+        "mode": this.$store.getters.CONSTANTS.mode.TABLE_INFO,
+        "args": {
+          "input": {
+            "type": "iris",
+            "target": this.$route.params.tableName
+          }
+        }
+      }
+      api_getAFIResponse(params).then((response) => {
+        this.$store.commit('setColumnList', response.res.columns);
+      });
     }
   }
 };

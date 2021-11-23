@@ -47,7 +47,10 @@ export default {
         delete req["mitigate"];
       }
 
-      return req;
+      return {
+        mode: this.$store.getters.CONSTANTS.mode.RUN,
+        args: req
+      }
     },
     convertArray(str) {
       if (this.isStringEmpty(str)) {
