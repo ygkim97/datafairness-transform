@@ -48,7 +48,7 @@
                         persistent-hint
                         outlined
                         required
-                        v-model="afiRowData[compKey].name"
+                        v-model="afiRowData[compKey][0]['name']"
                         label="Column Name"
                         :items="arrayList"
                         hint="Column을 선택해 주세요"
@@ -86,7 +86,7 @@
 <script>
 export default {
   name: "data-set-array",
-  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData", "arrayList"],
+  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData", "arrayList", "labelColumnList"],
   methods: {
     addRow(k) {
       // 빈 object 추가
@@ -98,11 +98,6 @@ export default {
     },
     removeRow(k, fi) {
       this.afiRowData[k].splice(fi, 1);
-    }
-  },
-  computed: {
-    labelColumnList() {
-      return this.$store.getters.labelColumnList;
     }
   }
 };

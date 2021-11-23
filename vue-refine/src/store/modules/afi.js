@@ -1,8 +1,6 @@
 // Data Type 정의
 const state = {
-  labelColumnList: [
-    "credit", "sex", "age"
-  ],
+  labelColumnList: [],
   // card 컴포넌트를 구성하는데 필요한 데이터
   stepper: [
     {
@@ -191,8 +189,8 @@ const state = {
       },
       protected_attributes: [
         {
-          name: "sex",
-          privileged_classes: "male"
+          name: "credit",
+          privileged_classes: "1"
         },
         {
           name: "age",
@@ -246,6 +244,9 @@ const state = {
 const mutations = {
   setAfiRowData(state, param) {
     state.afiRowData[param.key] = param.data;
+  },
+  setColumnList(state, param) {
+    state.labelColumnList= param;
   }
 };
 

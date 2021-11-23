@@ -39,12 +39,7 @@
 <script>
 export default {
   name: "data-set-object",
-  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData"],
-  computed: {
-    labelColumnList() {
-      return this.$store.getters.labelColumnList; 
-    }
-  }
+  props: ["pageKey", "rd", "compKey", "defaultData", "afiRowData", "labelColumnList"],
 };
 </script>
 
