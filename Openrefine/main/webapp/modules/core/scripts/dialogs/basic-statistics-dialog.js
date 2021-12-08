@@ -47,11 +47,8 @@ BasicStatisticsDialogUI.prototype._createDialog = function() {
 }
 
 BasicStatisticsDialogUI.prototype._getStatisticData = function() {
-	const selectedHeaders = BASIC_STAT_HEADER.INDEXES;
-	
-	if (selectedHeaders == 'all') {
-		selectedHeaders = [];
-	}
+	const selectedHeaders = BASIC_STAT_HEADER.INDEXES === 'all' ? [] : BASIC_STAT_HEADER.INDEXES;
+
 	const _self = this;
 	
 	const warningDialog1 = DialogSystem.showBusy($.i18n('core-index-dialog/loading-step1'));
@@ -559,32 +556,32 @@ BasicStatisticsDialogUI.prototype._createGrid = function() {
 		template += '</tr>';
 	})
 	
-	template += '<tr>';
-	
-	
-	for (var i = 0, size = column.length+1; i < size; i++) {
-		if (i == 0) {
-			template += '<th>';
-			template += $.i18n('core-index-data/view-detail');
-			template += '</th>';
-			continue;
-		}
-		const columnIndex = i-1; 
-		const c = column[columnIndex];
-		if (c == undefined || c.type == 'string') {
-			template += '<td>';
-			template += '</td>';
-			
-		} else {
-			template += '<td class="has_btn">';
-			template += '<button id="view_detail_btn_'+columnIndex+'" class="view_detail_btn" columnIndex="'+columnIndex+'">';
-			template += $.i18n('core-index-data/view');
-			template += '</button>';
-			template += '</td>';
-		}
-		
-	}
-	template += '</tr>';
+	// template += '<tr>';
+	//
+	//
+	// for (var i = 0, size = column.length+1; i < size; i++) {
+	// 	if (i == 0) {
+	// 		template += '<th>';
+	// 		template += $.i18n('core-index-data/view-detail');
+	// 		template += '</th>';
+	// 		continue;
+	// 	}
+	// 	const columnIndex = i-1;
+	// 	const c = column[columnIndex];
+	// 	if (c == undefined || c.type == 'string') {
+	// 		template += '<td>';
+	// 		template += '</td>';
+	//
+	// 	} else {
+	// 		template += '<td class="has_btn">';
+	// 		template += '<button id="view_detail_btn_'+columnIndex+'" class="view_detail_btn" columnIndex="'+columnIndex+'">';
+	// 		template += $.i18n('core-index-data/view');
+	// 		template += '</button>';
+	// 		template += '</td>';
+	// 	}
+	//
+	// }
+	// template += '</tr>';
 	
 	template += '</table>';
 	dialogChart.append(template);	
