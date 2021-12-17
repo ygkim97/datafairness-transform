@@ -28,6 +28,9 @@ Vue.component('Spinner', VueSimpleSpinner);
 import ScrollTop from "@/common/scroll/ScrollTop.vue";
 Vue.component('ScrollTop', ScrollTop);
 
+// import chart
+import { Chart } from '@/common/chart/index.js'
+
 Vue.config.productionTip = false
 
 // 전역 event 처리 -- event bus 추가

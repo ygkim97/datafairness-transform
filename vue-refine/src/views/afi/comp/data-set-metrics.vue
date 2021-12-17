@@ -47,7 +47,7 @@
           <div class="text-h6">
             Metrics
           </div>
-          <data-set-chart :params="params.metrics"></data-set-chart>
+          <data-set-chart :params="params.metrics" :stepKey="stepKey"></data-set-chart>
         </div>
       </div>
     </v-card>
@@ -57,7 +57,7 @@
 <script>
 export default {
   name: "data-set-metrics",
-  props: ["compKey", "params"],
+  props: ["compKey", "params", "stepKey"],
   computed: {
     defaultData() {
       return this.$store.getters.defaultData[this.compKey];

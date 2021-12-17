@@ -1,7 +1,6 @@
 <template>
   <v-card-actions class="custom-card-wrapper">
-    <data-set-metrics compKey="metrics" :params="response"> </data-set-metrics>
-    <!--      <pre>{{ response }}</pre>-->
+    <data-set-metrics compKey="metrics" :params="response" stepKey="compare"> </data-set-metrics>
   </v-card-actions>
 </template>
 
@@ -56,9 +55,4 @@ export default {
 </script>
 
 <style scoped>
-/deep/ .comp_wrap {
-  padding: 10px;
-  border: 1px solid lightblue;
-  margin: 0 20px 20px 20px;
-}
 </style>
