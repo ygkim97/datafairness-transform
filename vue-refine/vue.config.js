@@ -1,6 +1,7 @@
 module.exports = {
   runtimeCompiler: true,
   devServer: {
+    // overlay: false,
     port: process.env.VUE_APP_PORT,
     disableHostCheck: true,
     proxy: {
