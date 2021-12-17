@@ -189,8 +189,8 @@ const state = {
       },
       protected_attributes: [
         {
-          name: "credit",
-          privileged_classes: "1"
+          name: "sex",
+          privileged_classes: "male"
         },
         {
           name: "age",

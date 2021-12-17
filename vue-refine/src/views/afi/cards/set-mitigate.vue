@@ -1,6 +1,6 @@
 <template>
   <v-card-actions class="custom-card-wrapper">
-    <data-set-metrics compKey="metrics" :params="response"> </data-set-metrics>
+    <data-set-metrics compKey="metrics" :params="response" stepKey="metrics"> </data-set-metrics>
 
     <data-set-mitigate
       compKey="mitigate"
@@ -63,7 +63,6 @@ export default {
 <style scoped>
 /deep/ .comp_wrap {
   padding: 10px;
-  border: 1px solid lightblue;
-  margin: 0 20px 20px 20px;
+  margin: 0 20px 0px 20px;
 }
 </style>
