@@ -7,3 +7,11 @@ export function api_dataDqi(param) {
     params: param
   });
 }
+
+export function api_dataCorrection(param){
+  return request({
+    url: `/function/data-correction`,
+    method: "post",
+    params: param
+  });
+}

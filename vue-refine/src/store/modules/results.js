@@ -3,7 +3,7 @@ const state = {
   mode: null,
 
   useNER: {
-    auto : true,
+    auto : false,
     rule : true
   },
 
@@ -31,7 +31,9 @@ const state = {
       column_stats: [],
       table_dqi: {}
     }
-  }
+  },
+
+  correctionParam: []
 };
 // 동기 처리
 const mutations = {
@@ -65,6 +67,10 @@ const mutations = {
         table_dqi: {}
       }
     };
+  },
+  
+  setCorrectionParam(state, param) {
+    state.correctionParam = param;
   }
 };
 
@@ -87,7 +93,8 @@ const getters = {
   },
   resultResponse: (state) => state.resultResponse,
   resultRuleParam: (state) => state.resultRuleParam,
-  useNER: (state) => state.useNER
+  useNER: (state) => state.useNER,
+  correctionParam: (state) => state.correctionParam
 };
 // 비동기 처리
 const actions = {
