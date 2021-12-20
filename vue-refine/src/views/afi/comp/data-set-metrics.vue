@@ -47,7 +47,25 @@
           <div class="text-h6">
             Metrics
           </div>
-          <data-set-chart :params="params.metrics" :stepKey="stepKey"></data-set-chart>
+          <div class="chart-body-wrap">
+            <div class="btn-wrap">
+              <v-btn
+                color="blue-grey lighten-1"
+                class="float-right mr-7 float-right"
+                dark
+                x-small
+                @click="chartChange"
+                >{{
+                  chartBtnText + (chartType === "BAR" ? "LINE" : "BAR")
+                }}</v-btn
+              >
+            </div>
+            <data-set-chart
+              :params="params.metrics"
+              :stepKey="stepKey"
+              :chartType="chartType"
+            ></data-set-chart>
+          </div>
         </div>
       </div>
     </v-card>
@@ -66,7 +84,21 @@ export default {
   components: {
     DataSetChart: () => import("./data-set-chart.vue")
   },
-  methods: {}
+  methods: {
+    chartChange() {
+      if (this.chartType === "BAR") {
+        this.chartType = "LINE";
+      } else {
+        this.chartType = "BAR";
+      }
+    }
+  },
+  data() {
+    return {
+      chartType: "BAR",
+      chartBtnText: "chart view : "
+    };
+  }
 };
 </script>
 
@@ -87,7 +119,7 @@ span.key {
 .mitigation-wrap {
   margin-top: 20px;
 }
-.cart-wrap {
-  margin: 20px;
+.btn-wrap {
+  height: 30px;
 }
 </style>
