@@ -7,14 +7,14 @@
           v-show="chartType === 'BAR'"
           :key="'chart_bar_' + i"
           :id="'chart_bar_' + i"
-          width="400"
+          :width="chartWidth"
           height="200"
         ></canvas>
         <canvas
           v-show="chartType === 'LINE'"
           :key="'chart_line_' + i"
           :id="'chart_line_' + i"
-          width="400"
+          :width="chartWidth"
           height="200"
         ></canvas>
       </template>
@@ -32,6 +32,7 @@ export default {
   watch: {},
   data() {
     return {
+      chartWidth: 400,
       colors: ["#ffb2c1", "#a0d0f5"],
       chartData: {
         keys: [],
@@ -52,6 +53,8 @@ export default {
     this.convertChartData_line();
   },
   mounted() {
+    this.setCanvasWidth();
+
     const me = this;
     this.$nextTick(function() {
       Object.keys(me.chartData.datasets).forEach((key, i) => {
@@ -60,6 +63,11 @@ export default {
     });
   },
   methods: {
+    setCanvasWidth() {
+      const totalWidth = document.getElementsByClassName("metrics-body")[0].offsetWidth;
+      const chartCnt = this.chartData.keys.length;
+      this.chartWidth = (totalWidth / chartCnt) * 0.9;
+    },
     getToFixed(type, key, no) {
       let fixedNo =
         type === "before"
@@ -107,7 +115,8 @@ export default {
 
       Object.keys(this.params.before).forEach((e) => {
         // e = key
-        me.chartData.keys.push(e);
+        // keys를 BAR chart data 생성할때, 이미 구성해줬기 때문에 여기서는 하지 않는다.
+        // me.chartData.keys.push(e);
         obj = {
           data: [me.getToFixed("before", e, 3)],
           borderColor: [me.colors[0]],
