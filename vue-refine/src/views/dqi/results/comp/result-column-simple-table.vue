@@ -50,7 +50,9 @@
                           )"
                           :key="thirdInner"
                         >
-                          <td class="table-key">{{ convertTemplates(thirdInner) }}</td>
+                          <td class="table-key">
+                            {{ convertTemplates(thirdInner) }}
+                          </td>
                           <td>
                             {{ column[item][innerItem][thirdInner] }}
                           </td>
@@ -59,7 +61,12 @@
                     </table>
                   </td>
                   <td v-else>
-                    {{ column[item][innerItem] }}
+                    <template v-if="item === 'column_dqi'">
+                      <percentage-bar :value="Number(column[item][innerItem].replaceAll('%', ''))" endTag="%"></percentage-bar>
+                    </template>
+                    <template v-else>
+                      {{ column[item][innerItem] }}
+                    </template>
                   </td>
                 </tr>
               </tbody>
@@ -78,6 +85,9 @@
 export default {
   name: "ResultColumnSimpleTable",
   props: ["column"],
+  components: {
+    PercentageBar: () => import("./percentage-box")
+  },
   computed: {
     strTemplate() {
       return this.$store.getters.CONSTANTS.result_str;
@@ -117,6 +127,6 @@ table tr:last-child > td {
   padding-left: 16px;
 }
 td.table-key {
-    color: #627781;;
+  color: #627781;
 }
 </style>

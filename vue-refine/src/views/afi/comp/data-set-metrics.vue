@@ -55,9 +55,7 @@
                 dark
                 x-small
                 @click="chartChange"
-                >{{
-                  chartBtnText + (chartType === "BAR" ? "LINE" : "BAR")
-                }}</v-btn
+                >{{ (chartType === "BAR" ? "LINE" : "BAR") + " view" }}</v-btn
               >
             </div>
             <data-set-chart
@@ -95,8 +93,7 @@ export default {
   },
   data() {
     return {
-      chartType: "BAR",
-      chartBtnText: "chart view : "
+      chartType: "BAR"
     };
   }
 };

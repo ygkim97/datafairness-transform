@@ -4,7 +4,8 @@
       <v-layout>
         <v-flex xs12>
           <span class="text-caption" v-if="mode === 'auto'"
-            >'RULE 기반 지표 측정' 은 '자동 지표 측정' 에서 조회한 데이터를 기반으로 표시됩니다. <br>'데이터 조회' 를 먼저 실행해주세요.</span
+            >'RULE 기반 지표 측정' 은 '자동 지표 측정' 에서 조회한 데이터를
+            기반으로 표시됩니다. <br />'데이터 조회' 를 먼저 실행해주세요.</span
           >
         </v-flex>
         <v-flex class="button-wrap" xs3>
@@ -68,20 +69,52 @@
         </v-card-text>
       </v-card>
     </div>
+
     <div class="py-2">
       <v-card elevation="2" min-height="200">
         <v-toolbar color="blue-grey darken-2" dark height="40" flat
           >전체 통계
         </v-toolbar>
         <template class="all-grid-wrap">
-          <tui-grid
-            id="tuiGrid_total"
-            ref="tuiGrid_total"
-            :data="gridProps.total.gridData"
-            :columns="gridProps.total.columns"
-            :options="gridProps.total.options"
-            :theme="gridProps.theme"
-          ></tui-grid>
+          <div class="chart-body-wrap">
+            <div class="btn-wrap">
+              <div class="float-left chart-title-wrap">
+                <span class="text-overline">{{
+                  chartTypeArr[chartTypeNo]
+                }}</span>
+              </div>
+              <v-btn
+                color="blue-grey lighten-1"
+                class="float-right mr-7 float-right"
+                dark
+                x-small
+                @click="chartChange"
+              >
+                {{
+                  (chartTypeArr[chartTypeNo] === "GRID" ? "BAR" : "GRID") +
+                    " view"
+                }}
+              </v-btn>
+            </div>
+            <div class="total-wrap">
+              <dqi-grid
+                v-show="chartTypeArr[chartTypeNo] === 'GRID'"
+                :gridData="gridData"
+                :resultTemplate="strTemplate"
+              ></dqi-grid>
+              <dqi-bar
+                v-show="chartTypeArr[chartTypeNo] === 'BAR'"
+                :params="resultResponse.table_dqi"
+                :resultTemplate="strTemplate"
+              ></dqi-bar>
+              <div v-show="chartTypeArr[chartTypeNo] === 'GAUGE'">
+                <dqi-gauge
+                  :params="resultResponse.table_dqi"
+                  :resultTemplate="strTemplate"
+                ></dqi-gauge>
+              </div>
+            </div>
+          </div>
         </template>
       </v-card>
     </div>
@@ -94,52 +127,43 @@ export default {
   props: ["mode"],
   components: {
     ResultColumnSimpleTable: () => import("./result-column-simple-table.vue"),
-    NerCheckbox: () => import("./ner-checkbox.vue")
+    NerCheckbox: () => import("./ner-checkbox.vue"),
+    DqiGrid: () => import("./dqi-grid.vue"),
+    DqiBar: () => import("./dqi-chart-bar.vue"),
+    DqiGauge: () => import("./dqi-chart-gauge.vue")
   },
   computed: {
-    gridInfo() {
-      return this.$store.getters.GRID;
-    },
-    strTemplate() {
-      return this.$store.getters.CONSTANTS.result_str;
-    },
     resultResponse() {
       this.expansionAll(false);
       return this.$store.getters.resultResponse[this.mode];
-    }
-  },
-  watch: {
-    resultResponse(obj) {
-      const totalData = Object.keys(obj.table_dqi).map((td) => {
-        return { key: td, value: obj.table_dqi[td] };
-      });
-      this.$refs[`tuiGrid_total`].invoke("resetData", totalData);
+    },
+    strTemplate() {
+      return this.$store.getters.CONSTANTS.result_str;
     }
   },
   data() {
     return {
-      expansionPanels: [],
-      column: null,
-      rule: null,
-      gridProps: {
-        theme: null,
-        total: {
-          columns: [],
-          options: {},
-          gridData: []
-        },
-        columns: {
-          columns: [],
-          options: {},
-          gridData: []
-        }
-      }
+      gridData: [],
+      chartTypeNo: 0,
+      chartTypeArr: ["GRID", "BAR"],
+      expansionPanels: []
     };
   },
-  created() {
-    this.createGrid();
+  watch: {
+    resultResponse(obj) {
+      this.gridData = Object.keys(obj.table_dqi).map((td) => {
+        return { key: td, value: obj.table_dqi[td] };
+      });
+    }
   },
+  created() {},
   methods: {
+    chartChange() {
+      this.chartTypeNo++;
+      if (this.chartTypeNo >= this.chartTypeArr.length) {
+        this.chartTypeNo = 0;
+      }
+    },
     createGrid() {
       // theme
       this.gridProps.theme = this.gridInfo.theme;
@@ -199,5 +223,17 @@ div.buttons button {
 }
 .option-wrap .button-wrap {
   padding: 10px 5px;
+}
+
+.btn-wrap {
+  margin: 10px 0;
+  height: 30px;
+}
+.total-wrap {
+  padding: 20px;
+}
+
+.chart-title-wrap {
+  margin: 5px 20px;
 }
 </style>
