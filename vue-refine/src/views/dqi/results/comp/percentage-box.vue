@@ -4,8 +4,8 @@
     <div
       class="percentage-inner-bar"
       :style="{
-        width: innerWidth + 'px',
-        height: innerHeight + 'px',
+        width: innerWidth + '%',
+        height: innerHeight + '%',
         border: useBorder ? '1px solid #396eb0;' : ''
       }"
     ></div>
@@ -23,7 +23,7 @@ export default {
     return {
       el: null,
       innerWidth: 0,
-      innerHeight: 0,
+      innerHeight: 100,
       useBorder: true
     };
   },
@@ -34,9 +34,7 @@ export default {
   },
   methods: {
     setInnerBarWidth() {
-      this.innerWidth = (this.el.offsetWidth * this.value) / 100;
-      this.innerHeight = this.el.offsetHeight - 2; // border
-
+      this.innerWidth = this.value;
       if (this.innerWidth === 0) {
         this.useBorder = false;
       }
