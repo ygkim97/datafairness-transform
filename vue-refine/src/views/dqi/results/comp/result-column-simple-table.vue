@@ -62,7 +62,7 @@
                   </td>
                   <td v-else>
                     <template v-if="item === 'column_dqi'">
-                      <percentage-bar :value="Number(column[item][innerItem].replaceAll('%', ''))" endTag="%"></percentage-bar>
+                      <percentage-bar :value="Number(column[item][innerItem].replaceAll('%', ''))" endTag="%" :keyValue="column.column_name"></percentage-bar>
                     </template>
                     <template v-else>
                       {{ column[item][innerItem] }}
