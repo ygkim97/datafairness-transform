@@ -96,13 +96,13 @@ export default {
             },
             datalabels: {
               formatter: (value) => {
-                return value + "%";
+                return `${value}%`;
               }
             },
             tooltip: {
               callbacks: {
                 label: function(tooltipItem) {
-                  return tooltipItem.raw + "%";
+                  return `${tooltipItem.raw}%`;
                 }
               }
             }
