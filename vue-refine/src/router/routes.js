@@ -56,6 +56,12 @@ let routes = [
         icon: "mdi-alert-octagon",
         component: () => import("@/views/dqi/results/ViewResult.vue"),
         props: true
+      },
+      {
+        path: "correction",
+        text: "Correction",
+        name: "viewCorrection",
+        component: () => import("@/views/dqi/results/ViewCorrection.vue")
       }
     ]
   },

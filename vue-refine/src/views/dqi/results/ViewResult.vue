@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout>
-      <v-flex xs5>
+      <v-flex xs11>
         <v-tabs v-model="tab" color="blue-grey darken-4" class="mx-3">
           <v-tabs-slider color="blue-grey darken-4"></v-tabs-slider>
           <v-tab
@@ -13,6 +13,17 @@
             {{ mode.text }}
           </v-tab>
         </v-tabs>
+      </v-flex>
+      <v-flex v-if="showBtn" class="button-wrap">
+        <v-btn
+          color="blue-grey lighten-1"
+          dark
+          class="float-right"
+          small
+          @click="gotoRouter('viewCorrection')"
+        >
+        보정
+        </v-btn>
       </v-flex>
     </v-layout>
     <v-layout class="custom-result-body mt-0">
@@ -85,10 +96,14 @@ export default {
     useTab2: false,
     expandRule: false,
     mode: null,
-    selectedRule: []
+    selectedRule: [],
+    showBtn : false
   }),
 
   methods: {
+    gotoRouter(val) {
+      this.$router.push({ name: val }).catch(() => {});
+    },
     isAvailableTab(idx) {
       if (idx === 0) {
         // tab1은 데이터 조회 여부와 상관 없이 클릭 가능하다.
@@ -139,6 +154,7 @@ export default {
             response: response.data_dqi,
             mode: vm.mode
           });
+          this.showBtn = true;
         }
       });
     }
@@ -152,5 +168,8 @@ export default {
   margin: 10px;
   padding: 20px;
   min-height: 100px;
+}
+.button-wrap{
+  padding: 10px;
 }
 </style>
