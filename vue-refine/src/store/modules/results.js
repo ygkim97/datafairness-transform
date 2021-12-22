@@ -4,7 +4,7 @@ const state = {
 
   useNER: {
     auto : false,
-    rule : true
+    rule : false
   },
 
   // radio 구성 데이터

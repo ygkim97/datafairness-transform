@@ -1,12 +1,12 @@
 <template>
-   <div class="mt-10">
-      <v-card elevation="2" class="mb-11">
+  <div class="mt-10">
+    <v-card elevation="2">
          <v-toolbar
             color="blue-grey darken-3"
             dark
             height="40"
             flat
-         >Column selection
+         >Column Selection
          </v-toolbar>
          <div class="selection-wrap">
             <v-autocomplete
@@ -28,7 +28,7 @@
             dark
             height="40"
             flat
-         >Property setting
+         >Property Setting
          </v-toolbar>
          <div class="setting-wrap">
             <v-row class="mb-4">
@@ -40,14 +40,14 @@
                      outlined
                      required
                      label="setting"
-                     v-model="dataIndex"
+                     v-model="dataIndexItem"
                      :items="dataIndexList"
                      item-text="item"
                      item-disabled="disable"
                      color="text--secondary"
                   ></v-autocomplete>
                </v-col>
-               <template v-if="dataIndex==='null'">
+               <template v-if="dataIndexItem==='결측률'">
                   <v-col cols="2" class="d-flex justify-center pt-0">
                      <v-radio-group v-model="selected">
                         <v-radio
@@ -77,22 +77,72 @@
             </v-btn>
          </div>
       </v-card>
+      <v-card elevation="2">
+         <v-toolbar
+            color="blue-grey darken-3"
+            dark
+            height="40"
+            flat
+         >Correction Chart
+         </v-toolbar>
+         <div class="chart-wrap">
+            <v-row>
+               <div v-show="Object.keys(afterCorrection).length > 0" class="w-100">
+                  <div class="d-flex justify-space-between">
+                     <v-col cols="5.5">
+                        <correction-chart-doughnut
+                           chartType="before"
+                           :correctionData="beforeCorrection[dataIndex]"
+                           :dataIndex="dataIndex"
+                        >
+                        </correction-chart-doughnut>
+                     </v-col>
+                     <v-col cols="1" class="d-flex pt-16">
+                        <div class="d-flex justify-center w-100">
+                           <v-icon
+                              style="font-size: 3.5rem;"
+                           >
+                           mdi-arrow-right-bold
+                           </v-icon>
+                        </div>
+                     </v-col>
+                     <v-col cols="5.5">
+                        <correction-chart-doughnut
+                           chartType="after"
+                           :correctionData="afterCorrection[dataIndex]"
+                           :dataIndex="dataIndex"
+                        >
+                        </correction-chart-doughnut>
+                     </v-col>
+                  </div>
+               </div>
+               <template v-if="Object.keys(afterCorrection).length === 0">
+                  <p class="center w-100">데이터가 없습니다.</p>
+               </template>
+            </v-row>
+         </div>
+      </v-card>
    </div>
-   
 </template>
 
 <script>
 import { api_dataCorrection, api_dataDqi } from "@/apis/results.js"
 export default {
+   components: {
+      CorrectionChartDoughnut : () => import('./comp/correction-chart-doughnut.vue')
+   },
    data() {
       return {
          selected : 'imputation',
-         dataIndexList : [{item:'null', disable: false}, {item:'패턴 불일치', disable: false}, {item: '타입 불일치', disable: false}],
+         dataIndexList : [{item:'결측률', disable: false}, {item:'패턴 불일치', disable: false}, {item: '타입 불일치', disable: false}],
          columnNameList : [],
          columnName : '',
-         dataIndex : 'null',
+         dataIndexItem : '결측률',
          columnPattern: '',
-         columnType: ''
+         columnType: '',
+         beforeCorrection: [],
+         afterCorrection: [],
+         dataIndex: ''
       }
    },
    methods: {
@@ -107,13 +157,13 @@ export default {
             return;
          }
 
+         this.setBeforeCorrection();
          this.setCorrectionParam();
          // console.log(this.correctionParam);
-
          await api_dataCorrection(this.correctionParam).then((response) => {
             
             if (response.result !== "SUCCESS") {
-            // 데이터 조회를 하지 못한 경우
+               // 데이터 조회를 하지 못한 경우
                vm.EventBus.$emit("modalAlert", {
                   title: "경고",
                   text: "데이터 조회를 하지 못했습니다. 잠시후 다시 시도해 주세요",
@@ -134,7 +184,7 @@ export default {
                   } else {
                      response.data_dqi.column_stats.forEach((columnObj) => {
                         if(columnObj.column_name === this.columnName){
-                           console.log(columnObj.column_dqi);
+                           this.afterCorrection = columnObj.column_dqi;
                         }
                      });
                   }
@@ -144,13 +194,14 @@ export default {
       },
       setCorrectionParam() {
          let dataIndex = null;
-         if (this.dataIndex === 'null'){
+         if (this.dataIndexItem === '결측률'){
             dataIndex = 'missing_rate';
-         } else if(this.dataIndex === '패턴 불일치'){
-            dataIndex = 'pattern_mismatch_rate';
-         } else if(this.dataIndex === '타입 불일치'){
+         } else if(this.dataIndexItem === '패턴 불일치'){
+            dataIndex = 'pattern_missmatch_rate';
+         } else if(this.dataIndexItem === '타입 불일치'){
             dataIndex = 'type_missmatch_rate';
          }
+         this.dataIndex = dataIndex;
 
          let columnOptArray = []
          columnOptArray.push({
@@ -166,6 +217,13 @@ export default {
       setColumnNameList() {
          this.resultResponse.auto.column_stats.forEach((columnObj) => {
             this.columnNameList.push(columnObj.column_name);
+         });
+      },
+      setBeforeCorrection() {
+         this.resultResponse.auto.column_stats.forEach((columnObj)=> {
+            if(columnObj.column_name === this.columnName){
+               this.beforeCorrection = columnObj.column_dqi;
+            }
          });
       }
    },
@@ -211,10 +269,23 @@ export default {
 </script>
 
 <style scoped>
+.w-100{
+   width: 100%;
+}
+.v-card{
+   margin-bottom: 50px;
+}
+p.center {
+  text-align: center;
+}
 .selection-wrap{
    padding: 20px 32px 0px;
 }
 .setting-wrap{
    padding: 20px 32px 65px;
+}
+.chart-wrap{
+    margin: 20px;
+    padding: 40px;
 }
 </style>
