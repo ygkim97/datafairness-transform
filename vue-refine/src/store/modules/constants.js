@@ -62,7 +62,7 @@ const state = {
       "len median": "중위 값",
       missing_rate: "결측률",
       type_missmatch_rate: "타입 불일치율",
-      pattern_mismatch_rate: "패턴 불일치율",
+      pattern_missmatch_rate: "패턴 불일치율",
       consistency_violation_rate: "일관성 위배율",
       outlier_ratio: "이상치비율",
       uniqueness_violation_rate: "유일성 위배율",
