@@ -72,6 +72,11 @@
       <div class="chart-wrap">
         <v-row>
           <div v-show="Object.keys(afterCorrection).length > 0" class="w-100">
+            <div class="text-end">
+              <p>
+                {{ correctionCnt }} / {{ rowCnt }} (보정된 ROW수 / 전체 ROW수)
+              </p>
+            </div>
             <div class="d-flex justify-space-between">
               <v-col cols="5.5">
                 <correction-chart-doughnut
@@ -129,7 +134,9 @@ export default {
       columnType: "",
       beforeCorrection: [],
       afterCorrection: [],
-      dataIndex: ""
+      dataIndex: "",
+      correctionCnt: 0,
+      rowCnt: 0
     };
   },
   methods: {
@@ -156,9 +163,11 @@ export default {
             okTitle: "확인"
           });
         } else {
-          let ruleModeParam = this.ruleModeParam;
-          ruleModeParam.table_name = response.correction_table_name;
+          this.correctionCnt = response.correction_count;
 
+          const ruleModeParam = this.setRuleModeParam(
+            response.correction_table_name
+          );
           api_dataDqi(ruleModeParam).then((response) => {
             if (response.result !== "SUCCESS") {
               // 데이터 조회를 하지 못한 경우
@@ -210,8 +219,18 @@ export default {
       this.resultResponse.auto.column_stats.forEach((columnObj) => {
         if (columnObj.column_name === this.columnName) {
           this.beforeCorrection = columnObj.column_dqi;
+          this.rowCnt = columnObj.row_count;
         }
       });
+    },
+    setRuleModeParam(tableName) {
+      const ruleModeParam = {
+        mode: this.ruleModeParam.mode,
+        table_name: tableName,
+        ner: this.ruleModeParam.ner
+      };
+
+      return ruleModeParam;
     }
   },
   computed: {
