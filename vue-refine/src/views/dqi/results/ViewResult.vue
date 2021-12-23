@@ -107,13 +107,16 @@ export default {
       this.$router.push({ name: val }).catch(() => {});
     },
     isAvailableTab(idx) {
-      if (idx === 0) {
-        // tab1은 데이터 조회 여부와 상관 없이 클릭 가능하다.
-        return true;
-      } else {
-        // tab2는 데이터 조회가 완료된 후에 클릭 할 수 있다.
-        return this.showCorrectionBtn;
-      }
+        if (idx === 0) {
+            // 자동 지표측정은 항상 활성화
+            return true;
+        }
+        if (this.mode === 'auto') {
+            return this.showCorrectionBtn
+        } else {
+            // RULE 기반 지표 측정 페이지에서는 항상 활성화
+            return true;
+        }
     },
     getRuleData() {
       // TEST CODE
