@@ -7,6 +7,11 @@ const state = {
     rule : false
   },
 
+  showCorrectionBtn : {
+    auto : false,
+    rule : false
+  },
+
   // radio 구성 데이터
   resultMode: [
     {
@@ -47,6 +52,7 @@ const mutations = {
   },
   setResultResponse(state, param) {
     state.resultResponse[param.mode] = param.response;
+    state.showCorrectionBtn[param.mode] = true;
   },
   setResultRuleParam(state, param) {
     state.resultRuleParam = param;
@@ -94,7 +100,8 @@ const getters = {
   resultResponse: (state) => state.resultResponse,
   resultRuleParam: (state) => state.resultRuleParam,
   useNER: (state) => state.useNER,
-  correctionParam: (state) => state.correctionParam
+  correctionParam: (state) => state.correctionParam,
+  showCorrectionBtn : (state) => state.showCorrectionBtn,
 };
 // 비동기 처리
 const actions = {
