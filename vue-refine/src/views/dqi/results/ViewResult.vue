@@ -14,7 +14,7 @@
           </v-tab>
         </v-tabs>
       </v-flex>
-      <v-flex v-if="showBtn" class="button-wrap">
+      <v-flex v-if="showCorrectionBtn" class="button-wrap">
         <v-btn
           color="blue-grey lighten-1"
           dark
@@ -22,7 +22,7 @@
           small
           @click="gotoRouter('viewCorrection')"
         >
-        보정
+          보정
         </v-btn>
       </v-flex>
     </v-layout>
@@ -70,6 +70,9 @@ export default {
     },
     resultRuleParam() {
       return this.$store.getters.resultRuleParam;
+    },
+      showCorrectionBtn() {
+      return this.$store.getters.showCorrectionBtn[this.mode];
     }
   },
 
@@ -83,7 +86,8 @@ export default {
   },
 
   created() {
-    this.$store.commit("resetData");
+      // 데이터 리셋 사용하지 않음
+    // this.$store.commit("resetData");
 
     // 초기값 설정
     this.mode = this.$store.getters.CONSTANTS.mode.AUTO;
@@ -93,11 +97,9 @@ export default {
 
   data: () => ({
     tab: -1,
-    useTab2: false,
     expandRule: false,
     mode: null,
-    selectedRule: [],
-    showBtn : false
+    selectedRule: []
   }),
 
   methods: {
@@ -110,7 +112,7 @@ export default {
         return true;
       } else {
         // tab2는 데이터 조회가 완료된 후에 클릭 할 수 있다.
-        return this.useTab2;
+        return this.showCorrectionBtn;
       }
     },
     getRuleData() {
@@ -136,11 +138,8 @@ export default {
         this.ruleSelected();
       }
 
-      // console.log(this.ruleModeParam)
-
       const vm = this;
       await api_dataDqi(this.ruleModeParam).then((response) => {
-        vm.useTab2 = true;
 
         if (response.data_dqi === null) {
           // 데이터 조회를 하지 못한 경우
@@ -154,7 +153,6 @@ export default {
             response: response.data_dqi,
             mode: vm.mode
           });
-          this.showBtn = true;
         }
       });
     }
@@ -169,7 +167,7 @@ export default {
   padding: 20px;
   min-height: 100px;
 }
-.button-wrap{
+.button-wrap {
   padding: 10px;
 }
 </style>
