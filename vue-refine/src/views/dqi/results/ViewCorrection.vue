@@ -83,6 +83,7 @@
                   chartType="before"
                   :correctionData="beforeCorrection[dataIndex]"
                   :dataIndex="dataIndex"
+                  :afterCorrection="afterCorrection"
                 >
                 </correction-chart-doughnut>
               </v-col>
@@ -98,6 +99,7 @@
                   chartType="after"
                   :correctionData="afterCorrection[dataIndex]"
                   :dataIndex="dataIndex"
+                  :afterCorrection="afterCorrection"
                 >
                 </correction-chart-doughnut>
               </v-col>

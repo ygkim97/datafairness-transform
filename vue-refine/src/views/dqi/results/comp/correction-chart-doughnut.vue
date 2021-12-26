@@ -19,7 +19,7 @@
 import { Chart } from "chart.js";
 
 export default {
-  props: ["chartType", "correctionData", "dataIndex"],
+  props: ["chartType", "correctionData", "dataIndex", "afterCorrection"],
     data() {
       return{
         chartObj: null,
@@ -107,7 +107,7 @@ export default {
       this.setLabels();
     },
     watch: {
-      correctionData() {
+      afterCorrection() {
         this.createDatasets();
         this.chartObj.data.labels = this.setLabels();
         this.chartObj.data.datasets = this.datasets;
