@@ -26,6 +26,7 @@ export default {
     }
   },
   created() {
+    this.createDatasets();
     this.setLabels();
   },
   mounted() {
