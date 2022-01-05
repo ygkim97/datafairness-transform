@@ -183,51 +183,43 @@ const state = {
     },
     dataset: {
       label: {
-        name: "credit",
+        name: "",
         // array 형식으로 바꿔줘야함.
-        favorable_classes: "1"
+        favorable_classes: ""
       },
       protected_attributes: [
         {
-          name: "sex",
-          privileged_classes: "male"
-        },
-        {
-          name: "age",
-          privileged_classes: "eval: x > 25"
+          name: "",
+          privileged_classes: ""
         }
       ],
       // array 형식으로 바꿔줘야함.
       categorical_features:
-        "status,credit_history,purpose,savings,employment,other_debtors,property,installment_plans,housing,skill_level,telephone,foreign_worker",
+        "",
       // array 동일
       features_to_keep: "",
       // arry 동일
-      features_to_drop: "personal_status",
-      custom_preprocessing:
-        "def custom_preprocessing(df):\n" +
-        "    status_map = {'A91': 'male', 'A93': 'male', 'A94': 'male', 'A92': 'female', 'A95': 'female'}\n" +
-        "    df['sex'] = df['personal_status'].replace(status_map)\n" +
-        "    return df"
+      features_to_drop: "",
+      custom_preprocessing: ""
     },
     metric: {
       // name:value 형식으로 convert 해줘야함.
       privileged_groups: [
         {
-          name: "age",
-          value: 1
+          name: "",
+          value: null
         }
       ],
       unprivileged_groups: [
         {
-          name: "age",
-          value: 0
+          name: "",
+          value: null
         }
       ],
       metrics: {
         // array 형식으로 배꿔좌야함.
-        statistical_parity_difference: true,
-        disparate_impact: true
+        statistical_parity_difference: false,
+        disparate_impact: false
       }
     },
     mitigate: {

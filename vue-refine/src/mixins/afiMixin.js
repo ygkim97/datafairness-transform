@@ -19,11 +19,11 @@ export default {
       );
 
       req.metric.privileged_groups = req.metric.privileged_groups.map((e) => {
-        return { [e.name]: e.value };
+        return { [e.name]: Number(e.value) };
       });
       req.metric.unprivileged_groups = req.metric.unprivileged_groups.map(
         (e) => {
-          return { [e.name]: e.value };
+          return { [e.name]: Number(e.value) };
         }
       );
 
