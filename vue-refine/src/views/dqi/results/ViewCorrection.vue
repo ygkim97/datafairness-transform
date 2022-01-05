@@ -144,6 +144,10 @@ export default {
   methods: {
     async btnClick() {
       const vm = this;
+
+      // mode를 auto로 임시 설정
+      this.$store.commit("setMode", "auto");
+
       if (this.columnName === "") {
         vm.EventBus.$emit("modalAlert", {
           title: "경고",
