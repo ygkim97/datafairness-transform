@@ -151,13 +151,18 @@ export default {
   },
   watch: {
     resultResponse(obj) {
+      this.setGridData(obj);
+    }
+  },
+  created() {
+    this.setGridData(this.resultResponse);
+  },
+  methods: {
+    setGridData(obj) {
       this.gridData = Object.keys(obj.table_dqi).map((td) => {
         return { key: td, value: obj.table_dqi[td] };
       });
-    }
-  },
-  created() {},
-  methods: {
+    },
     chartChange() {
       this.chartTypeNo++;
       if (this.chartTypeNo >= this.chartTypeArr.length) {
